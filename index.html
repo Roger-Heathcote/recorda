@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>Live mic to waveform example</title>
+	<!--[if le IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+      <script src="scripts/respond.js"></script>
+  <![endif]-->
+  <style>
+    .wrapper { width:100%; height: 300px; }
+  </style>
+</head>
+<body>
+  <div id="wrapper">
+     <canvas id="waveform"></canvas>
+  </div>
+  <div>
+    <button>STOP</button>
+  </div>
+  <div id="outs">
+    Frames:<div id="frames">none</div><br>
+    Audio Processing Events:<div id="audProcEnv">none</div><br>
+    <div id="mouseLocationDiv"></div>
+  </div>
+  <script src="scripts/app.js"></script>
+</body>
+</html>
