@@ -17,7 +17,7 @@ var AudioEngine = function (GLOBALS, loResWaveformParams=false) {
   //this.state = "buffer";
   this.scriptProcessorBuffer = 16384 / 4; //64;
   this.channels = 2;
-  this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  this.audioContext = new (GLOBALS.win.AudioContext || GLOBALS.win.webkitAudioContext)();
   this.sampleRate = this.audioContext.sampleRate;
   this.gainNode = this.audioContext.createGain();
   this.gainNode.gain.value = 0; // Mute the output / Don't output sound - otherwise feedback!

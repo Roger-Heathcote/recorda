@@ -11,6 +11,7 @@ const bufferLength = 30;
 const loResWaveformParams = { dataPoints: 300, secondsToDisplay: bufferLength };
 
 recorder = new RecorderApp(
+  window,
   navigator,
   canvas,
   AudioEngine,

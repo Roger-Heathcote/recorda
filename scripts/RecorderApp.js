@@ -23,6 +23,7 @@ var saveState = createStateObject(stateObject, "save", "saving");
 
 
 var RecorderApp = function(
+    window,
     navigator,
     canvas,
     AudioEngine,
@@ -35,6 +36,7 @@ var RecorderApp = function(
   console.log("DDE in RecorderApp constructor is:", dataDisplayElement);
   let instance = this;
   let GLOBALS = {
+    win:window,
     nav:navigator,
     state:"buffer",
     secondsToBuffer: bufferLength,
