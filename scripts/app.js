@@ -13,9 +13,9 @@ const loResWaveformParams = { dataPoints: 300, secondsToDisplay: bufferLength };
 recorder = new RecorderApp(
   window,
   navigator,
-  canvas,
   AudioEngine,
   bufferLength,
+  canvas,
   MouseStatus,
   WaveformDisplay,
   loResWaveformParams,

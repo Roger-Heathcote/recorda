@@ -14,7 +14,8 @@ test1: {
 
   let navigator = {};
     // This program is licensed under the MIT License.
-  navigator.GetUserMedia = function(opt, ok, ng) {
+  navigator.getUserMedia = function(opt, ok, ng) {
+    console.log("Sure I'm GetUserMedia, come on over.")
     ok(null);
   };
   AudioContext.prototype.createMediaStreamSource = function() {
@@ -37,24 +38,35 @@ test1: {
   let window = {};
   window.AudioContext = AudioContext;
 
-  //break test1;
-  (function() {
+  loadRawJS('./scripts/globalFunctions.js');
+  loadRawJS('./scripts/humane_dates.js');
+  loadRawJS('./scripts/AudioEngine.js');
+  loadRawJS('./scripts/RecorderApp.js');
+  //loadRawJS('./scripts/.js');
+  //sloadRawJS('./scripts/.js');
 
-    loadRawJS('./scripts/globalFunctions.js');
-    loadRawJS('./scripts/humane_dates.js');
-    loadRawJS('./scripts/AudioEngine.js');
-    loadRawJS('./scripts/RecorderApp.js');
-    //loadRawJS('./scripts/.js');
-    //sloadRawJS('./scripts/.js');
+  const bufferLength = 30;
+  const loResWaveformParams = { dataPoints: 300, secondsToDisplay: bufferLength };
+  console.log("Constructing new RecorderApp");
+  recorder = new RecorderApp(
+    window,
+    navigator,
+    AudioEngine,
+    bufferLength
+  );
+  recorder.init();
+  recorder.globals.inPoint = recorder.audEng.codeChannel[0];
+  console.log("recGLOBS:", recorder.globals);
+  recorder.record();
 
-    const bufferLength = 30;
-    const loResWaveformParams = { dataPoints: 300, secondsToDisplay: bufferLength };
-
-    recorder = new RecorderApp(
-      AudioEngine,
-      bufferLength,
-      navigator
-    );
-    recorder.init();
-  }());
+  (function stayAliveFor(i) {
+    setTimeout(function () {
+      console.log("left Channel Length:", recorder.audEng.leftChannel.length);
+      console.log("left Channel [0]:", recorder.audEng.leftChannel[0]);
+      console.log("Code number:", recorder.audEng.codeNumber);
+      if (--i) {          // If i > 0, keep going
+        stayAliveFor(i);       // Call the loop again, and pass it the current value of i
+      }
+    }, 2000);
+  })(5);
 }

@@ -25,9 +25,9 @@ var saveState = createStateObject(stateObject, "save", "saving");
 var RecorderApp = function(
     window,
     navigator,
-    canvas,
     AudioEngine,
     bufferLength,
+    canvas=false,
     MouseStatus=false,
     WaveformDisplay=false,
     loResWaveformParams=false,
@@ -52,7 +52,8 @@ var RecorderApp = function(
   this.inPoint = undefined;
   this.outPoint = undefined;
   this.states = { buffer: bufferState, record: recordState, save: saveState };
-
+  this.globals = GLOBALS;
+  
   bufferState.handleWaveformClick = function(code) {
     console.log("buffer state is taking care of business!");
     GLOBALS.inPoint = code;
@@ -123,16 +124,20 @@ var RecorderApp = function(
 
     this.audEng = new AudioEngine(GLOBALS, loResWaveformParams);
 
-    this.mouse = new MouseStatus(canvas);
+    if(MouseStatus) {
+      this.mouse = new MouseStatus(canvas);
+    }
 
-    this.waveDisp = new WaveformDisplay(
-      GLOBALS,
-      window,
-      canvas,
-      this.mouse,
-      this.audEng.loResWaveform,
-      this.audEng.loResCodeChannel,
-      this.waveformClicked);
+    if(WaveformDisplay){
+      this.waveDisp = new WaveformDisplay(
+        GLOBALS,
+        window,
+        canvas,
+        this.mouse,
+        this.audEng.loResWaveform,
+        this.audEng.loResCodeChannel,
+        this.waveformClicked);
+    }
 
     this.state.enter();
     this.state.execute();
