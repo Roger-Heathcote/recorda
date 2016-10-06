@@ -1,0 +1,101 @@
+/*jshint esversion: 6 */
+
+let WaveformDisplay = function(GLOBALS, the_window, canvas, mouse, loResWaveform, loResCodeChannel, clickHandler) {
+  instance = this;
+  //this.state = "buffer";
+  this.minRefreshTime = 200;
+  this.secondsToDisplay = GLOBALS.secondsToBuffer;
+  this.window = the_window;
+  this.canvas = canvas;
+  this.waveform = loResWaveform;
+  this.codeChan = loResCodeChannel;
+  this.canvasCtx = canvas.getContext("2d");
+  this.lastRedraw = 0;
+  this.mouse = mouse;
+
+  this.waveformClicked = function(event) {
+    let rect = this.canvas.getBoundingClientRect();
+    let ratio = (event.clientX - rect.left) / rect.width;
+    let index = Math.floor(this.codeChan.length * ratio);
+    while (this.codeChan[index] === 0) {index++;}
+    if (this.codeChan[index]) { clickHandler(this.codeChan[index]); }
+  }.bind(this);
+  canvas.addEventListener('mouseup', this.waveformClicked, false);
+
+  this.updateDisplay = function() {
+    requestAnimationFrame(instance.updateDisplay);
+    if (Date.now() > (instance.lastRedraw + instance.minRefreshTime)) {
+      instance.drawWave();
+      instance.lastRedraw = Date.now();
+      // stopped here for some reason
+    }
+
+  };
+
+  this.waveDrawStates = {
+    buffer: function(GLOBALS, mouse, canvas, canvasCtx, codeChan) {
+      let mouseStatus = mouse.status();
+      if (mouseStatus.over) {
+        canvasCtx.fillStyle = 'rgb(255, 255, 255)';
+        canvasCtx.fillRect(0, 0, mouseStatus.x, canvas.height);
+        canvasCtx.fillStyle = 'rgb(150, 250, 150)';
+        canvasCtx.fillRect(mouseStatus.x, 0, canvas.width-mouseStatus.x, canvas.height);
+      } else {
+        canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    },
+
+    record: function(GLOBALS, mouse, canvas, canvasCtx, codeChan) {
+      let mouseStatus = mouse.status();
+      let inPointX = ratio(codeChan, GLOBALS.inPoint, canvas.width);
+      //console.log(mouseStatus.x, inPointX);
+      if (mouseStatus.over && (mouseStatus.x>inPointX)) {
+        //console.log("happenin!");
+        canvasCtx.fillStyle = 'rgb(255, 255, 255)';
+        canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+        canvasCtx.fillStyle = 'rgb(150, 250, 150)';
+        canvasCtx.fillRect(inPointX, 0, mouseStatus.x-inPointX, canvas.height);
+      } else {
+        canvasCtx.fillStyle = 'rgb(255, 255, 255)';
+        canvasCtx.fillRect(0, 0, inPointX, canvas.height);
+        canvasCtx.fillStyle = 'rgb(150, 250, 150)';
+        canvasCtx.fillRect(inPointX, 0, canvas.width, canvas.height);
+      }
+    },
+
+    save: function(GLOBALS, mouse, canvas, canvasCtx, codeChan) {
+      let mouseStatus = mouse.status();
+      let inPointX = ratio(codeChan, GLOBALS.inPoint, canvas.width);
+      let outPointX = ratio(codeChan, GLOBALS.outPoint, canvas.width);
+      canvasCtx.fillStyle = 'rgb(255, 255, 255)';
+      canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+      canvasCtx.fillStyle = 'rgb(150, 150, 150)';
+      canvasCtx.fillRect(inPointX, 0, outPointX-inPointX, canvas.height);
+    }
+  };
+
+  this.drawWave = function() {
+
+    // draw background
+    this.waveDrawStates[GLOBALS.state](GLOBALS, this.mouse, this.canvas, this.canvasCtx, instance.codeChan);
+
+    // draw waveform
+    instance.canvasCtx.fillStyle = 'rgb(0, 0, 0)';
+    let sliceWidth = instance.canvas.width / instance.waveform.length;
+    for(let i = 0; i < instance.waveform.length; i++) {
+      let y = instance.waveform[i] * instance.canvas.height;
+      instance.canvasCtx.fillRect(i*sliceWidth, canvas.height-y, sliceWidth+1, y);
+    }
+  };
+
+  this.updateDisplay();
+
+};
+
+function ratio(array, key, width, dfault=0) {
+  if (key <= array[0]) { return 0; }
+  if (key >= array[array.length-1]) { return width; }
+  let result = binarySearch(array, key);
+  if (result === -1) { return dfault; }
+  return Math.floor( width * (result/array.length) );
+}

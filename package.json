@@ -1,12 +1,22 @@
 {
-  "name": "mic_to_waveform",
-  "version": "1.0.0",
-  "description": "HTML5 web audio example - live microphone to waveform display",
+  "name": "recorda",
+  "version": "0.0.2",
+  "private": true,
+  "description": "Buffering audio recorder",
   "main": "index.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "python -m SimpleHTTPServer"
+    "test": "node tests.js",
+    "start": "python -m SimpleHTTPServer 8910;"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "Roger Heathcote",
+  "license": "UNLICENSED",
+  "dependencies": {},
+  "devDependencies": {
+    "web-audio-test-api": "^0.5.2"
+  },
+  "keywords": [
+    "buffering",
+    "audio",
+    "recorder"
+  ]
 }
