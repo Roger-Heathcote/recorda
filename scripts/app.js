@@ -33,7 +33,6 @@ function resizeCanvas() {
 function playClicked(recordingID) {
   audioElement = document.getElementById("audiotest");
   let recording = recorder.getRecordingByUCTTimestamp(recordingID);
-  console.log("Recording is:",recording);
   var url = URL.createObjectURL(recording.data);
   audioElement.src = url;
 }

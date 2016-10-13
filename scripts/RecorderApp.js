@@ -5,7 +5,6 @@ var stateObject = {
   init: target => this.target = target,
   reset: target => this.target.init(),
   enter: target => {
-    //console.log(this.target.state.name+": setting up state.");
     console.log("Setting global state to", this.target.state.name);
     this.target.globals.state = this.target.state.name;
   },
