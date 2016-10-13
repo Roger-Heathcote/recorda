@@ -28,7 +28,6 @@ recorder.init();
 
 function resizeCanvas() {
   canvas.width = document.getElementById("wrapper").offsetWidth;
-  //console.log("resizing");
 }
 
 function playClicked(recordingID) {

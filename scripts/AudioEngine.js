@@ -3,8 +3,6 @@
 
 var AudioEngine = function (GLOBALS, loResWaveformParams=false) {
 
-  if(typeof GLOBALS.secondsToBuffer !== "number"){throw new Error("GLOBALS.secondsToBuffer should be a number");}
-
   this.totalBlocksHandled = 0;
   this.updateBlockTotal = function() {
     this.totalBlocksHandled++;
@@ -18,28 +16,17 @@ var AudioEngine = function (GLOBALS, loResWaveformParams=false) {
   this.bitDepth = 16;
   this.audioContext = new (GLOBALS.win.AudioContext || GLOBALS.win.webkitAudioContext)();
   this.sampleRate = this.audioContext.sampleRate;
-  this.gainNode = this.audioContext.createGain();
-  //this.gainNode.gain.value = 0; // Mute the output / Don't output sound - otherwise feedback!
+  this.gainNode = this.audioContext.createGain(); // Master volume, just in case we need it!
   this.scriptNode = this.audioContext.createScriptProcessor(this.scriptProcessorBuffer, 2, 2);
-
-  console.log("samplerate:", this.samplerate);
-  console.log("sec2buff:", GLOBALS.secondsToBuffer);
-  console.log("scriptProcBuf:", this.scriptProcessorBuffer);
   this.recBufArrayLength = Math.ceil((GLOBALS.secondsToBuffer * this.sampleRate) / this.scriptProcessorBuffer);
-  console.log("recBufArrayLength:", this.recBufArrayLength );
-
   this.leftChannel = new Array(this.recBufArrayLength).fill(0);
   this.rightChannel = new Array(this.recBufArrayLength).fill(0);
   this.codeChannel = new Array(this.recBufArrayLength).fill(0);
   this.interleaved16BitAudio = new Array(this.recBufArrayLength).fill(0);
-
-  //console.log("Should have:", this.leftChannel.length * 60 * this.scriptProcessorBuffer, "");
-
   this.codeNumber = 0;
-  this.dispPeak = 0;
+  this.maxAmplitude = 0;
   this.loResWaveformParams = loResWaveformParams;
   if(loResWaveformParams){
-    console.log("loResWaveform generation enabled");
     this.loResWaveformDataPoints = loResWaveformParams.dataPoints;
     this.loResWaveformSecondsToDisplay = loResWaveformParams.secondsToDisplay;
     this.loResWaveform = new Array(this.loResWaveformDataPoints).fill(0);
@@ -59,7 +46,6 @@ var AudioEngine = function (GLOBALS, loResWaveformParams=false) {
                             GLOBALS.nav.msGetUserMedia);
 
   if (GLOBALS.nav.getUserMedia) {
-    console.log('getUserMedia supported.');
     GLOBALS.nav.getUserMedia (
       { audio: true },
       function(audioStream) {
@@ -68,39 +54,33 @@ var AudioEngine = function (GLOBALS, loResWaveformParams=false) {
         this.scriptNode.connect(this.gainNode);
         this.gainNode.connect(this.audioContext.destination);
       }.bind(this),
-      function(streamError) {
-        throw( new Error("The following gUM Error occured: " + streamError) );
-      }
+      function(streamError) { throw( new Error("The following gUM Error occured: " + streamError) ); }
     );
   } else {
      throw( new Error("getUserMedia not supported on your browser!") );
   }
 
   let scriptProcessor = function scriptProcessor(audioProcessingEvent) {
-    //console.log("Processing");
     this.codeNumber++;
     let left = audioProcessingEvent.inputBuffer.getChannelData (0);
     let right = audioProcessingEvent.inputBuffer.getChannelData (1);
-    let leftout = audioProcessingEvent.outputBuffer.getChannelData (0);
-    let rightout = audioProcessingEvent.outputBuffer.getChannelData (1);
     this.interleaved16BitAudio.push ( stereoFloat32ToInterleavedInt16(left, right) );
     this.codeChannel.push (this.codeNumber);
-    // TODO this.interleaved16BitAudio.push (new)
 
     for (let sample = 0; sample < this.scriptProcessorBuffer; sample++) {
       // track max amplitude encountered
-      if (left[sample] > this.dispPeak) { this.dispPeak = left[sample]; }
-      if (left[sample] < -this.dispPeak) { this.dispPeak = -left[sample]; } // TODO check both
-      if(loResWaveformParams){
+      if (left[sample] > this.maxAmplitude) { this.maxAmplitude = left[sample]; }
+      if (left[sample] < -this.maxAmplitude) { this.maxAmplitude = -left[sample]; } // TODO check both
+      if(loResWaveformParams){ // TODO move this check to block above, don't need maxamp if no waveform display!
         // if enough samples have elapsed push a display data point & reset counter
         this.dispCount--;
         if (this.dispCount < 0) {
           this.dispCount = this.samplesPerDataPoint;
-          this.loResWaveform.push(this.dispPeak);
+          this.loResWaveform.push(this.maxAmplitude);
           this.loResWaveform.shift();
           this.loResCodeChannel.push(this.codeNumber);
           this.loResCodeChannel.shift();
-          this.dispPeak = 0;
+          this.maxAmplitude = 0;
           if(!this.loResOffset) {
             this.loResOffset = this.codeNumber - 1;
           }
@@ -110,8 +90,7 @@ var AudioEngine = function (GLOBALS, loResWaveformParams=false) {
 
     while ((GLOBALS.state === "buffer") && (this.interleaved16BitAudio.length > this.recBufArrayLength)) {
       let trimLength = this.interleaved16BitAudio.length - this.recBufArrayLength;
-      trimLength > 1 ? console.log : null;
-      //console.log(trimLength," to trim");
+      trimLength > 1 ? console.log("trimLength =", trimLength) : console.log("Wang!");
       this.interleaved16BitAudio.splice(0, trimLength);
       this.codeChannel.splice(0, trimLength);
     }

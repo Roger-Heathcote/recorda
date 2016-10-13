@@ -16,12 +16,6 @@ var bufferState = createStateObject(stateObject, "buffer", "buffering");
 var recordState = createStateObject(stateObject, "record", "recording");
 var saveState = createStateObject(stateObject, "save", "saving");
 
-
-
-
-
-
-
 var RecorderApp = function(
     window,
     navigator,
@@ -33,7 +27,6 @@ var RecorderApp = function(
     loResWaveformParams=false,
     dataDisplayElement=false
   ){
-  console.log("DDE in RecorderApp constructor is:", dataDisplayElement);
   let instance = this;
   let GLOBALS = {
     win:window,
@@ -55,7 +48,6 @@ var RecorderApp = function(
   this.globals = GLOBALS;
 
   bufferState.handleWaveformClick = function(code) {
-    console.log("buffer state is taking care of business!");
     GLOBALS.inPoint = code;
     console.log("inPoint set:", GLOBALS.inPoint);
     GLOBALS.state = "record";
@@ -63,7 +55,6 @@ var RecorderApp = function(
   }.bind(this);
 
   recordState.handleWaveformClick = function(code) {
-    console.log("record state is taking care of business!");
     if(code >= GLOBALS.inPoint)
       {
         GLOBALS.outPoint = code;
@@ -75,16 +66,16 @@ var RecorderApp = function(
       }
   };
 
-  saveState.handleWaveformClick = function(code) {
-    console.log("save state is taking care of business!");
-    console.log("code is:", code);
-
-    GLOBALS.state = "buffer";
-    this.buffer();
-  };
+  // saveState.handleWaveformClick = function(code) {
+  //   console.log("save state is taking care of business!");
+  //   console.log("code is:", code);
+  //
+  //   GLOBALS.state = "buffer";
+  //   this.buffer();
+  // };
 
   saveState.execute = function(arg) {
-    let WAVFile = makeWAVFileBlob(
+    let WAVFileBlob = makeWAVFileBlob(
       this.audEng.interleaved16BitAudio,
       this.audEng.codeChannel,
       GLOBALS.inPoint,
@@ -98,11 +89,11 @@ var RecorderApp = function(
 
     GLOBALS.recordings.push({
       name: "Untitled " + GLOBALS.recordings.length, // " :: " + humanReadableLocalDatetime(dateNow),
-      data: WAVFile,
+      data: WAVFileBlob,
       UCTTimestamp: dateNow,
       localTimestamp: datestampToSystemLocalDatestamp(dateNow), // need to get adjustment from humanReadableDatetime and refactor / write dateLocal(dateNow)!
       sampleRate: this.audEng.sampleRate,
-      size: WAVFile.byteLength, // 16 bit
+      size: WAVFileBlob.size, // 16 bit
       color: randomColorCode(175,250)
     });
     this.redrawDataDisplay();
@@ -110,13 +101,11 @@ var RecorderApp = function(
   }.bind(this);
 
   saveState.exit = function(arg){
-    console.log("In save.exit, resetting in/out points");
     GLOBALS.inPoint = undefined;
     GLOBALS.outPoint = undefined;
   };
 
   this.init = function() {
-    console.log("SO INIT THE SHIT OUT OF THIS!");
     this.inPoint = undefined;
     this.outPoint = undefined;
     this.states.buffer.init(this);
@@ -175,12 +164,8 @@ var RecorderApp = function(
     let recordings = GLOBALS.recordings.slice();
     recordings.reverse();
     recordings.forEach(function(recording) {
-      // console.log(recording);
       console.log("recording object", recording);
-      // let timeStamp = new Date(recording.localTimestamp);
-      // console.log("date object", timestamp);
       out.push( "<li>" );
-      //out.push(   "<span class='recording_humanTime'>" );
       out.push(   "<span class='recording_humanTime' style='background:" + recording.color + "'>" );
       out.push(     humanifyDatestamp( new Date(recording.localTimestamp) ) );
       out.push(   "</span>" );
