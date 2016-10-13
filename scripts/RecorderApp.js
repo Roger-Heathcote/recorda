@@ -53,7 +53,7 @@ var RecorderApp = function(
   this.outPoint = undefined;
   this.states = { buffer: bufferState, record: recordState, save: saveState };
   this.globals = GLOBALS;
-  
+
   bufferState.handleWaveformClick = function(code) {
     console.log("buffer state is taking care of business!");
     GLOBALS.inPoint = code;
@@ -84,23 +84,25 @@ var RecorderApp = function(
   };
 
   saveState.execute = function(arg) {
-    saveBuffer = makeSaveBuffer(
-      this.audEng.leftChannel,
-      this.audEng.rightChannel,
+    let WAVFile = makeWAVFile(
+      this.audEng.interleaved16BitAudio,
       this.audEng.codeChannel,
       GLOBALS.inPoint,
-      GLOBALS.outPoint
+      GLOBALS.outPoint,
+      this.audEng.sampleRate,
+      this.audEng.channels,
+      this.audEng.bitDepth
     );
 
     let dateNow = Date.now();
 
     GLOBALS.recordings.push({
-      name: "Untitled " + GLOBALS.recordings.length + " :: " + humanReadableLocalDatetime(dateNow),
-      data: saveBuffer,
+      name: "Untitled " + GLOBALS.recordings.length, // " :: " + humanReadableLocalDatetime(dateNow),
+      data: WAVFile,
       UCTTimestamp: dateNow,
       localTimestamp: datestampToSystemLocalDatestamp(dateNow), // need to get adjustment from humanReadableDatetime and refactor / write dateLocal(dateNow)!
       sampleRate: this.audEng.sampleRate,
-      size: (saveBuffer[0].length + saveBuffer[1].length) * 4,
+      size: WAVFile.byteLength, // 16 bit
       color: randomColorCode(175,250)
     });
     this.redrawDataDisplay();
@@ -201,7 +203,7 @@ var RecorderApp = function(
     out.push("Memory use...<br>");
     out.push("Recordings:", formatBytes(GLOBALS.recordings.reduce( function(t,r) {return t + r.size;}, 0)));
     out.push( "<br>" );
-    out.push("Main buffers:", formatBytes(this.audEng.leftChannel.length * this.audEng.channels * this.audEng.scriptProcessorBuffer));
+    out.push("Main buffers:", formatBytes(this.audEng.interleaved16BitAudio.length * this.audEng.scriptProcessorBuffer));
     return out.join("");
   }.bind(this);
 
@@ -218,39 +220,21 @@ function createStateObject(stateObject, stateName, stateIng) {
   return newObject;
 }
 
-function makeSaveBuffer(
-  left,
-  right,
-  code,
-  inPoint,
-  outPoint
-){
-  console.log("Making save buffer");
-
-  properInFrame = binarySearch(code, inPoint);
-  properOutFrame = binarySearch(code, outPoint);
-  console.log("PRoper in/out", properInFrame, properOutFrame);
-
-  //console.log("left[properInFrame]", left[properInFrame]);
-
-  frameSize = left[left.length-1].length;
-  numFrames = outPoint - inPoint;
-  //
-  // console.log("Frame size is", frameSize,"32bit INTs");
-  // console.log("There are", numFrames, "frames per channel");
-  // console.log("Total buffer size is", frameSize * numFrames);
-  //
-  mergedLeft = new Float32Array(frameSize * numFrames);
-  mergedRight = new Float32Array(frameSize * numFrames);
-  //
-  // TODO do the right channel too!
-  let frameOffset = 0;
-  let emptyFrame = new Float32Array(frameSize).fill(0);
-  for(index = properInFrame; index < (properInFrame + numFrames); index++){
-    mergedLeft.set(left[index], frameOffset);
-    mergedRight.set(right[index], frameOffset);
-    frameOffset = frameOffset + frameSize;
-  }
-  console.log("OK have a look!");
-  return [mergedLeft, mergedRight];
-}
+// function makeWAVFile(
+//   audio,
+//   code,
+//   inPoint,
+//   outPoint
+// ){
+//   properInFrame = binarySearch(code, inPoint);
+//   properOutFrame = binarySearch(code, outPoint);
+//   frameSize = audio[audio.length-1].length;
+//   numFrames = outPoint - inPoint;
+//   let merged = new Int16Array(frameSize * numFrames);
+//   let frameOffset = 0;
+//   for(index = properInFrame; index < (properInFrame + numFrames); index++){
+//     merged.set(audio[index], frameOffset);
+//     frameOffset = frameOffset + frameSize;
+//   }
+//   return merged;
+// }

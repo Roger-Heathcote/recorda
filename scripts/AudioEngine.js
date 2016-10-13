@@ -3,8 +3,6 @@
 
 var AudioEngine = function (GLOBALS, loResWaveformParams=false) {
 
-  let temp = this; // this feels antipatterny, kosher???
-
   if(typeof GLOBALS.secondsToBuffer !== "number"){throw new Error("GLOBALS.secondsToBuffer should be a number");}
 
   this.totalBlocksHandled = 0;
@@ -17,10 +15,11 @@ var AudioEngine = function (GLOBALS, loResWaveformParams=false) {
 
   this.scriptProcessorBuffer = 16384 / 4; //64;
   this.channels = 2;
+  this.bitDepth = 16;
   this.audioContext = new (GLOBALS.win.AudioContext || GLOBALS.win.webkitAudioContext)();
   this.sampleRate = this.audioContext.sampleRate;
   this.gainNode = this.audioContext.createGain();
-  this.gainNode.gain.value = 0; // Mute the output / Don't output sound - otherwise feedback!
+  //this.gainNode.gain.value = 0; // Mute the output / Don't output sound - otherwise feedback!
   this.scriptNode = this.audioContext.createScriptProcessor(this.scriptProcessorBuffer, 2, 2);
 
   console.log("samplerate:", this.samplerate);
@@ -32,8 +31,9 @@ var AudioEngine = function (GLOBALS, loResWaveformParams=false) {
   this.leftChannel = new Array(this.recBufArrayLength).fill(0);
   this.rightChannel = new Array(this.recBufArrayLength).fill(0);
   this.codeChannel = new Array(this.recBufArrayLength).fill(0);
+  this.interleaved16BitAudio = new Array(this.recBufArrayLength).fill(0);
 
-  console.log("Should have:", this.leftChannel.length * 60 * this.scriptProcessorBuffer, "");
+  //console.log("Should have:", this.leftChannel.length * 60 * this.scriptProcessorBuffer, "");
 
   this.codeNumber = 0;
   this.dispPeak = 0;
@@ -76,15 +76,16 @@ var AudioEngine = function (GLOBALS, loResWaveformParams=false) {
      throw( new Error("getUserMedia not supported on your browser!") );
   }
 
-  this.scriptNode.onaudioprocess = function(audioProcessingEvent) {
+  let scriptProcessor = function scriptProcessor(audioProcessingEvent) {
+    //console.log("Processing");
     this.codeNumber++;
     let left = audioProcessingEvent.inputBuffer.getChannelData (0);
     let right = audioProcessingEvent.inputBuffer.getChannelData (1);
     let leftout = audioProcessingEvent.outputBuffer.getChannelData (0);
     let rightout = audioProcessingEvent.outputBuffer.getChannelData (1);
-    this.leftChannel.push (new Float32Array (left));
-    this.rightChannel.push (new Float32Array (right));
+    this.interleaved16BitAudio.push ( stereoFloat32ToInterleavedInt16(left, right) );
     this.codeChannel.push (this.codeNumber);
+    // TODO this.interleaved16BitAudio.push (new)
 
     for (let sample = 0; sample < this.scriptProcessorBuffer; sample++) {
       // track max amplitude encountered
@@ -107,11 +108,11 @@ var AudioEngine = function (GLOBALS, loResWaveformParams=false) {
       } //end if
     } // end for
 
-    while ((GLOBALS.state === "buffer") && (this.leftChannel.length > this.recBufArrayLength)) {
-      let trimLength = this.leftChannel.length - this.recBufArrayLength;
-      console.log(trimLength," to trim");
-      this.leftChannel.splice(0, trimLength);
-      this.rightChannel.splice(0, trimLength);
+    while ((GLOBALS.state === "buffer") && (this.interleaved16BitAudio.length > this.recBufArrayLength)) {
+      let trimLength = this.interleaved16BitAudio.length - this.recBufArrayLength;
+      trimLength > 1 ? console.log : null;
+      //console.log(trimLength," to trim");
+      this.interleaved16BitAudio.splice(0, trimLength);
       this.codeChannel.splice(0, trimLength);
     }
 
@@ -119,5 +120,6 @@ var AudioEngine = function (GLOBALS, loResWaveformParams=false) {
 
   }.bind(this);
 
+  this.scriptNode.onaudioprocess = scriptProcessor;
 
 };

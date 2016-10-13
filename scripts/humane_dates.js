@@ -13,7 +13,7 @@
 
 function humaneDate(date, compareTo){
 
-    console.log("DATE PARAM:", date);
+    //console.log("DATE PARAM:", date);
 
     //console.log("Humanizing!!!");
 
@@ -141,5 +141,3 @@ if(typeof jQuery != 'undefined') {
         });
     };
 }
-
-//console.log(humaneDate(new Date(Date.now()-1000000)));

@@ -1,5 +1,7 @@
 /*jshint esversion: 6 */
 
+// TODO: after a recording made app starts to leak memory quite profusely - investigate
+
 let canvas = document.getElementById("waveform");
 let canvasCtx = canvas.getContext("2d");
 resizeCanvas();
@@ -30,21 +32,10 @@ function resizeCanvas() {
 }
 
 function playClicked(recordingID) {
-  console.log("Yep, play was clicked.", recordingID);
   let recording = recorder.getRecordingByUCTTimestamp(recordingID);
-  console.log("recObj:", recording);
-
-  let sixteenBitLeft = float32ToInt16( recording.data[0] );
-  let sixteenBitRight = float32ToInt16( recording.data[1] );
-
-  console.log("LEFT:", sixteenBitLeft);
-  console.log("RIGHT:", sixteenBitRight);
-
-  // audioElement = document.getElementById("audiotest");
-  // var blob = new Blob(decodedData, {type: "correct-mimetype/here"});
-  // var url = URL.createObjectURL(blob);
-  // audioElement.src = url;
-
-
-
+  audioElement = document.getElementById("audiotest");
+  let dataView = new DataView(recording.data);
+  var blob = new Blob([recording.data], {type: "audio/wav"});
+  var url = URL.createObjectURL(blob);
+  audioElement.src = url;
 }
