@@ -90,7 +90,7 @@ var AudioEngine = function (GLOBALS, loResWaveformParams=false) {
 
     while ((GLOBALS.state === "buffer") && (this.interleaved16BitAudio.length > this.recBufArrayLength)) {
       let trimLength = this.interleaved16BitAudio.length - this.recBufArrayLength;
-      trimLength > 1 ? console.log("trimLength =", trimLength) : console.log("Wang!");
+      trimLength > 1 ? console.log("trimLength =", trimLength) : {};
       this.interleaved16BitAudio.splice(0, trimLength);
       this.codeChannel.splice(0, trimLength);
     }

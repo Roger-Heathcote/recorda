@@ -4,7 +4,11 @@ var stateObject = {
   name: "Name not set",
   init: target => this.target = target,
   reset: target => this.target.init(),
-  enter: target => console.log(this.target.state.name+": setting up state."),
+  enter: target => {
+    //console.log(this.target.state.name+": setting up state.");
+    console.log("Setting global state to", this.target.state.name);
+    this.target.globals.state = this.target.state.name;
+  },
   execute: target => console.log(this.target.state.name+": executing."),
   buffer: target => this.target.changeState(this.target.states.buffer),
   record: target => this.target.changeState(this.target.states.record),
@@ -66,13 +70,10 @@ var RecorderApp = function(
       }
   };
 
-  // saveState.handleWaveformClick = function(code) {
-  //   console.log("save state is taking care of business!");
-  //   console.log("code is:", code);
-  //
-  //   GLOBALS.state = "buffer";
-  //   this.buffer();
-  // };
+  saveState.handleWaveformClick = function(code) {
+    // GLOBALS.state = "buffer";
+    // this.buffer();
+  };
 
   saveState.execute = function(arg) {
     let WAVFileBlob = makeWAVFileBlob(
@@ -147,7 +148,6 @@ var RecorderApp = function(
 
 
   this.waveformClicked = function(code) {
-    console.log("Waveform clicked");
     this.state.handleWaveformClick(code);
   }.bind(this);
 
@@ -164,7 +164,6 @@ var RecorderApp = function(
     let recordings = GLOBALS.recordings.slice();
     recordings.reverse();
     recordings.forEach(function(recording) {
-      console.log("recording object", recording);
       out.push( "<li>" );
       out.push(   "<span class='recording_humanTime' style='background:" + recording.color + "'>" );
       out.push(     humanifyDatestamp( new Date(recording.localTimestamp) ) );
@@ -204,22 +203,3 @@ function createStateObject(stateObject, stateName, stateIng) {
   newObject[stateName] = target => console.log(this.target.state.name+": already "+stateIng+".");
   return newObject;
 }
-
-// function makeWAVFileBlob(
-//   audio,
-//   code,
-//   inPoint,
-//   outPoint
-// ){
-//   properInFrame = binarySearch(code, inPoint);
-//   properOutFrame = binarySearch(code, outPoint);
-//   frameSize = audio[audio.length-1].length;
-//   numFrames = outPoint - inPoint;
-//   let merged = new Int16Array(frameSize * numFrames);
-//   let frameOffset = 0;
-//   for(index = properInFrame; index < (properInFrame + numFrames); index++){
-//     merged.set(audio[index], frameOffset);
-//     frameOffset = frameOffset + frameSize;
-//   }
-//   return merged;
-// }

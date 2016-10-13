@@ -182,8 +182,6 @@ function makeWAVFileBlob(
   properOutFrame = binarySearch(code, outPoint);
   frameSize = audioChunks[audioChunks.length-1].length;
   frameSizeInBytes = audioChunks[audioChunks.length-1].length * 2;
-  console.log("Framesize:", frameSize);
-  console.log("sampleRate:",sampleRate);
   numFrames = outPoint - inPoint;
 
   let fileBuffer = new ArrayBuffer( 44 + frameSize * numFrames * 2 ); // size is in bytes and we have Int16s
