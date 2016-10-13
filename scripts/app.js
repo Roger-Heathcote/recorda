@@ -32,10 +32,9 @@ function resizeCanvas() {
 }
 
 function playClicked(recordingID) {
-  let recording = recorder.getRecordingByUCTTimestamp(recordingID);
   audioElement = document.getElementById("audiotest");
-  let dataView = new DataView(recording.data);
-  var blob = new Blob([recording.data], {type: "audio/wav"});
-  var url = URL.createObjectURL(blob);
+  let recording = recorder.getRecordingByUCTTimestamp(recordingID);
+  console.log("Recording is:",recording);
+  var url = URL.createObjectURL(recording.data);
   audioElement.src = url;
 }

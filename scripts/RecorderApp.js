@@ -84,7 +84,7 @@ var RecorderApp = function(
   };
 
   saveState.execute = function(arg) {
-    let WAVFile = makeWAVFile(
+    let WAVFile = makeWAVFileBlob(
       this.audEng.interleaved16BitAudio,
       this.audEng.codeChannel,
       GLOBALS.inPoint,
@@ -220,7 +220,7 @@ function createStateObject(stateObject, stateName, stateIng) {
   return newObject;
 }
 
-// function makeWAVFile(
+// function makeWAVFileBlob(
 //   audio,
 //   code,
 //   inPoint,

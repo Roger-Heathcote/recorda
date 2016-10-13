@@ -169,7 +169,7 @@ function bytes2AsciiAndNumbers(bytes){
 
 
 
-function makeWAVFile(
+function makeWAVFileBlob(
   audioChunks,
   code,
   inPoint,
@@ -218,9 +218,7 @@ function makeWAVFile(
   writeUTFBytes(headerSection, 36, 'data');
   headerSection.setUint32(40, audioSection.byteLength, true);
 
-  // Return file
-  return fileBuffer;
+  // Return file blob
+  return new Blob([fileBuffer], {type: "audio/wav"});
 
-
-  
 }
