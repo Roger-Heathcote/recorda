@@ -9,8 +9,8 @@ window.addEventListener('resize', resizeCanvas, false);
 let recordingsDiv = document.getElementById("recordings");
 let dataDisplayElement = document.getElementById("dataDisplay");
 
-const bufferLength = 30;
-const loResWaveformParams = { dataPoints: 300, secondsToDisplay: bufferLength };
+const bufferLength = 60;
+const loResWaveformParams = { dataPoints: 900, secondsToDisplay: bufferLength };
 
 recorder = new RecorderApp(
   window,

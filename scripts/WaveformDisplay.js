@@ -3,7 +3,7 @@
 let WaveformDisplay = function WaveformDisplay(GLOBALS, the_window, canvas, mouse, loResWaveform, loResCodeChannel, clickHandler) {
   instance = this;
   //this.state = "buffer";
-  this.minRefreshTime = 200;
+  this.minRefreshTime = 100;
   this.secondsToDisplay = GLOBALS.secondsToBuffer;
   this.window = the_window;
   this.canvas = canvas;
