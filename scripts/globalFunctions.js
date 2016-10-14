@@ -66,7 +66,7 @@ function addTimezoneOffsetTo(dateObject) {
 }
 
 
-function humanifyDatestamp(date) {
+function relativeDateTime(date) {
   return humaneDate(date);
 }
 

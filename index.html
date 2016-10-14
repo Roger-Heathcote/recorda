@@ -14,6 +14,7 @@
       width: 6em;
       display: inline-block;
     }
+    ul { list-style-type: none; margin:0px; padding:0px; }
   </style>
 </head>
 <body>
@@ -23,16 +24,10 @@
   <div id="wrapper">
      <canvas id="waveform"></canvas>
   </div>
-  <div>
-    <button>Save whole buffer</button>
-  </div>
   <div id="dataDisplay">
     <!-- shit gets inserted here -->
   </div>
-  <div>
-    <audio id="audiotest" controls>
-    </audio>
-  </div>
+
   <script src="scripts/globalFunctions.js"></script>
   <script src="scripts/humane_dates.js"></script>
   <script src="scripts/MouseStatus.js"></script>

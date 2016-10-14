@@ -94,7 +94,8 @@ var RecorderApp = function RecorderApp(
       localTimestamp: datestampToSystemLocalDatestamp(dateNow), // need to get adjustment from humanReadableDatetime and refactor / write dateLocal(dateNow)!
       sampleRate: this.audEng.sampleRate,
       size: WAVFileBlob.size, // 16 bit
-      color: randomColorCode(175,250)
+      color: randomColorCode(175,250),
+      url: GLOBALS.win.URL.createObjectURL(WAVFileBlob)
     });
     this.redrawDataDisplay();
     this.buffer();
@@ -153,27 +154,43 @@ var RecorderApp = function RecorderApp(
   this.redrawDataDisplay = function redrawDataDisplay() {
     let out = [];
     out.push( '<div id="memory">', this.renderMemory(), '</div>' );
-    out.push( '<div id="recordings">', this.renderRecordings(), '</div>' );
+    out.push( '<div id="recordings">', this.renderRecordings(this.getRecordingsData()), '</div>' );
     dataDisplayElement.innerHTML = out.join("");
   }.bind(this);
 
-  this.renderRecordings = function renderRecordings() {
-    let out = [];
-    out.push("<ul>");
+  this.getRecordingsData = function getRecordingsData(){
+    let list = [];
     let recordings = GLOBALS.recordings.slice();
     recordings.reverse();
     recordings.forEach(function recordingsForEach(recording) {
+      let recObj = {
+        id: recording.UCTTimestamp,
+        color: recording.color,
+        date: relativeDateTime( new Date(recording.localTimestamp) ),
+        name: sanitize(recording.name),
+        url: recording.url
+      };
+      list.push(recObj);
+    });
+    return list;
+  }.bind(this);
+
+  this.renderRecordings = function renderRecordings(recordings) {
+    let out = [];
+    out.push("<ul>");
+    recordings.forEach(function viewForEach(recording) {
       out.push( "<li>" );
-      out.push(   "<span class='recording_humanTime' style='background:" + recording.color + "'>" );
-      out.push(     humanifyDatestamp( new Date(recording.localTimestamp) ) );
+      out.push(   "<span class=\"recording_humanTime\" style=\"background:" + recording.color + "\">" );
+      out.push(     recording.date );
       out.push(   "</span>" );
-      out.push(   "<span class='recording_Name'>" );
-      out.push(     sanitize(recording.name) );
+      out.push(   "<span class=\"recording_Name\">" );
+      out.push(     recording.name );
       out.push(   "</span>" );
+      out.push(   "<audio controls>");
+      out.push(     "<source src=\""+recording.url+"\" type=\"audio/wav\">" );
+      out.push(   "</audio>");
       out.push(   "<span>" );
-      out.push(     "<button id=\"recordingID_" );
-      out.push(     recording.UCTTimestamp + "\" ");
-      out.push(     "onclick=\"playClicked("+ recording.UCTTimestamp +")\">play</button>" );
+      out.push(     "<button onclick=\"saveClicked("+ recording.id +")\">save</button>" );
       out.push(   "</span>" );
       out.push( "</li>" );
     });

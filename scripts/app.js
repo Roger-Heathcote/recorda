@@ -30,9 +30,14 @@ function resizeCanvas() {
   canvas.width = document.getElementById("wrapper").offsetWidth;
 }
 
-function playClicked(recordingID) {
-  audioElement = document.getElementById("audiotest");
+function saveClicked(recordingID) {
   let recording = recorder.getRecordingByUCTTimestamp(recordingID);
-  var url = URL.createObjectURL(recording.data);
-  audioElement.src = url;
+  let url = window.URL.createObjectURL(recording.data);
+  anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = recording.name + ".wav";
+  document.body.appendChild(anchor);
+  anchor.click();
+  //audioElement = document.getElementById("audiotest");
+  //audioElement.src = url;
 }
