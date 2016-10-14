@@ -36,7 +36,7 @@ function sanitize( dirty ){
     "'": '&#39;'
   };
   function escapeHTML(s, forAttribute) {
-      return s.replace(forAttribute ? /[&<>'"]/g : /[&<>]/g, function(c) {
+      return s.replace(forAttribute ? /[&<>'"]/g : /[&<>]/g, function escMap(c) {
           return ESC_MAP[c];
       });
   }
@@ -67,9 +67,6 @@ function addTimezoneOffsetTo(dateObject) {
 
 
 function humanifyDatestamp(date) {
-  //console.log("Oh the humanity!", date);
-  //console.log(humaneDate);
-  //console.log(humaneDate(date));
   return humaneDate(date);
 }
 

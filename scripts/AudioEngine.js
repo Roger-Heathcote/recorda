@@ -1,10 +1,10 @@
 /*jshint esversion: 6 */
 /*jshint -W056 */
 
-var AudioEngine = function (GLOBALS, loResWaveformParams=false) {
+var AudioEngine = function AudioEngine(GLOBALS, loResWaveformParams=false) {
 
   this.totalBlocksHandled = 0;
-  this.updateBlockTotal = function() {
+  this.updateBlockTotal = function updateBlockTotal() {
     this.totalBlocksHandled++;
     if(this.totalBlocksHandled % 100 === 0){
       console.log( "Total audio blocks handled so far:", this.totalBlocksHandled + ". Audio array length is", this.interleaved16BitAudio.length );
@@ -48,13 +48,13 @@ var AudioEngine = function (GLOBALS, loResWaveformParams=false) {
   if (GLOBALS.nav.getUserMedia) {
     GLOBALS.nav.getUserMedia (
       { audio: true },
-      function(audioStream) {
+      function didGetUserMedia(audioStream) {
         var source = this.audioContext.createMediaStreamSource(audioStream);
         source.connect(this.scriptNode);
         this.scriptNode.connect(this.gainNode);
         this.gainNode.connect(this.audioContext.destination);
       }.bind(this),
-      function(streamError) { throw( new Error("The following gUM Error occured: " + streamError) ); }
+      function didNotGetUserMedia(streamError) { throw( new Error("The following gUM Error occured: " + streamError) ); }
     );
   } else {
      throw( new Error("getUserMedia not supported on your browser!") );

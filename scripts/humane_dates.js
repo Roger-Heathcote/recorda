@@ -7,21 +7,19 @@
  * at http://ejohn.org/blog/javascript-pretty-date
  * and henrah's proposed modification
  * at http://ejohn.org/blog/javascript-pretty-date/#comment-297458
- *
+ * Further messed around with by Roger Heathcote (technicalbloke.com)
+ * Largely to make linter warnings go away
  * Licensed under the MIT license.
  */
 
-function humaneDate(date, compareTo){
+/*jshint esversion: 6 */
+/*jshint -W056 */
 
-    //console.log("DATE PARAM:", date);
+function humaneDate(inputDate, inputCompareTo){
 
-    //console.log("Humanizing!!!");
+    if(!inputDate) { return; }
 
-    if(!date) {
-        return;
-    }
-    //console.log("Humanizing2!!!");
-    var lang = {
+    let lang = {
             ago: 'Ago',
             from: '',
             now: 'Just Now',
@@ -37,8 +35,8 @@ function humaneDate(date, compareTo){
             months: 'Months',
             year: 'Year',
             years: 'Years'
-        },
-        formats = [
+    };
+    let formats = [
             [60, lang.now],
             [3600, lang.minute, lang.minutes, 60], // 60 minutes, 1 minute
             [86400, lang.hour, lang.hours, 3600], // 24 hours, 1 hour
@@ -46,20 +44,18 @@ function humaneDate(date, compareTo){
             [2628000, lang.week, lang.weeks, 604800], // ~1 month, 1 week
             [31536000, lang.month, lang.months, 2628000], // 1 year, ~1 month
             [Infinity, lang.year, lang.years, 31536000] // Infinity, 1 year
-        ],
-        isString = typeof date == 'string',
-        date = isString ?
-                    new Date(('' + date).replace(/-/g,"/").replace(/[TZ]/g," ")) :
-                    date,
-        compareTo = compareTo || new Date,
-        seconds = (compareTo - date +
-                        (compareTo.getTimezoneOffset() -
-                            // if we received a GMT time from a string, doesn't include time zone bias
-                            // if we got a date object, the time zone is built in, we need to remove it.
-                            (isString ? 0 : date.getTimezoneOffset())
-                        ) * 60000
-                    ) / 1000,
-        token;
+    ];
+    let isString = typeof inputDate == 'string';
+    let date = isString ?
+        new Date(('' + inputDate).replace(/-/g,"/").replace(/[TZ]/g," ")) : inputDate;
+    let compareTo = inputCompareTo || new Date();
+    let seconds = (compareTo - date + (compareTo.getTimezoneOffset() -
+        // if we received a GMT time from a string, doesn't include time zone bias
+        // if we got a date object, the time zone is built in, we need to remove it.
+        (isString ? 0 : date.getTimezoneOffset())
+        ) * 60000
+    ) / 1000;
+    let token;
 
     if(seconds < 0) {
         seconds = Math.abs(seconds);
@@ -68,35 +64,16 @@ function humaneDate(date, compareTo){
         token = lang.ago ? ' ' + lang.ago : '';
     }
 
-    /*
-     * 0 seconds && < 60 seconds        Now
-     * 60 seconds                       1 Minute
-     * > 60 seconds && < 60 minutes     X Minutes
-     * 60 minutes                       1 Hour
-     * > 60 minutes && < 24 hours       X Hours
-     * 24 hours                         1 Day
-     * > 24 hours && < 7 days           X Days
-     * 7 days                           1 Week
-     * > 7 days && < ~ 1 Month          X Weeks
-     * ~ 1 Month                        1 Month
-     * > ~ 1 Month && < 1 Year          X Months
-     * 1 Year                           1 Year
-     * > 1 Year                         X Years
-     *
-     * Single units are +10%. 1 Year shows first at 1 Year + 10%
-     */
-//console.log("Humanizing3!!!");
     function normalize(val, single)
     {
-        var margin = 0.1;
+        let margin = 0.1;
         if(val >= single && val <= single * (1+margin)) {
             return single;
         }
         return val;
     }
-//console.log("Humanizing4!!!");
-    for(var i = 0, format = formats[0]; formats[i]; format = formats[++i]) {
-//console.log("Humanizing5!!!");
+
+    for(let i = 0, format = formats[0]; formats[i]; format = formats[++i]) {
 
         if(seconds < format[0]) {
 
@@ -105,32 +82,31 @@ function humaneDate(date, compareTo){
                 return format[1];
             }
 
-            var val = Math.ceil(normalize(seconds, format[3]) / (format[3]));
+            let val = Math.ceil(normalize(seconds, format[3]) / (format[3]));
 
             return val +
                     ' ' +
                     (val != 1 ? format[2] : format[1]) +
                     (i > 0 ? token : '');
-        } else { console.log("fudge"); }
-//console.log("Humanizing9!!!");
+        }
     }
 }
 
 if(typeof jQuery != 'undefined') {
-    jQuery.fn.humaneDates = function(options)
+    jQuery.fn.humaneDates = function jQueryFnHumaneDates(options)
     {
-        var settings = jQuery.extend({
+        let settings = jQuery.extend({
             'lowercase': false
         }, options);
 
-        return this.each(function()
+        return this.each(function eachInThisJQueryFnHumaneDates()
         {
-            var $t = jQuery(this),
+            let $t = jQuery(this),
                 date = $t.attr('datetime') || $t.attr('title');
 
             date = humaneDate(date);
 
-            if(date && settings['lowercase']) {
+            if(date && settings.lowercase) {
                 date = date.toLowerCase();
             }
 

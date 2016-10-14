@@ -1,6 +1,6 @@
 /*jshint esversion: 6 */
 
-let WaveformDisplay = function(GLOBALS, the_window, canvas, mouse, loResWaveform, loResCodeChannel, clickHandler) {
+let WaveformDisplay = function WaveformDisplay(GLOBALS, the_window, canvas, mouse, loResWaveform, loResCodeChannel, clickHandler) {
   instance = this;
   //this.state = "buffer";
   this.minRefreshTime = 200;
@@ -13,7 +13,7 @@ let WaveformDisplay = function(GLOBALS, the_window, canvas, mouse, loResWaveform
   this.lastRedraw = 0;
   this.mouse = mouse;
 
-  this.waveformClicked = function(event) {
+  this.waveformClicked = function waveformClicked(event) {
     let rect = this.canvas.getBoundingClientRect();
     let ratio = (event.clientX - rect.left) / rect.width;
     let index = Math.floor(this.codeChan.length * ratio);
@@ -22,7 +22,7 @@ let WaveformDisplay = function(GLOBALS, the_window, canvas, mouse, loResWaveform
   }.bind(this);
   canvas.addEventListener('mouseup', this.waveformClicked, false);
 
-  this.updateDisplay = function() {
+  this.updateDisplay = function updateDisplay() {
     requestAnimationFrame(instance.updateDisplay);
     if (Date.now() > (instance.lastRedraw + instance.minRefreshTime)) {
       instance.drawWave();
@@ -33,7 +33,7 @@ let WaveformDisplay = function(GLOBALS, the_window, canvas, mouse, loResWaveform
   };
 
   this.waveDrawStates = {
-    buffer: function(GLOBALS, mouse, canvas, canvasCtx, codeChan) {
+    buffer: function waveDrawStates_buffer(GLOBALS, mouse, canvas, canvasCtx, codeChan) {
       let mouseStatus = mouse.status();
       if (mouseStatus.over) {
         canvasCtx.fillStyle = 'rgb(255, 255, 255)';
@@ -45,7 +45,7 @@ let WaveformDisplay = function(GLOBALS, the_window, canvas, mouse, loResWaveform
       }
     },
 
-    record: function(GLOBALS, mouse, canvas, canvasCtx, codeChan) {
+    record: function waveDrawStates_record(GLOBALS, mouse, canvas, canvasCtx, codeChan) {
       let mouseStatus = mouse.status();
       let inPointX = ratio(codeChan, GLOBALS.inPoint, canvas.width);
       //console.log(mouseStatus.x, inPointX);
@@ -63,7 +63,7 @@ let WaveformDisplay = function(GLOBALS, the_window, canvas, mouse, loResWaveform
       }
     },
 
-    save: function(GLOBALS, mouse, canvas, canvasCtx, codeChan) {
+    save: function waveDrawStates_save(GLOBALS, mouse, canvas, canvasCtx, codeChan) {
       let mouseStatus = mouse.status();
       let inPointX = ratio(codeChan, GLOBALS.inPoint, canvas.width);
       let outPointX = ratio(codeChan, GLOBALS.outPoint, canvas.width);
@@ -74,7 +74,7 @@ let WaveformDisplay = function(GLOBALS, the_window, canvas, mouse, loResWaveform
     }
   };
 
-  this.drawWave = function() {
+  this.drawWave = function drawWave() {
 
     // draw background
     this.waveDrawStates[GLOBALS.state](GLOBALS, this.mouse, this.canvas, this.canvasCtx, instance.codeChan);

@@ -19,7 +19,7 @@ var bufferState = createStateObject(stateObject, "buffer", "buffering");
 var recordState = createStateObject(stateObject, "record", "recording");
 var saveState = createStateObject(stateObject, "save", "saving");
 
-var RecorderApp = function(
+var RecorderApp = function RecorderApp(
     window,
     navigator,
     AudioEngine,
@@ -50,14 +50,14 @@ var RecorderApp = function(
   this.states = { buffer: bufferState, record: recordState, save: saveState };
   this.globals = GLOBALS;
 
-  bufferState.handleWaveformClick = function(code) {
+  bufferState.handleWaveformClick = function bufferStateHandleWaveformClick(code) {
     GLOBALS.inPoint = code;
     console.log("inPoint set:", GLOBALS.inPoint);
     GLOBALS.state = "record";
     this.record();
   }.bind(this);
 
-  recordState.handleWaveformClick = function(code) {
+  recordState.handleWaveformClick = function recordStateHandleWaveformClick(code) {
     if(code >= GLOBALS.inPoint)
       {
         GLOBALS.outPoint = code;
@@ -69,12 +69,12 @@ var RecorderApp = function(
       }
   };
 
-  saveState.handleWaveformClick = function(code) {
+  saveState.handleWaveformClick = function saveStateHandleWaveformClick(code) {
     // GLOBALS.state = "buffer";
     // this.buffer();
   };
 
-  saveState.execute = function(arg) {
+  saveState.execute = function saveStateExecute(arg) {
     let WAVFileBlob = makeWAVFileBlob(
       this.audEng.interleaved16BitAudio,
       this.audEng.codeChannel,
@@ -100,12 +100,12 @@ var RecorderApp = function(
     this.buffer();
   }.bind(this);
 
-  saveState.exit = function(arg){
+  saveState.exit = function saveStateExit(arg){
     GLOBALS.inPoint = undefined;
     GLOBALS.outPoint = undefined;
   };
 
-  this.init = function() {
+  this.init = function RecorderAppInit() {
     this.inPoint = undefined;
     this.outPoint = undefined;
     this.states.buffer.init(this);
@@ -133,10 +133,10 @@ var RecorderApp = function(
     this.state.enter();
     this.state.execute();
   };
-  this.buffer = function() { this.state.buffer(); };
-  this.record =  function() { this.state.record(); };
-  this.save =  function() { this.state.save(); };
-  this.changeState = function(state) {
+  this.buffer = function buffer() { this.state.buffer(); };
+  this.record =  function record() { this.state.record(); };
+  this.save =  function save() { this.state.save(); };
+  this.changeState = function changeState(state) {
     if (this.state !== state) {
       this.state.exit();
       this.state = state;
@@ -146,23 +146,23 @@ var RecorderApp = function(
   };
 
 
-  this.waveformClicked = function(code) {
+  this.waveformClicked = function waveformClicked(code) {
     this.state.handleWaveformClick(code);
   }.bind(this);
 
-  this.redrawDataDisplay = function() {
+  this.redrawDataDisplay = function redrawDataDisplay() {
     let out = [];
     out.push( '<div id="memory">', this.renderMemory(), '</div>' );
     out.push( '<div id="recordings">', this.renderRecordings(), '</div>' );
     dataDisplayElement.innerHTML = out.join("");
   }.bind(this);
 
-  this.renderRecordings = function() {
+  this.renderRecordings = function renderRecordings() {
     let out = [];
     out.push("<ul>");
     let recordings = GLOBALS.recordings.slice();
     recordings.reverse();
-    recordings.forEach(function(recording) {
+    recordings.forEach(function recordingsForEach(recording) {
       out.push( "<li>" );
       out.push(   "<span class='recording_humanTime' style='background:" + recording.color + "'>" );
       out.push(     humanifyDatestamp( new Date(recording.localTimestamp) ) );
@@ -181,7 +181,7 @@ var RecorderApp = function(
     return out.join("");
   }.bind(this);
 
-  this.renderMemory = function() {
+  this.renderMemory = function renderMemory() {
     let out = [];
     out.push("Memory use...<br>");
     out.push("Recordings:", formatBytes(GLOBALS.recordings.reduce( function(t,r) {return t + r.size;}, 0)));
@@ -190,7 +190,7 @@ var RecorderApp = function(
     return out.join("");
   }.bind(this);
 
-  this.getRecordingByUCTTimestamp = function(id) {
+  this.getRecordingByUCTTimestamp = function getRecordingByUCTTimestamp(id) {
     return GLOBALS.recordings.filter( (obj) => obj.UCTTimestamp === id )[0];
   }.bind(this);
 

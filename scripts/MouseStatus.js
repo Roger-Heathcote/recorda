@@ -1,16 +1,16 @@
 /*jshint esversion: 6 */
 
-var MouseStatus = function(element){
+var MouseStatus = function MouseStatus(element){
   let instance = this;
   this.x = undefined;
   this.y = undefined;
   this.over = false;
   //console.log("This from MouseStatus constructor:", this);
-  this.status = function() {
+  this.status = function MouseStatus_status() {
     //console.log("THIS FROM STATUS", this);
     return { x:this.x, y:this.y, over:this.over };
   };
-  this.updateXY = function(event) {
+  this.updateXY = function MouseStatus_updateXY(event) {
     var rect = element.getBoundingClientRect();
     this.x = event.clientX - rect.left; //top;
     this.y = event.clientY - rect.top; //left;
