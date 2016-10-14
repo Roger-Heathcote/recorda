@@ -1,14 +1,13 @@
+Allow recording deletion
 make custom audio tag controller/display as stock one cannot be meaningfully styled and looks ugly as owt.
-
 Use webworker for WAV file creation
+Save all recordings to zip
 
 DONE-------------------------
 
+Prepend a nice human readable date to the file name
+Split recording list renderer into views - SORT OF!
+Add playback to each recording list entry
+Add save functionality
 Refactor to eliminate anon functions, they can make profiling and debugging awkward
   All functions should have names!
-
-Add save functionality
-
-Add playback to each recording list entry
-
-Split recording list renderer into views - SORT OF!

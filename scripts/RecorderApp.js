@@ -88,7 +88,8 @@ var RecorderApp = function RecorderApp(
     let dateNow = Date.now();
 
     GLOBALS.recordings.push({
-      name: "Untitled " + GLOBALS.recordings.length, // " :: " + humanReadableLocalDatetime(dateNow),
+      // TODO this should use monotonic counter rather than rec length as recs may be deleted at some point
+      name: humanReadableLocalDate(dateNow) + " - Untitled " + GLOBALS.recordings.length,
       data: WAVFileBlob,
       UCTTimestamp: dateNow,
       localTimestamp: datestampToSystemLocalDatestamp(dateNow), // need to get adjustment from humanReadableDatetime and refactor / write dateLocal(dateNow)!

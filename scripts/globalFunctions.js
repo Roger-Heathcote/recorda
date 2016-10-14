@@ -52,11 +52,11 @@ function datestampToSystemLocalDatestamp(dateStamp) {
   return offsetTime;
 }
 
-function humanReadableLocalDatetime (dateStamp) {
+function humanReadableLocalDate (dateStamp) {
   let dateObject = new Date();
   dateObject.setTime(dateStamp);
-  var newDateObject = addTimezoneOffsetTo(dateObject);
-  return dateObject.toTimeString();
+  //var newDateObject = addTimezoneOffsetTo(dateObject);
+  return dateObject.toDateString();
 }
 
 function addTimezoneOffsetTo(dateObject) {
