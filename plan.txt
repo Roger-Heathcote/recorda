@@ -1,0 +1,9 @@
+Refactor to eliminate anon functions, they can make profiling and debugging awkward
+  All functions should have names!
+
+Add save functionality
+
+Add playback to each recording list entry
+
+Split recording list renderer into views
+  research MVC vs MVP vs MVVM etc.

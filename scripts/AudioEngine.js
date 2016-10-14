@@ -6,8 +6,8 @@ var AudioEngine = function (GLOBALS, loResWaveformParams=false) {
   this.totalBlocksHandled = 0;
   this.updateBlockTotal = function() {
     this.totalBlocksHandled++;
-    if(this.totalBlocksHandled % 1000 === 0){
-      console.log( "Total audio blocks handled so far:", this.totalBlocksHandled );
+    if(this.totalBlocksHandled % 100 === 0){
+      console.log( "Total audio blocks handled so far:", this.totalBlocksHandled + ". Audio array length is", this.interleaved16BitAudio.length );
      }
   };
 
