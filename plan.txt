@@ -1,8 +1,34 @@
+Audio quality for voice is passable but pretty bad for music
+  Seemingly this is because by default google processes it first unless instructed otherwise
+    doing things like noise suppression and echo removal
+  apparently these "constraints" can be added or removed via an constraints object passed to the guM constructor
+
+
 Allow recording deletion
+  remove from recordings
+    index.html needs a delete button
+    app needs a event_handler for that button
+      that handler asks recorder to delete id wevs then call refresh
+        by passing in refresh as a callback
+
 make custom audio tag controller/display as stock one cannot be meaningfully styled and looks ugly as owt.
+  http://codepen.io/katzkode/pen/ZbxYYG
+
 Use webworker for WAV file creation
 Save all recordings to zip
-
+Separation of audio from dom:
+    need to mock window.URL.createObjectURL(WAVFileBlob or whatever)
+    Alternatively
+      make sure it isn't called
+        by adding additional logic to function saveStateExecute(arg)?
+    Or deal with the consequence of undefined down the line?
+    Or make it a fancy undefined?
+      http://window.URL.not.present.so.no.URL.for.you.buddy
+    We only need it in the views no?
+      And the views don't need actual data to test
+        so if we even bother testing them we can mock the input there
+      We might need to test the view builder though
+      But is that a problem if it just doesn't have a url property
 DONE-------------------------
 
 Prepend a nice human readable date to the file name

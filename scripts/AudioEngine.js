@@ -40,6 +40,8 @@ var AudioEngine = function AudioEngine(GLOBALS, loResWaveformParams=false) {
   }
 
   // TODO Check if these are all needed - mid 2016
+  // Oh, navigator.getUserMedia is dprecated according to mozilla
+  // we should be using MediaDevices.getUserMedia
   GLOBALS.nav.getUserMedia = (GLOBALS.nav.getUserMedia ||
                             GLOBALS.nav.webkitGetUserMedia ||
                             GLOBALS.nav.mozGetUserMedia ||
@@ -47,6 +49,7 @@ var AudioEngine = function AudioEngine(GLOBALS, loResWaveformParams=false) {
 
   if (GLOBALS.nav.getUserMedia) {
     GLOBALS.nav.getUserMedia (
+      // { audio: true },
       { audio: true },
       function didGetUserMedia(audioStream) {
         var source = this.audioContext.createMediaStreamSource(audioStream);
