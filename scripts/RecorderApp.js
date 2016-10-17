@@ -19,6 +19,8 @@ var bufferState = createStateObject(stateObject, "buffer", "buffering");
 var recordState = createStateObject(stateObject, "record", "recording");
 var saveState = createStateObject(stateObject, "save", "saving");
 
+
+
 var RecorderApp = function RecorderApp(
     window,
     navigator,
@@ -28,7 +30,8 @@ var RecorderApp = function RecorderApp(
     MouseStatus=false,
     WaveformDisplay=false,
     loResWaveformParams=false,
-    dataDisplayElement=false
+    dataDisplayElement=false,
+    optionalMediaConstraints=false
   ){
   let instance = this;
   let GLOBALS = {
@@ -49,6 +52,17 @@ var RecorderApp = function RecorderApp(
   this.outPoint = undefined;
   this.states = { buffer: bufferState, record: recordState, save: saveState };
   this.globals = GLOBALS;
+  this.optionalMediaConstraints = [
+    {echoCancellation: false},
+    {mozAutoGainControl: false},
+    {mozNoiseSuppression: false},
+    {googEchoCancellation: false},
+    {googAutoGainControl: false},
+    {googNoiseSuppression: false},
+    {googHighpassFilter: false}
+  ];
+  // just pure replacement now, move to extend & override later if neccessary
+  if(optionalMediaConstraints){ this.optionalMediaConstraints = optionalMediaConstraints; }
 
   bufferState.handleWaveformClick = function bufferStateHandleWaveformClick(code) {
     GLOBALS.inPoint = code;
@@ -107,6 +121,11 @@ var RecorderApp = function RecorderApp(
     GLOBALS.outPoint = undefined;
   };
 
+  this.toggleOptionalConstraint = function toggleOptionalConstraint(constraintName){
+    console.log("attempting to TOGGLE THE OPTIONAL CONSTRAINT:", constraintName);
+    this.audEng.toggleOptionalConstraint(constraintName);
+  };
+
   this.init = function RecorderAppInit() {
     this.inPoint = undefined;
     this.outPoint = undefined;
@@ -115,7 +134,7 @@ var RecorderApp = function RecorderApp(
     this.states.save.init(this);
     this.state = this.states.buffer;
 
-    this.audEng = new AudioEngine(GLOBALS, loResWaveformParams);
+    this.audEng = new AudioEngine(GLOBALS, loResWaveformParams, this.optionalMediaConstraints);
 
     if(MouseStatus) {
       this.mouse = new MouseStatus(canvas);
@@ -155,11 +174,11 @@ var RecorderApp = function RecorderApp(
   this.redrawDataDisplay = function redrawDataDisplay() {
     let out = [];
     out.push( '<div id="memory">', this.renderMemory(), '</div>' );
-    out.push( '<div id="recordings">', this.renderRecordings(this.getRecordingsData()), '</div>' );
+    out.push( '<div id="recordings">', this.viewRecordings(this.buildViewModelRecordings()), '</div>' );
     dataDisplayElement.innerHTML = out.join("");
   }.bind(this);
 
-  this.getRecordingsData = function getRecordingsData(){
+  this.buildViewModelRecordings = function buildViewModelRecordings(){
     let list = [];
     let recordings = GLOBALS.recordings.slice();
     recordings.reverse();
@@ -176,7 +195,7 @@ var RecorderApp = function RecorderApp(
     return list;
   }.bind(this);
 
-  this.renderRecordings = function renderRecordings(recordings) {
+  this.viewRecordings = function viewRecordings(recordings) {
     let out = [];
     out.push("<ul>");
     recordings.forEach(function viewForEach(recording) {

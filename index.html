@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>Live mic to waveform example</title>
+	<title>RECORDA</title>
 	<!--[if le IE 9]>
       <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
       <script src="scripts/respond.js"></script>
@@ -35,5 +35,15 @@
   <script src="scripts/WaveformDisplay.js"></script>
   <script src="scripts/RecorderApp.js"></script>
   <script src="scripts/app.js"></script>
+
+  <button onclick='constraintToggleClicked("echoCancellation")'>echoCancellation</button>
+  <button onclick='constraintToggleClicked("mozAutoGainControl")'>mozAutoGainControl</button>
+  <button onclick='constraintToggleClicked("mozNoiseSuppression")'>mozNoiseSuppression</button>
+  <button onclick='constraintToggleClicked("googEchoCancellation")'>googEchoCancellation</button>
+  <button onclick='constraintToggleClicked("googAutoGainControl")'>googAutoGainControl</button>
+  <button onclick='constraintToggleClicked("googNoiseSuppression")'>googNoiseSuppression</button>
+  <button onclick='constraintToggleClicked("googHighpassFilter")'>googHighpassFilter</button>
+
 </body>
+
 </html>

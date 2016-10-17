@@ -25,6 +25,7 @@ recorder = new RecorderApp(
 );
 recorder.init();
 
+console.log( "Supported constraints are:", navigator.mediaDevices.getSupportedConstraints() );
 
 function resizeCanvas() {
   canvas.width = document.getElementById("wrapper").offsetWidth;
@@ -38,6 +39,9 @@ function saveClicked(recordingID) {
   anchor.download = recording.name + ".wav";
   document.body.appendChild(anchor);
   anchor.click();
-  //audioElement = document.getElementById("audiotest");
-  //audioElement.src = url;
+}
+
+function constraintToggleClicked(constraintName) {
+  console.log("Constraint toggle", constraintName,"clicked");
+  recorder.toggleOptionalConstraint(constraintName);
 }

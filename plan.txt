@@ -1,8 +1,17 @@
+
+Investigate effect of individual audio constraints on voice and music
 Audio quality for voice is passable but pretty bad for music
   Seemingly this is because by default google processes it first unless instructed otherwise
     doing things like noise suppression and echo removal
   apparently these "constraints" can be added or removed via an constraints object passed to the guM constructor
-
+  Uhoh! navigator.guM is deprecated
+    Long live navigator.mediaDevices.getUserMedia( {constraints} )
+    Which returnds a promise so...
+       result = navigator.getUserMedia({ audio: true })
+       p.then( function gotTheMediaStreamWoo(mediaStream){
+         // go it!
+       })
+       p.catch( function(error){ console.log(err.name) } );
 
 Allow recording deletion
   remove from recordings
@@ -11,8 +20,37 @@ Allow recording deletion
       that handler asks recorder to delete id wevs then call refresh
         by passing in refresh as a callback
 
-make custom audio tag controller/display as stock one cannot be meaningfully styled and looks ugly as owt.
-  http://codepen.io/katzkode/pen/ZbxYYG
+Options
+  Optional audio constraints
+    Firefox "seems" to permit constraints to be applied after the fact
+      Though I've yet to find one that seems to have any effect
+    Chrome 35 has to have them specified up front
+      but they do seem to have an effect
+  Redesign so NoiseSuppression => mozNoiseSuppression, googNoiseSuppression
+   implement recorder.listConstraintsAndStatus()
+     return [ constraint1: true, constraint2: false etc]
+  Look into constraints in webkit browsers, safari etc
+  Other options...
+    runtime changeable - toggles
+      clipDetectionDisplay: true|false
+      audioPassthrough: true:false
+
+optionsViewBuilder(){
+  let list = [];
+  this.globals.options.forEach(function(option)){
+    list.append( {option.name, option[name]} );
+  }
+}
+
+Clip detection, warning
+  input signal comes through scriptPRocessrNode
+  already finding the loudest
+MAybe don't pollute the inner loop with anything fancy
+maybe just use the waveform display data points themselves
+
+
+
+Recording stops in firefox after a few seconds, investigate
 
 Use webworker for WAV file creation
 Save all recordings to zip
@@ -29,8 +67,24 @@ Separation of audio from dom:
         so if we even bother testing them we can mock the input there
       We might need to test the view builder though
       But is that a problem if it just doesn't have a url property
-DONE-------------------------
 
+make custom audio tag controller/display as stock one cannot be meaningfully styled and looks ugly as owt.
+  http://codepen.io/katzkode/pen/ZbxYYG
+
+To use getUserMedia() in an installable app (for example, a Firefox OS app), you need to specify one or both of the following fields inside your manifest file:
+  "permissions": {
+    "audio-capture": {
+      "description": "Required to capture audio using getUserMedia()"
+    },
+    "video-capture": {
+      "description": "Required to capture video using getUserMedia()"
+    }
+  }
+
+
+DONE-------------------------
+Added rudimentary clip detection.
+Investigate way of getting HQ line in!
 Prepend a nice human readable date to the file name
 Split recording list renderer into views - SORT OF!
 Add playback to each recording list entry
