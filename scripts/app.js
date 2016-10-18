@@ -45,3 +45,8 @@ function constraintToggleClicked(constraintName) {
   console.log("Constraint toggle", constraintName,"clicked");
   recorder.toggleOptionalConstraint(constraintName);
 }
+
+function audioPassthroughClicked(){
+  console.log("audioPassthroughClicked");
+  recorder.toggleAudioPassthrough();
+}

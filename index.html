@@ -28,6 +28,7 @@
     <!-- shit gets inserted here -->
   </div>
 
+  <script src="scripts/OptionalAudioConstraints.js"></script>
   <script src="scripts/globalFunctions.js"></script>
   <script src="scripts/humane_dates.js"></script>
   <script src="scripts/MouseStatus.js"></script>
@@ -36,13 +37,17 @@
   <script src="scripts/RecorderApp.js"></script>
   <script src="scripts/app.js"></script>
 
-  <button onclick='constraintToggleClicked("echoCancellation")'>echoCancellation</button>
-  <button onclick='constraintToggleClicked("mozAutoGainControl")'>mozAutoGainControl</button>
-  <button onclick='constraintToggleClicked("mozNoiseSuppression")'>mozNoiseSuppression</button>
-  <button onclick='constraintToggleClicked("googEchoCancellation")'>googEchoCancellation</button>
-  <button onclick='constraintToggleClicked("googAutoGainControl")'>googAutoGainControl</button>
-  <button onclick='constraintToggleClicked("googNoiseSuppression")'>googNoiseSuppression</button>
-  <button onclick='constraintToggleClicked("googHighpassFilter")'>googHighpassFilter</button>
+  <div>
+    <button onclick='constraintToggleClicked("echoCancellation")'>echoCancellation</button>
+    <button onclick='constraintToggleClicked("mozAutoGainControl")'>mozAutoGainControl</button>
+    <button onclick='constraintToggleClicked("mozNoiseSuppression")'>mozNoiseSuppression</button>
+    <button onclick='constraintToggleClicked("googEchoCancellation")'>googEchoCancellation</button>
+    <button onclick='constraintToggleClicked("googAutoGainControl")'>googAutoGainControl</button>
+    <button onclick='constraintToggleClicked("googNoiseSuppression")'>googNoiseSuppression</button>
+    <button onclick='constraintToggleClicked("googHighpassFilter")'>googHighpassFilter</button>
+  </div>
+
+  <button onclick='audioPassthroughClicked()'>audio passthrough</button>
 
 </body>
 

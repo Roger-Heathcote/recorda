@@ -30,8 +30,7 @@ var RecorderApp = function RecorderApp(
     MouseStatus=false,
     WaveformDisplay=false,
     loResWaveformParams=false,
-    dataDisplayElement=false,
-    optionalMediaConstraints=false
+    dataDisplayElement=false
   ){
   let instance = this;
   let GLOBALS = {
@@ -52,17 +51,10 @@ var RecorderApp = function RecorderApp(
   this.outPoint = undefined;
   this.states = { buffer: bufferState, record: recordState, save: saveState };
   this.globals = GLOBALS;
-  this.optionalMediaConstraints = [
-    {echoCancellation: false},
-    {mozAutoGainControl: false},
-    {mozNoiseSuppression: false},
-    {googEchoCancellation: false},
-    {googAutoGainControl: false},
-    {googNoiseSuppression: false},
-    {googHighpassFilter: false}
-  ];
-  // just pure replacement now, move to extend & override later if neccessary
-  if(optionalMediaConstraints){ this.optionalMediaConstraints = optionalMediaConstraints; }
+
+  this.toggleAudioPassthrough = function toggleAudioPassthrough(){
+    this.audEng.toggleAudioPassthrough();
+  };
 
   bufferState.handleWaveformClick = function bufferStateHandleWaveformClick(code) {
     GLOBALS.inPoint = code;

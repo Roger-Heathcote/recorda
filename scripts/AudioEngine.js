@@ -1,7 +1,7 @@
 /*jshint esversion: 6 */
 /*jshint -W056 */
 
-var AudioEngine = function AudioEngine(GLOBALS, loResWaveformParams=false, optionalMediaConstraints=false) {
+var AudioEngine = function AudioEngine(GLOBALS, loResWaveformParams=false) {
 
   this.totalBlocksHandled = 0;
   this.updateBlockTotal = function updateBlockTotal() {
@@ -19,15 +19,21 @@ var AudioEngine = function AudioEngine(GLOBALS, loResWaveformParams=false, optio
   this.gainNode = this.audioContext.createGain(); // Master volume, just in case we need it!
   this.scriptNode = this.audioContext.createScriptProcessor(this.scriptProcessorBuffer, 2, 2);
   this.recBufArrayLength = Math.ceil((GLOBALS.secondsToBuffer * this.sampleRate) / this.scriptProcessorBuffer);
-  this.leftChannel = new Array(this.recBufArrayLength).fill(0);
-  this.rightChannel = new Array(this.recBufArrayLength).fill(0);
+  // this.leftChannel = new Array(this.recBufArrayLength).fill(0);
+  // this.rightChannel = new Array(this.recBufArrayLength).fill(0);
   this.codeChannel = new Array(this.recBufArrayLength).fill(0);
   this.interleaved16BitAudio = new Array(this.recBufArrayLength).fill(0);
   this.codeNumber = 0;
   this.maxAmplitude = 0;
-  this.loResWaveformParams = loResWaveformParams;
-  this.optionalMediaConstraints = optionalMediaConstraints;
   this.audioStream = false;
+  this.passthrough = false;
+  this.toggleAudioPassthrough = () => {
+    this.passthrough = !this.passthrough;
+    console.log("passthrough is now:", this.passthrough);
+  }
+  this.optionalAudioConstraints = new OptionalAudioConstraints(echo=false, noise=false, gain=false, high=false);
+
+  this.loResWaveformParams = loResWaveformParams;
   if(loResWaveformParams){
     this.loResWaveformDataPoints = loResWaveformParams.dataPoints;
     this.loResWaveformSecondsToDisplay = loResWaveformParams.secondsToDisplay;
@@ -69,43 +75,12 @@ var AudioEngine = function AudioEngine(GLOBALS, loResWaveformParams=false, optio
 
   // let this.mediaConstraints = { audio: { optional: [{echoCancellation:false}] } };
   //
-  this.dressOptionalConstraint = function dressOptionalConstraint(constraintList){
-    return { audio: { optional: constraintList } };
-  };
 
-  this.__toggleMediaConstraint =
-    function __toggleMediaConstraint(constraintList,constraintName){
-      console.log("constraintList:", constraintList);
-      console.log("constraintName:", constraintName);
-      let idx = constraintList.findIndex( element => element.hasOwnProperty(constraintName) );
-      console.log("findIndexResult:", idx);
-      console.log( "constraintList[idx][constraintName]:", constraintList[idx][constraintName]);
-      console.log( "constraintList[idx].constraintName is now:", constraintList[idx][constraintName] );
-      if(constraintList[idx]){ constraintList[idx][constraintName] = !constraintList[idx][constraintName] }
-      console.log( "constraintList[idx].constraintName is now:", constraintList[idx][constraintName] );
-    };
 
-  this.toggleOptionalConstraint =
-    function toggleOptionalConstraint(constraintName){
-      console.log("In audEng's toggleOptionalConstraint now, constraintName is:", constraintName);
-      this.__toggleMediaConstraint(this.optionalMediaConstraints, constraintName);
-      console.log("Done in __toggleMediaConstraint now, moving on.");
-      console.log("this.mediaStreamTrack = ", this.mediaStreamTrack);
-      this.mediaStreamTrack.applyConstraints(this.dressOptionalConstraint(this.optionalMediaConstraints));
-      console.log("Asked mediaStreamTrack to applyConstraints! Is it listening? Who knows?");
-      console.log("IT says it's constraints are:", this.mediaStreamTrack.getConstraints );
-      console.log("IT says it's settings are:", this.mediaStreamTrack.getSettings );
-    };
 
-  this.mediaConstraints = { audio: true };
-  if(optionalMediaConstraints){
-    console.log("Constraints actively passed to AudioEngine constructor");
-    this.mediaConstraints = this.dressOptionalConstraint( this.optionalMediaConstraints ); // firefox only atm
-    console.log("HERE!!!", this.mediaConstraints);
-  }
-
+  // WIRE UP THE INPUT TO OUR SCRIPTPROCESSOR NODE
   if (navigator.mediaDevices.getUserMedia){
-    let audioInput = navigator.mediaDevices.getUserMedia( this.mediaConstraints );
+    let audioInput = navigator.mediaDevices.getUserMedia( this.optionalAudioConstraints.asConstraintsObject() );
     audioInput.catch( err => console.log("gUM ERROR:",err.name) );
     audioInput.then(
       function connectUpTheAudioStream(audioStream){
@@ -118,23 +93,19 @@ var AudioEngine = function AudioEngine(GLOBALS, loResWaveformParams=false, optio
     );
   }
 
-
-//
-// {
-//         mandatory: {
-//           googEchoCancellation: false,
-//           googAutoGainControl: false,
-//           googNoiseSuppression: false,
-//           googHighpassFilter: false
-//         }
-
-
   let scriptProcessor = function scriptProcessor(audioProcessingEvent) {
     this.codeNumber++;
     let left = audioProcessingEvent.inputBuffer.getChannelData (0);
     let right = audioProcessingEvent.inputBuffer.getChannelData (1);
     this.interleaved16BitAudio.push ( stereoFloat32ToInterleavedInt16(left, right) );
     this.codeChannel.push (this.codeNumber);
+
+    // enable pass through option
+    if(this.passthrough) {
+      console.log("pass through enabled");
+      // commit then go get the old code!
+    }
+
 
     for (let sample = 0; sample < this.scriptProcessorBuffer; sample++) {
       // track max amplitude encountered
