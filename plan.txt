@@ -1,18 +1,4 @@
-Move views out of recorder, leaving only viewModels inside
-
-Investigate effect of individual audio constraints on voice and music
-Audio quality for voice is passable but pretty bad for music
-  Seemingly this is because by default google processes it first unless instructed otherwise
-    doing things like noise suppression and echo removal
-  apparently these "constraints" can be added or removed via an constraints object passed to the guM constructor
-  Uhoh! navigator.guM is deprecated
-    Long live navigator.mediaDevices.getUserMedia( {constraints} )
-    Which returnds a promise so...
-       result = navigator.getUserMedia({ audio: true })
-       p.then( function gotTheMediaStreamWoo(mediaStream){
-         // go it!
-       })
-       p.catch( function(error){ console.log(err.name) } );
+Get dataDisplay actually working
 
 Allow recording deletion
   remove from recordings
@@ -21,58 +7,17 @@ Allow recording deletion
       that handler asks recorder to delete id wevs then call refresh
         by passing in refresh as a callback
 
-Options
-
-  Audio passthorough option
-    In progress, UI and controllers are in place
-    just need the hot loop ressurecting
-
-  Re-applying constraints live
-    Firefox "seems" to permit constraints to be applied after the fact
-      Though I've yet to find one that seems to have any effect
-    Chrome 35 has to have them specified up front
-      but they do seem to have an effect
-   implement recorder.listConstraintsAndStatus()
-     return [ constraint1: true, constraint2: false etc]
-  Look into constraints in webkit browsers, safari etc
-  Other options...
-    runtime changeable - toggles
-      clipDetectionDisplay: true|false
-      audioPassthrough: true:false
-
-Recording stops in firefox after a few seconds, investigate
-
-Use webworker for WAV file creation
-Save all recordings to zip
-Separation of audio from dom:
-    need to mock window.URL.createObjectURL(WAVFileBlob or whatever)
-    Alternatively
-      make sure it isn't called
-        by adding additional logic to function saveStateExecute(arg)?
-    Or deal with the consequence of undefined down the line?
-    Or make it a fancy undefined?
-      http://window.URL.not.present.so.no.URL.for.you.buddy
-    We only need it in the views no?
-      And the views don't need actual data to test
-        so if we even bother testing them we can mock the input there
-      We might need to test the view builder though
-      But is that a problem if it just doesn't have a url property
-
-make custom audio tag controller/display as stock one cannot be meaningfully styled and looks ugly as owt.
-  http://codepen.io/katzkode/pen/ZbxYYG
-
-To use getUserMedia() in an installable app (for example, a Firefox OS app), you need to specify one or both of the following fields inside your manifest file:
-  "permissions": {
-    "audio-capture": {
-      "description": "Required to capture audio using getUserMedia()"
-    },
-    "video-capture": {
-      "description": "Required to capture video using getUserMedia()"
-    }
-  }
-
+Chrome still looping last sample block when audio passthrough is disabled
+  If not simple to fix either
+  1) use existing gain node or
+  2) if that would affect recording playback insert an extra gain node in gumSetup
 
 DONE-------------------------
+
+put all views in a views file
+where to put all the click handlers? Left in app.js for now
+
+Move views out of recorder, leaving only viewModels inside
 
 Redesign constraint handling
   constraints = new OptionalAudioConstraintsClass();
@@ -88,3 +33,50 @@ Add playback to each recording list entry
 Add save functionality
 Refactor to eliminate anon functions, they can make profiling and debugging awkward
   All functions should have names!
+
+
+
+LONG TERM--------------------------------------------------------------
+
+  Investigate effect of individual audio constraints on voice and music
+    Until API is better implemented in the browsers this would be unproductively slow
+    Disabling all by default gives best quality on my music PC so I guess I'll just
+    await the day the toggles seem to do something
+
+  Re-applying constraints live
+    Firefox "seems" to permit constraints to be applied after the fact
+      Though I've yet to find one that seems to have any effect
+    Chrome 35 has to have them specified up front
+      but they do seem to have an effect
+    Look into constraints in webkit browsers, safari etc
+
+  Use webworker for WAV file creation
+    Also save all/selected recordings to zip
+
+  Separation of audio from dom:
+      need to mock window.URL.createObjectURL(WAVFileBlob or whatever)
+      Alternatively
+        make sure it isn't called
+          by adding additional logic to function saveStateExecute(arg)?
+      Or deal with the consequence of undefined down the line?
+      Or make it a fancy undefined?
+        http://window.URL.not.present.so.no.URL.for.you.buddy
+      We only need it in the views no?
+        And the views don't need actual data to test
+          so if we even bother testing them we can mock the input there
+        We might need to test the view builder though
+        But is that a problem if it just doesn't have a url property
+
+  make custom audio tag controller/display as stock one cannot be meaningfully styled and looks ugly as owt.
+    http://codepen.io/katzkode/pen/ZbxYYG
+
+  Make a chrome/firefox app!
+  To use getUserMedia() in an installable app (for example, a Firefox OS app), you need to specify one or both of the following fields inside your manifest file:
+    "permissions": {
+      "audio-capture": {
+        "description": "Required to capture audio using getUserMedia()"
+      },
+      "video-capture": {
+        "description": "Required to capture video using getUserMedia()"
+      }
+    }

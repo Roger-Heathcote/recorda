@@ -1,17 +1,9 @@
 /*jshint esversion: 6 */
 
-// TODO: after a recording made app starts to leak memory quite profusely - investigate
-
+// INIT RECORDER
 let canvas = document.getElementById("waveform");
-let canvasCtx = canvas.getContext("2d");
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas, false);
-let recordingsDiv = document.getElementById("recordings");
-let dataDisplayElement = document.getElementById("dataDisplay");
-
 const bufferLength = 60;
 const loResWaveformParams = { dataPoints: 900, secondsToDisplay: bufferLength };
-
 recorder = new RecorderApp(
   window,
   navigator,
@@ -26,13 +18,28 @@ recorder = new RecorderApp(
 );
 recorder.init();
 
-console.log( "Supported constraints are:", navigator.mediaDevices.getSupportedConstraints() );
+// VIEWS, DRAW YOURSELVES
+resizeCanvas();
+setInterval( refreshDataDisplay(), 5 * 1000 );
+refreshOptionsView();
+// console.log( "Supported constraints are:", navigator.mediaDevices.getSupportedConstraints() );
 
-function resizeCanvas() {
-  canvas.width = document.getElementById("wrapper").offsetWidth;
+// ADD IN EVENT LISTENERS
+
+window.addEventListener('resize', resizeCanvas, false);
+
+// AND DEFINE CLICK HANDLERS
+
+function audioPassthroughClicked(){ recorder.toggleAudioPassthrough(); }
+function optionToggleClicked(name){ this.recorder.toggleOptionalAudioConstraint(name); }
+function constraintToggleClicked(constraintName) {
+  // CONSTRAINTS TICKBOX TICKED HANDLER: constraint name => tell model to toggle that constraint
+  // Fire and forget right now. Model currently tries to reapply but does not handle errors when it can't
+  console.log("Constraint toggle", constraintName,"clicked");
+  recorder.toggleOptionalConstraint(constraintName);
 }
-
 function saveClicked(recordingID) {
+  // SAVE BUTTONS HANDLER: recording_id => browser download
   let recording = recorder.getRecordingByUCTTimestamp(recordingID);
   let url = window.URL.createObjectURL(recording.data);
   anchor = document.createElement("a");
@@ -42,102 +49,26 @@ function saveClicked(recordingID) {
   anchor.click();
 }
 
-function constraintToggleClicked(constraintName) {
-  console.log("Constraint toggle", constraintName,"clicked");
-  recorder.toggleOptionalConstraint(constraintName);
-  let viewModel = this.recorder.vm_OptionalAudioConstraints();
-  console.log("constraints viewmodel is:", viewModel);
-}
+// OTHER EVENT HANDLERS
 
-function audioPassthroughClicked(){
-  console.log("audioPassthroughClicked");
-  recorder.toggleAudioPassthrough();
-}
+// CANVAS RESIZE HANDLER. Make canvas responsive to scale changes
+function resizeCanvas() { canvas.width = document.getElementById("wrapper").offsetWidth; }
 
-function v_optionsBlock(optionsArray){
-  console.log("supplied options array is:", optionsArray);
-  let output = [];
-  optionsArray.forEach(
-    function itterateViewOptions(optionObject){
-      output.push( "<li>" );
-      output.push(   "<span>" );
-      output.push(   "<input type=\"checkbox\" " );
-      output.push(     "onclick=\"toggleOption('"+optionObject.name+"')\"" );
-      output.push(     optionObject.status ? " checked": "" );
-      output.push(   ">" );
-      output.push(   "</span>" );
-      output.push(   "<span>" );
-      output.push(     optionObject.name );
-      output.push(   "</span>" );
-      output.push( "</li>" );
-    }
-  );
-  return ["<ul>", ...output, "</ul>"].join("");
-}
+// VIEW REFRESHERS
 function refreshOptionsView(){
   let block = document.getElementById("optionsBlock");
-  //console.log("This is what I have for a block", block);
-  block.innerHTML = v_optionsBlock(recorder.vm_options());
-  //console.log("Should have updated optionsBlock with contents");
-}
-function toggleOption(name){
-  // console.log("Attempting toggle!");
-  this.recorder.toggleOptionalAudioConstraint(name);
-}
-refreshOptionsView();
-
-
-
-
-function v_dataDisplayBlock(viewModel){
-  out = [];
-  out.push( "<ul>" );
-  out.push(   "<li>Recordings: " );
-  out.push(     viewModel.memory.recordings );
-  out.push(   "</li>" );
-  out.push(   "<li>Buffers: " );
-  out.push(     viewModel.memory.buffers );
-  out.push(   "</li>" );
-  out.push( "</ul>" );
-  return out.join("");
+  block.innerHTML = views.optionsBlock(recorder.vm_options());
 }
 function refreshDataDisplay(){
   let block = document.getElementById("dataDisplayBlock");
-  // console.log("This is what I have for a block", block);
-  block.innerHTML = v_dataDisplayBlock(recorder.vm_dataDisplayBlock());
+  block.innerHTML = views.dataDisplayBlock(recorder.vm_dataDisplayBlock());
   console.log("Should have updated optionsBlock with contents", recorder.vm_dataDisplayBlock() );
 }
-function dataDisplayChangedCallback(){
-  refreshDataDisplay();
-}
-setInterval( refreshDataDisplay(), 5 * 1000 );
-
-
-
-function v_recordingsBlock(recordingsList) {
-  let out = [];
-  out.push("<ul>");
-  recordingsList.forEach(function viewForEach(recording) {
-    out.push( "<li>" );
-    out.push(   "<span class=\"recording_humanTime\" style=\"background:" + recording.color + "\">" );
-    out.push(     recording.date );
-    out.push(   "</span>" );
-    out.push(   "<span class=\"recording_Name\">" );
-    out.push(     recording.name );
-    out.push(   "</span>" );
-    out.push(   "<audio controls>");
-    out.push(     "<source src=\""+recording.url+"\" type=\"audio/wav\">" );
-    out.push(   "</audio>");
-    out.push(   "<span>" );
-    out.push(     "<button onclick=\"saveClicked("+ recording.id +")\">save</button>" );
-    out.push(   "</span>" );
-    out.push( "</li>" );
-  });
-  out.push("</ul>");
-  return out.join("");
-};
-function recordingsListChangedCallback(){ refreshRecordings(); }
 function refreshRecordings(){
   let block = document.getElementById("recordingsBlock");
-  block.innerHTML = v_recordingsBlock(recorder.vm_recordings());
+  block.innerHTML = views.recordingsBlock(recorder.vm_recordings());
 }
+
+// RECORDER NOTIFICATION CALLBACK HANDLERS
+function recordingsListChangedCallback(){ refreshRecordings(); }
+function dataDisplayChangedCallback(){ refreshDataDisplay(); }
