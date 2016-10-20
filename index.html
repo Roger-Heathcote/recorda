@@ -24,9 +24,19 @@
   <div id="wrapper">
      <canvas id="waveform"></canvas>
   </div>
-  <div id="dataDisplay">
-    <!-- shit gets inserted here -->
+
+  <div id="dataDisplayBlock">
   </div>
+
+  <div id="optionsBlock">
+  </div>
+
+  <div id="recordingsBlock">
+  </div>
+
+  <button onclick='audioPassthroughClicked()'>audio passthrough</button>
+  <!--<button onclick='refreshOptionsView()'>refreshOptionsView</button>-->
+
 
   <script src="scripts/OptionalAudioConstraints.js"></script>
   <script src="scripts/globalFunctions.js"></script>
@@ -36,18 +46,6 @@
   <script src="scripts/WaveformDisplay.js"></script>
   <script src="scripts/RecorderApp.js"></script>
   <script src="scripts/app.js"></script>
-
-  <div>
-    <button onclick='constraintToggleClicked("echoCancellation")'>echoCancellation</button>
-    <button onclick='constraintToggleClicked("mozAutoGainControl")'>mozAutoGainControl</button>
-    <button onclick='constraintToggleClicked("mozNoiseSuppression")'>mozNoiseSuppression</button>
-    <button onclick='constraintToggleClicked("googEchoCancellation")'>googEchoCancellation</button>
-    <button onclick='constraintToggleClicked("googAutoGainControl")'>googAutoGainControl</button>
-    <button onclick='constraintToggleClicked("googNoiseSuppression")'>googNoiseSuppression</button>
-    <button onclick='constraintToggleClicked("googHighpassFilter")'>googHighpassFilter</button>
-  </div>
-
-  <button onclick='audioPassthroughClicked()'>audio passthrough</button>
 
 </body>
 

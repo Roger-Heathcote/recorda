@@ -23,16 +23,37 @@ var AudioEngine = function AudioEngine(GLOBALS, loResWaveformParams=false) {
   // this.rightChannel = new Array(this.recBufArrayLength).fill(0);
   this.codeChannel = new Array(this.recBufArrayLength).fill(0);
   this.interleaved16BitAudio = new Array(this.recBufArrayLength).fill(0);
+  this.emptyOutputLeft = new Float32Array(this.scriptProcessorBuffer).fill(0);
+  this.emptyOutputRight = this.emptyOutputLeft;
   this.codeNumber = 0;
   this.maxAmplitude = 0;
-  this.audioStream = false;
+  this.mediaStreamTrack = false;
   this.passthrough = false;
-  this.toggleAudioPassthrough = () => {
+  this.toggleAudioPassthrough = function toggleAudioPassthrough(){
     this.passthrough = !this.passthrough;
     console.log("passthrough is now:", this.passthrough);
-  }
-  this.optionalAudioConstraints = new OptionalAudioConstraints(echo=false, noise=false, gain=false, high=false);
-
+  };
+  this.reapplyConstraints = function reapplyConstraints(constraintsObject){
+    console.log("Here is where we will try to re-apply the constraints to the audioTrack");
+    if(this.mediaStreamTrack){
+      let appliedPromise = this.mediaStreamTrack.applyConstraints(constraintsObject);
+      appliedPromise
+        .then( function(value){
+          console.log("Applied OK, or so is implied by my being in the .then however..." );
+          console.log("The value receivedby my function in .then is", value," wutwut???");
+        } )
+        .catch( function(presumably_an_error){ // how test this code path?
+          console.log("Didnae apply itsel", presumably_an_error);
+        } );
+    } else {
+      console.log("NoMST");
+    }
+  }.bind(this);
+  this.optionalAudioConstraints = new OptionalAudioConstraints(this.reapplyConstraints, echo=false, noise=true, gain=false, high=false);
+  this.currentAudioConstraints = function(){ return this.optionalAudioConstraints.state(); };
+  this.toggleOptionalAudioConstraint = function audioToggleAudioConstraint(constraintName){
+    this.optionalAudioConstraints.toggleConstraint(constraintName);
+  };
   this.loResWaveformParams = loResWaveformParams;
   if(loResWaveformParams){
     this.loResWaveformDataPoints = loResWaveformParams.dataPoints;
@@ -98,14 +119,15 @@ var AudioEngine = function AudioEngine(GLOBALS, loResWaveformParams=false) {
     let left = audioProcessingEvent.inputBuffer.getChannelData (0);
     let right = audioProcessingEvent.inputBuffer.getChannelData (1);
     this.interleaved16BitAudio.push ( stereoFloat32ToInterleavedInt16(left, right) );
+    let leftout = audioProcessingEvent.outputBuffer.getChannelData (0);
+    let rightout = audioProcessingEvent.outputBuffer.getChannelData (1);
+
     this.codeChannel.push (this.codeNumber);
 
-    // enable pass through option
-    if(this.passthrough) {
-      console.log("pass through enabled");
-      // commit then go get the old code!
+    if(this.passthrough === false){
+      leftout = this.emptyOutputLeft; // TODO, this isn't working in chrome, investigate :/
+      rightout = this.emptyOutputRight;
     }
-
 
     for (let sample = 0; sample < this.scriptProcessorBuffer; sample++) {
       // track max amplitude encountered
@@ -115,6 +137,15 @@ var AudioEngine = function AudioEngine(GLOBALS, loResWaveformParams=false) {
       // And there's the opportunity to be more precisely forgiving
       //   how best then, pass a callback to clipping detection function?
       //  do simple waveform only case first!
+
+      // enable pass through option
+      if(this.passthrough) {
+        // console.log("pass through enabled");
+        // commit then go get the old code!
+        leftout[sample] = left[sample];
+        rightout[sample] = right[sample];
+        //debugger;
+      }
 
       if (left[sample] > this.maxAmplitude) { this.maxAmplitude = left[sample]; }
       if (left[sample] < -this.maxAmplitude) { this.maxAmplitude = -left[sample]; } // TODO check both

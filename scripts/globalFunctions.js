@@ -217,3 +217,9 @@ function makeWAVFileBlob(
   return new Blob([fileBuffer], {type: "audio/wav"});
 
 }
+
+function immute(simple_object){
+  // pass by value for simple objects
+  // returns a "deep" copy of original Object
+  return JSON.parse(JSON.stringify(simple_object));
+}

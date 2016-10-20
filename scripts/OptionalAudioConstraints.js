@@ -1,6 +1,9 @@
 //jshint esversion: 6
 
-let OptionalAudioConstraints = function OptionalAudioConstraints(echo=true, noise=true, gain=true, high=true){
+let OptionalAudioConstraints = function OptionalAudioConstraints(reapplyCallback, echo=true, noise=true, gain=true, high=true){
+
+    this.reapplyCallback = reapplyCallback;
+
     this.__state = {
           echoCancellation: echo,
           noiseReduction: noise,
@@ -18,6 +21,18 @@ let OptionalAudioConstraints = function OptionalAudioConstraints(echo=true, nois
       return map[constraintName];
     };
 
+    // Moz only set for testing
+    // this.__mapToConstraintsList = function mapToConstrainsName(constraintName, truth){
+    //   let map = {
+    //     echoCancellation: [ {echoCancellation: truth} ],
+    //     noiseReduction: [ {mozNoiseSuppression: truth} ],
+    //     autoGainControl: [ {mozAutoGainControl: truth} ],
+    //     highPassFilter: [ ]
+    //   };
+    //   return map[constraintName];
+    // };
+
+
     // compiles settings into a constraintsObject suitable for getUserMEdia
     this.asConstraintsObject = function compileConstraintsObject(){
       constraintList = [];
@@ -32,6 +47,8 @@ let OptionalAudioConstraints = function OptionalAudioConstraints(echo=true, nois
     this.toggleConstraint = function toggleConstraint(constraintName){
       if(this.__state.hasOwnProperty(constraintName)){
         this.__state[constraintName] = !this.__state[constraintName];
+        console.log(constraintName, "toggled to", this.__state[constraintName]);
+        this.reapplyCallback( this.asConstraintsObject() );
       } else {
         console.log("invalid constraint name:", constraintName);
       }
@@ -39,12 +56,12 @@ let OptionalAudioConstraints = function OptionalAudioConstraints(echo=true, nois
 
     // returns an deep copy of the current state
     this.state = function state(){
-      return JSON.parse(JSON.stringify(this.__state));
+      return immute(this.__state);
     };
 };
 
 quickTests: {
-  //break quickTests;
+  break quickTests;
   console.log("Tests init...");
 
   c = new OptionalAudioConstraints(echo=false, gain=false);

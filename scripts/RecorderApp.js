@@ -19,8 +19,6 @@ var bufferState = createStateObject(stateObject, "buffer", "buffering");
 var recordState = createStateObject(stateObject, "record", "recording");
 var saveState = createStateObject(stateObject, "save", "saving");
 
-
-
 var RecorderApp = function RecorderApp(
     window,
     navigator,
@@ -30,7 +28,8 @@ var RecorderApp = function RecorderApp(
     MouseStatus=false,
     WaveformDisplay=false,
     loResWaveformParams=false,
-    dataDisplayElement=false
+    recordingsListChangedCallback=false,
+    dataDisplayChangedCallback=false
   ){
   let instance = this;
   let GLOBALS = {
@@ -51,7 +50,8 @@ var RecorderApp = function RecorderApp(
   this.outPoint = undefined;
   this.states = { buffer: bufferState, record: recordState, save: saveState };
   this.globals = GLOBALS;
-
+  this.recordingsListChangedCallback = recordingsListChangedCallback;
+  this.dataDisplayChangedCallback = dataDisplayChangedCallback;
   this.toggleAudioPassthrough = function toggleAudioPassthrough(){
     this.audEng.toggleAudioPassthrough();
   };
@@ -64,7 +64,7 @@ var RecorderApp = function RecorderApp(
   }.bind(this);
 
   recordState.handleWaveformClick = function recordStateHandleWaveformClick(code) {
-    if(code >= GLOBALS.inPoint)
+    if(code >= GLOBALS.inPoint) // outpoint must be after in point!
       {
         GLOBALS.outPoint = code;
         console.log("outPoint set:", GLOBALS.outPoint);
@@ -104,8 +104,17 @@ var RecorderApp = function RecorderApp(
       color: randomColorCode(175,250),
       url: GLOBALS.win.URL.createObjectURL(WAVFileBlob)
     });
-    this.redrawDataDisplay();
+
     this.buffer();
+
+    // TODO - figure out how to signal data display needs updating from here
+    // do we accept a callback from above?
+    // yup, think so!
+    if(this.recordingsListChangedCallback !== false){
+      console.log("Firing rec list change callback");
+      this.recordingsListChangedCallback();
+    }
+
   }.bind(this);
 
   saveState.exit = function saveStateExit(arg){
@@ -113,9 +122,9 @@ var RecorderApp = function RecorderApp(
     GLOBALS.outPoint = undefined;
   };
 
-  this.toggleOptionalConstraint = function toggleOptionalConstraint(constraintName){
-    console.log("attempting to TOGGLE THE OPTIONAL CONSTRAINT:", constraintName);
-    this.audEng.toggleOptionalConstraint(constraintName);
+  this.toggleOptionalAudioConstraint = function recorderToggleOptionalAudioConstraint(constraintName){
+    // console.log("attempting to TOGGLE THE OPTIONAL CONSTRAINT:", constraintName);
+    this.audEng.toggleOptionalAudioConstraint(constraintName);
   };
 
   this.init = function RecorderAppInit() {
@@ -163,14 +172,25 @@ var RecorderApp = function RecorderApp(
     this.state.handleWaveformClick(code);
   }.bind(this);
 
-  this.redrawDataDisplay = function redrawDataDisplay() {
-    let out = [];
-    out.push( '<div id="memory">', this.renderMemory(), '</div>' );
-    out.push( '<div id="recordings">', this.viewRecordings(this.buildViewModelRecordings()), '</div>' );
-    dataDisplayElement.innerHTML = out.join("");
-  }.bind(this);
+  this.vm_dataDisplayBlock = function vm_dataDisplayBlock(){
+    let out = {};
+    out.memory = this.getMemory();
+    return out;
+  };
 
-  this.buildViewModelRecordings = function buildViewModelRecordings(){
+  this.vm_options = function vm_options(){
+    let viewModel = this.vm_OptionalAudioConstraints();
+    let output = [];
+    Object.keys(viewModel).forEach(
+      function(name, idx){
+        console.log( name, viewModel[name], idx);
+        output.push( { name:name, status:viewModel[name] } );
+      }
+    );
+    return output;
+  }
+
+  this.vm_recordings = function vm_recordings(){
     let list = [];
     let recordings = GLOBALS.recordings.slice();
     recordings.reverse();
@@ -187,36 +207,30 @@ var RecorderApp = function RecorderApp(
     return list;
   }.bind(this);
 
-  this.viewRecordings = function viewRecordings(recordings) {
-    let out = [];
-    out.push("<ul>");
-    recordings.forEach(function viewForEach(recording) {
-      out.push( "<li>" );
-      out.push(   "<span class=\"recording_humanTime\" style=\"background:" + recording.color + "\">" );
-      out.push(     recording.date );
-      out.push(   "</span>" );
-      out.push(   "<span class=\"recording_Name\">" );
-      out.push(     recording.name );
-      out.push(   "</span>" );
-      out.push(   "<audio controls>");
-      out.push(     "<source src=\""+recording.url+"\" type=\"audio/wav\">" );
-      out.push(   "</audio>");
-      out.push(   "<span>" );
-      out.push(     "<button onclick=\"saveClicked("+ recording.id +")\">save</button>" );
-      out.push(   "</span>" );
-      out.push( "</li>" );
-    });
-    out.push("</ul>");
-    return out.join("");
-  }.bind(this);
+  this.vm_OptionalAudioConstraints = function vm_OptionalAudioConstraints(){
+    console.log("vm_OptionalAudioConstraints returns this:", this.audEng.currentAudioConstraints());
+    return this.audEng.currentAudioConstraints();
+  };
 
-  this.renderMemory = function renderMemory() {
-    let out = [];
-    out.push("Memory use...<br>");
-    out.push("Recordings:", formatBytes(GLOBALS.recordings.reduce( function(t,r) {return t + r.size;}, 0)));
-    out.push( "<br>" );
-    out.push("Main buffers:", formatBytes(this.audEng.interleaved16BitAudio.length * this.audEng.scriptProcessorBuffer));
-    return out.join("");
+  // this.vm_recordings = function vm_recordings() {
+  //   let out = [];
+  //   this.GLOBALS.recordings.forEach(function viewForEach(recording) {
+  //     out.push({
+  //       color: recording.color,
+  //       date: recording.date,
+  //       name: recording.name,
+  //       url: recording.url,
+  //       id: recording.id
+  //     });
+  //   });
+  //   return out;
+  // }.bind(this);
+
+  this.getMemory = function getMemory() {
+    let out = {};
+    out.recordings = formatBytes(GLOBALS.recordings.reduce( function(t,r) {return t + r.size;}, 0));
+    out.buffers = formatBytes(this.audEng.interleaved16BitAudio.length * this.audEng.scriptProcessorBuffer);
+    return out;
   }.bind(this);
 
   this.getRecordingByUCTTimestamp = function getRecordingByUCTTimestamp(id) {

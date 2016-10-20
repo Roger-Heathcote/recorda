@@ -1,3 +1,4 @@
+Move views out of recorder, leaving only viewModels inside
 
 Investigate effect of individual audio constraints on voice and music
 Audio quality for voice is passable but pretty bad for music

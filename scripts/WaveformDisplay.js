@@ -13,7 +13,7 @@ let WaveformDisplay = function WaveformDisplay(GLOBALS, the_window, canvas, mous
   this.lastRedraw = 0;
   this.mouse = mouse;
 
-  this.waveformClicked = function waveformClicked(event) {
+  this.waveformClicked = function waveformClickedInWaveformDisplay(event) {
     let rect = this.canvas.getBoundingClientRect();
     let ratio = (event.clientX - rect.left) / rect.width;
     let index = Math.floor(this.codeChan.length * ratio);
@@ -83,7 +83,7 @@ let WaveformDisplay = function WaveformDisplay(GLOBALS, the_window, canvas, mous
     instance.canvasCtx.fillStyle = 'rgb(0, 0, 0)';
     let sliceWidth = instance.canvas.width / instance.waveform.length;
     for(let i = 0; i < instance.waveform.length; i++) {
-      if(instance.waveform[i] > 0.99){
+      if(instance.waveform[i] > 0.9999){
         instance.canvasCtx.fillStyle = 'rgb(255, 0, 0)';
       } else {
         instance.canvasCtx.fillStyle = 'rgb(0, 0, 0)';
