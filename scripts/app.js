@@ -20,7 +20,8 @@ recorder.init();
 
 // VIEWS, DRAW YOURSELVES
 resizeCanvas();
-setInterval( refreshDataDisplay(), 5 * 1000 );
+refreshDataDisplay();
+setInterval( refreshDataDisplay, 5 * 1000 );
 refreshOptionsView();
 // console.log( "Supported constraints are:", navigator.mediaDevices.getSupportedConstraints() );
 
@@ -63,10 +64,10 @@ function refreshDataDisplayClicked(){
   refreshDataDisplay();
 }
 function refreshDataDisplay(){
-  //console.log("refreshing data display");
+  console.log("refreshing data display");
   let block = document.getElementById("dataDisplayBlock");
   block.innerHTML = views.dataDisplayBlock(recorder.vm_dataDisplayBlock());
-  console.log("Should have updated optionsBlock with contents", recorder.vm_dataDisplayBlock() );
+  //console.log("Should have updated optionsBlock with contents", recorder.vm_dataDisplayBlock() );
 }
 function refreshRecordings(){
   //console.log("refreshing recordings");
