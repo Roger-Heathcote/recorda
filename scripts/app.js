@@ -59,16 +59,21 @@ function refreshOptionsView(){
   let block = document.getElementById("optionsBlock");
   block.innerHTML = views.optionsBlock(recorder.vm_options());
 }
+function refreshDataDisplayClicked(){
+  refreshDataDisplay();
+}
 function refreshDataDisplay(){
+  //console.log("refreshing data display");
   let block = document.getElementById("dataDisplayBlock");
   block.innerHTML = views.dataDisplayBlock(recorder.vm_dataDisplayBlock());
   console.log("Should have updated optionsBlock with contents", recorder.vm_dataDisplayBlock() );
 }
 function refreshRecordings(){
+  //console.log("refreshing recordings");
   let block = document.getElementById("recordingsBlock");
   block.innerHTML = views.recordingsBlock(recorder.vm_recordings());
 }
 
 // RECORDER NOTIFICATION CALLBACK HANDLERS
-function recordingsListChangedCallback(){ refreshRecordings(); }
+function recordingsListChangedCallback(){ console.log("refRecs!"); refreshRecordings(); refreshDataDisplay(); }
 function dataDisplayChangedCallback(){ refreshDataDisplay(); }
