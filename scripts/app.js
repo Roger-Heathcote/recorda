@@ -18,11 +18,12 @@ recorder = new RecorderApp(
 );
 recorder.init();
 
-// VIEWS, DRAW YOURSELVES
+// VIEWS, DRAW YOURSELVES ONCE
 resizeCanvas();
-refreshDataDisplay();
-setInterval( refreshDataDisplay, 5 * 1000 );
 refreshOptionsView();
+refreshDataDisplay();
+setInterval( refreshDataDisplay, 5 * 1000 ); // and then every 5 seconds
+
 // console.log( "Supported constraints are:", navigator.mediaDevices.getSupportedConstraints() );
 
 // ADD IN EVENT LISTENERS
