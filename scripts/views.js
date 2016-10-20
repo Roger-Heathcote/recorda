@@ -6,7 +6,7 @@ views = {
     let out = [];
     out.push("<ul>");
     recordingsList.forEach(function viewForEach(recording) {
-      out.push( "<li>" );
+      out.push( "<li style=\"background:" + recording.color + "\">" );
       out.push(   "<span class=\"recording_humanTime\" style=\"background:" + recording.color + "\">" );
       out.push(     recording.date );
       out.push(   "</span>" );
