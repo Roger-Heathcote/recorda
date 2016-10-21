@@ -1,10 +1,9 @@
-Get dataDisplay actually working
-
 Allow recording deletion
   remove from recordings
-    index.html needs a delete button
+    recordings view needs a delete button
     app needs a event_handler for that button
-      that handler asks recorder to delete id wevs then call refresh
+      that handler asks recorder to delete id wevs
+         delete handler must call recordings list changed callback
         by passing in refresh as a callback
 
 Chrome still looping last sample block when audio passthrough is disabled
@@ -13,6 +12,10 @@ Chrome still looping last sample block when audio passthrough is disabled
   2) if that would affect recording playback insert an extra gain node in gumSetup
 
 DONE-------------------------
+
+Come up with better uuid ssytem than just using timestamps!
+
+Get dataDisplay actually working
 
 put all views in a views file
 where to put all the click handlers? Left in app.js for now

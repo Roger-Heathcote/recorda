@@ -80,6 +80,7 @@ var RecorderApp = function RecorderApp(
     // this.buffer();
   };
 
+
   saveState.execute = function saveStateExecute(arg) {
     let WAVFileBlob = makeWAVFileBlob(
       this.audEng.interleaved16BitAudio,
@@ -102,7 +103,8 @@ var RecorderApp = function RecorderApp(
       sampleRate: this.audEng.sampleRate,
       size: WAVFileBlob.size, // 16 bit
       color: randomColorCode(175,250),
-      url: GLOBALS.win.URL.createObjectURL(WAVFileBlob)
+      url: GLOBALS.win.URL.createObjectURL(WAVFileBlob),
+      uuid: randomUUID(8)
     });
 
     this.buffer();
@@ -196,7 +198,7 @@ var RecorderApp = function RecorderApp(
     recordings.reverse();
     recordings.forEach(function recordingsForEach(recording) {
       let recObj = {
-        id: recording.UCTTimestamp,
+        id: recording.uuid,
         color: recording.color,
         date: relativeDateTime( new Date(recording.localTimestamp) ),
         name: sanitize(recording.name),
@@ -233,8 +235,8 @@ var RecorderApp = function RecorderApp(
     return out;
   }.bind(this);
 
-  this.getRecordingByUCTTimestamp = function getRecordingByUCTTimestamp(id) {
-    return GLOBALS.recordings.filter( (obj) => obj.UCTTimestamp === id )[0];
+  this.getRecordingByUuid = function getRecordingByUuid(id) {
+    return GLOBALS.recordings.filter( (obj) => obj.uuid === id )[0];
   }.bind(this);
 
 };

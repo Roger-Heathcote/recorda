@@ -42,7 +42,7 @@ function constraintToggleClicked(constraintName) {
 }
 function saveClicked(recordingID) {
   // SAVE BUTTONS HANDLER: recording_id => browser download
-  let recording = recorder.getRecordingByUCTTimestamp(recordingID);
+  let recording = recorder.getRecordingByUuid(recordingID);
   let url = window.URL.createObjectURL(recording.data);
   anchor = document.createElement("a");
   anchor.href = url;

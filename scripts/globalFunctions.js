@@ -223,3 +223,26 @@ function immute(simple_object){
   // returns a "deep" copy of original Object
   return JSON.parse(JSON.stringify(simple_object));
 }
+
+function randomUUID(UUIDLength){
+  let allowedChars = "abcdefghijklmnopqstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let uuid = [];
+  let min = 1;
+  let max = allowedChars.length-1;
+  while(uuid.length < UUIDLength){
+    let randCharIdx = Math.floor(Math.random()*(max-min+1))+min;
+    uuid.push( allowedChars.charAt(randCharIdx));
+  }
+  return uuid.join("");
+}
+
+
+
+
+tests: {
+  break tests;
+  console.log("Tests enabled");
+  let uuid = randomUUID(16);
+  if (uuid.length !== 16) { throw new Error("randomUUID (length should be 16) :", uuid); }
+  console.log("randomUUID is:", uuid);
+}
