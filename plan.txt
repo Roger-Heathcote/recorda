@@ -1,17 +1,8 @@
-Allow recording deletion
-  remove from recordings
-    recordings view needs a delete button
-    app needs a event_handler for that button
-      that handler asks recorder to delete id wevs
-         delete handler must call recordings list changed callback
-        by passing in refresh as a callback
-
-Chrome still looping last sample block when audio passthrough is disabled
-  If not simple to fix either
-  1) use existing gain node or
-  2) if that would affect recording playback insert an extra gain node in gumSetup
-
 DONE-------------------------
+
+Fixed chrome pasthorugh issue
+
+Allow recording deletion
 
 Come up with better uuid ssytem than just using timestamps!
 
