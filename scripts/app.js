@@ -51,6 +51,10 @@ function saveClicked(recordingID) {
   anchor.click();
 }
 
+function deleteClicked(recordingID) {
+  // DELETE BUTTONS HANDLER: recording_id => recording deleted
+  recorder.deleteRecordingByUuid(recordingID);
+}
 // OTHER EVENT HANDLERS
 
 // CANVAS RESIZE HANDLER. Make canvas responsive to scale changes

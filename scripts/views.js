@@ -23,9 +23,14 @@ views = {
       out.push( "</span>" );
 
       out.push(   "<span>" );
-      // out.push(     '<button onclick="saveClicked(\"'+recording.id +'\")>save</button>' );
       out.push(     '<button onclick=\'saveClicked("'+recording.id+'")\'>save</button>' );
       out.push(   "</span>" );
+
+      out.push(   "<span>" );
+      out.push(     '<button onclick=\'deleteClicked("'+recording.id+'")\'>delete</button>' );
+      out.push(   "</span>" );
+
+
       out.push( "</li>" );
     });
     out.push("</ul>");

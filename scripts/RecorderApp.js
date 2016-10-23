@@ -235,8 +235,17 @@ var RecorderApp = function RecorderApp(
     return out;
   }.bind(this);
 
+  // this.
+
   this.getRecordingByUuid = function getRecordingByUuid(id) {
     return GLOBALS.recordings.filter( (obj) => obj.uuid === id )[0];
+  }.bind(this);
+
+  this.deleteRecordingByUuid = function deleteRecordingByUuid(id) {
+    let recording = this.getRecordingByUuid(id);
+    let idx =  GLOBALS.recordings.indexOf(recording);
+    GLOBALS.recordings.splice(idx, 1 );
+    recordingsListChangedCallback();
   }.bind(this);
 
 };
