@@ -47,7 +47,7 @@ var AudioEngine = function AudioEngine(GLOBALS, loResWaveformParams=false) {
       console.log("NoMST");
     }
   }.bind(this);
-  this.optionalAudioConstraints = new OptionalAudioConstraints(this.reapplyConstraints, echo=false, noise=true, gain=false, high=false);
+  this.optionalAudioConstraints = new OptionalAudioConstraints(this.reapplyConstraints, echo=false, noise=false, gain=false, high=false);
   this.currentAudioConstraints = function(){ return this.optionalAudioConstraints.state(); };
   this.toggleOptionalAudioConstraint = function audioToggleAudioConstraint(constraintName){
     this.optionalAudioConstraints.toggleConstraint(constraintName);

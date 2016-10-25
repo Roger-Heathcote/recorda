@@ -1,7 +1,7 @@
 //jshint esversion: 6
 
 function binarySearch(array, key, zeroOrThrow=0) {
-    var lo = 0,
+    let lo = 0,
         hi = array.length - 1,
         mid,
         element;
@@ -23,7 +23,6 @@ function binarySearch(array, key, zeroOrThrow=0) {
       } else {
         return 0;
       }
-    //return -1;
 }
 
 

@@ -45,6 +45,24 @@ LONG TERM--------------------------------------------------------------
     Look into constraints in webkit browsers, safari etc
 
   Use webworker for WAV file creation
+    Not at all straightforward!
+    Main array is an array of arraybuffers
+      but if we "transfer" them we lose access to them which we can't have
+      AND
+      if we copy them in one block then for big selections
+        we will block the event loop for too long which is exactly what we are trying to avoid
+        even without the display portion active this may still block the scriopt processor and cause glitches
+    Possible solution
+      when an outpoint is set
+        dimension a new fixed width array and write the wav header
+          then copy the data over a bit at a time til it's done.
+        BUT
+          As it stands we would only be able to save a single recording at a time
+            as if we returned from saved to buffering state we might trim needed elements
+        ALSO
+          Can we run without get animation frame?
+
+
     Also save all/selected recordings to zip
 
   Separation of audio from dom:
