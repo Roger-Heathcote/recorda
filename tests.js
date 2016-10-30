@@ -120,28 +120,137 @@ function makeBufferTestFixture(inputString){
   return buffer;
 }
 
-( function () {
-  // return;
-  let testName = "Make WAV header";
-  loadRawJS('./scripts/globalFunctions.js');
-  //let result = addWAVHeader(audio,channels, sample_rate,bit_depth);
-  let audio = Int16Array.from([0.1, 0.2, 0.3, 0.4, 0.5, 0.6]);
-  let channels = 2;
-  let sampleRate = 48000;
-  let bit_depth = 16;
-  let buffer = new ArrayBuffer(44);
-  let view = new DataView(buffer);
-  addWAVHeader(view, audio, channels, sampleRate, bit_depth);
-  console.log(bytes2AsciiAndNumbers(buffer));
-//   //
-//   // let expected = (Int16Array.from([]);
-//   // if (JSON.stringify(result) !== JSON.stringify(expected)) {
-//   //   console.log(result);
-//   //   console.log(expected);
-//   //   throw new Error( testName );
-//   // }
-}());
 
-// let testBuffer = makeBufferTestFixture("wang");
-// console.log(bytes2Hex( testBuffer ));
-// console.log(bytes2Ascii( testBuffer ));
+
+
+( function(){
+
+  let window = {};
+  window.AudioContext = function fakeAudioContext(){
+    this.fakePropery1 = "fake";
+    console.log("I'm not real!");
+    this.createGain = function fakeCreateGain(){
+      console.log("fakeCreateGain");
+      let fakeGainNode = {
+        connect: function(){ console.log("fakeCreateGainConnectMethod");}
+      };
+      return fakeGainNode;
+    };
+    this.createScriptProcessor = function fakeCreateScriptProcessor(bufferSize,y,z){
+      console.log("fakeCreateScriptProcessor, size =", bufferSize);
+      let scriptProcessor = {
+        connect: function(){ console.log("fakeCreateScriptProcessor connect method.");}
+      };
+
+      return scriptProcessor;
+    };
+    this.sampleRate = 44100;
+    this.createMediaStreamSource = function createFakeMediaStreamSource(){
+      console.log("fakeCreateMediaStreamSource");
+      let fakeMediaStreamSource = {
+        connect: function fakeConnect(){ console.log("Arse pipes akimbo"); }
+      };
+      return fakeMediaStreamSource;
+    };
+  };
+
+  let navigator = {};
+  navigator.mediaDevices = {};
+  navigator.mediaDevices.getUserMedia = function fakeGetUserMedia(constraints){
+    console.log("Sure I'm GetUserMedia, come on over.");
+    console.log("THIS IS: ", this);
+    console.log("CONSTRAINTS ARE:", constraints);
+
+    return new Promise(
+      function(resolve, reject) {
+        if ( true ) {
+          let fakeAudioStream = {};
+          fakeAudioStream.getAudioTracks = function fakeGetAudioTracks(){
+            return [{
+              applyConstraints: function fakeApplyConstraints(constraint){
+                console.log("applying fake constraint:", constraint);
+              }
+            }];
+          };
+          resolve(fakeAudioStream); // this should return an audio stream
+        }
+        else {
+          reject(Error("It broke"));
+        }
+      }
+    );
+
+  };
+
+
+
+
+
+
+  // function(opt, ok, ng) {
+  //   console.log("Sure I'm GetUserMedia, come on over.");
+  //   console.log("THIS IS: ", this, ok);
+  //   //let audioStream = this.audioContext.createMediaStreamSource();
+  //   //ok(audioStream);
+  //   //ok(null);
+  // };
+
+
+  loadRawJS('./scripts/OptionalAudioConstraints.js');
+  loadRawJS('./scripts/globalFunctions.js');
+  loadRawJS('./scripts/humane_dates.js');
+  loadRawJS('./scripts/AudioEngine.js');
+  loadRawJS('./scripts/RecorderApp.js');
+
+  const bufferLength = 30;
+  console.log("Constructing new RecorderApp");
+  recorder = new RecorderApp(
+    window,
+    navigator,
+    AudioEngine,
+    bufferLength
+  );
+  recorder.init();
+  // recorder.globals.inPoint = recorder.audEng.codeChannel[0];
+  // console.log("recGLOBS:", recorder.globals);
+  recorder.record();
+
+  console.log("Borls");
+
+  var ScriptNodeTestFixture = function ScriptNodeTestFixture(){
+      this.data = Float32Array.from(createScriptProcessorTestFixture(4096));
+      this.inputBuffer = {
+        getChannelData: function(index){
+          return 1;
+        }
+      };
+      this.outputBuffer = {
+        getChannelData: function(index){
+          return 1;
+        }
+      };
+  };
+
+  scriptNodeTestFixture = new ScriptNodeTestFixture();
+  recorder.audEng.scriptNode.onaudioprocess( scriptNodeTestFixture, true );
+  recorder.audEng.scriptNode.onaudioprocess( scriptNodeTestFixture, true );
+  console.log("yeah done");
+  setInterval( recorder.audEng.scriptNode.onaudioprocess, 1000, scriptNodeTestFixture, true );
+
+})();
+
+
+
+function createScriptProcessorTestFixture(lenf){
+  out = [];
+  cur = 0;
+  ofs = 0.01;
+  for(x=0; x<lenf; x++){
+    cur = cur + ofs;
+    out.push(cur);
+    if (Math.abs(cur) > 0.9){
+      ofs = -ofs;
+    }
+  }
+  return out;
+}

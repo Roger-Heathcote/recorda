@@ -190,7 +190,7 @@ var RecorderApp = function RecorderApp(
       }
     );
     return output;
-  }
+  };
 
   this.vm_recordings = function vm_recordings(){
     let list = [];

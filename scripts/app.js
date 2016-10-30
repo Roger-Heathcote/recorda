@@ -2,8 +2,8 @@
 
 // INIT RECORDER
 let canvas = document.getElementById("waveform");
-const bufferLength = 600;
-const loResWaveformParams = { dataPoints: 1200, secondsToDisplay: bufferLength };
+const bufferLength = 60;
+const loResWaveformParams = { dataPoints: 500, secondsToDisplay: bufferLength };
 recorder = new RecorderApp(
   window,
   navigator,

@@ -1,3 +1,6 @@
+Prettier audio elements.
+Mono/Float recording
+
 DONE-------------------------
 
 Fixed chrome pasthorugh issue
@@ -31,6 +34,53 @@ Refactor to eliminate anon functions, they can make profiling and debugging awkw
 
 
 LONG TERM--------------------------------------------------------------
+
+  supporting an arbitrary number of channels may be tough, esp as I only have stereo soundcard right now
+  but it would be v.cool!
+  combo explosion suggests splitting into smaller composable options
+    but interleaving an mixing don't map easily to >2 channels
+    so maybe presets are the way to go
+    left and right channels to sepa`rate arrays
+    l & r mixed to mono
+    l only
+    r only
+
+  channels
+  stereo interleave
+  sample conversion
+
+
+
+  Looping?
+    As separate app?
+    As extension of current app?
+      Make recorder handle looping?
+      Make recorder handle multiple formats?
+      Make audio engine handle multiple formats.
+      Make separate app for looping and only resuse audio engine?
+      current app auto downsamples to 16 bit interleaved stereo
+      and for looping we may prefer to record to 32bit float
+      but it would also be useful to be able to record to mono for memory reasons
+      so maybe we could make the audio engine format pluggable?
+        stuff in recorder app relys on audio format
+          list which stuff
+        so it should specify format at construction time?
+          between a choice of formats that audio engine offers?
+            which formats.
+    Looper
+      wants to be low latency
+      high precision
+        does precision need to be higher than the processing block size?
+      do we need to timestamp the recorded chunks?
+        with the audio clock's timestamp
+        if we do this as standard is there much overhead?
+      this would allow us to retain variable size chunk recording while
+        adding millisecond accuracy
+      so yeah, if we want to make this code more general rather than write a seperate audio engine
+        we should do that.
+
+
+
 
   Investigate effect of individual audio constraints on voice and music
     Until API is better implemented in the browsers this would be unproductively slow

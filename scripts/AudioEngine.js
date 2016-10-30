@@ -19,8 +19,6 @@ var AudioEngine = function AudioEngine(GLOBALS, loResWaveformParams=false) {
   this.gainNode = this.audioContext.createGain(); // Master volume, just in case we need it!
   this.scriptNode = this.audioContext.createScriptProcessor(this.scriptProcessorBuffer, 2, 2);
   this.recBufArrayLength = Math.ceil((GLOBALS.secondsToBuffer * this.sampleRate) / this.scriptProcessorBuffer);
-  // this.leftChannel = new Array(this.recBufArrayLength).fill(0);
-  // this.rightChannel = new Array(this.recBufArrayLength).fill(0);
   this.codeChannel = new Array(this.recBufArrayLength).fill(0);
   this.interleaved16BitAudio = new Array(this.recBufArrayLength).fill(0);
   this.codeNumber = 0;
@@ -98,11 +96,12 @@ var AudioEngine = function AudioEngine(GLOBALS, loResWaveformParams=false) {
 
 
   // WIRE UP THE INPUT TO OUR SCRIPTPROCESSOR NODE
-  if (navigator.mediaDevices.getUserMedia){
-    let audioInput = navigator.mediaDevices.getUserMedia( this.optionalAudioConstraints.asConstraintsObject() );
+  if (GLOBALS.nav.mediaDevices.getUserMedia){
+    let audioInput = GLOBALS.nav.mediaDevices.getUserMedia( this.optionalAudioConstraints.asConstraintsObject() );
     audioInput.catch( err => console.log("gUM ERROR:",err.name) );
     audioInput.then(
       function connectUpTheAudioStream(audioStream){
+        console.log("Wanky crisps, the audioStream is:", audioStream);
         this.mediaStreamTrack = audioStream.getAudioTracks()[0];
         let source = this.audioContext.createMediaStreamSource(audioStream);
         source.connect(this.scriptNode);
@@ -112,7 +111,8 @@ var AudioEngine = function AudioEngine(GLOBALS, loResWaveformParams=false) {
     );
   }
 
-  let scriptProcessor = function scriptProcessor(audioProcessingEvent) {
+  let scriptProcessor = function scriptProcessor(audioProcessingEvent, logon=false) {
+    if(logon){console.log("You triggered?");}
     this.codeNumber++;
     let left = audioProcessingEvent.inputBuffer.getChannelData (0);
     let right = audioProcessingEvent.inputBuffer.getChannelData (1);

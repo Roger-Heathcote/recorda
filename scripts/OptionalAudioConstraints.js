@@ -1,6 +1,6 @@
 //jshint esversion: 6
 
-let OptionalAudioConstraints = function OptionalAudioConstraints(reapplyCallback, echo=true, noise=true, gain=true, high=true){
+var OptionalAudioConstraints = function OptionalAudioConstraints(reapplyCallback, echo=true, noise=true, gain=true, high=true){
 
     this.reapplyCallback = reapplyCallback;
 
