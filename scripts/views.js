@@ -14,13 +14,22 @@ views = {
       out.push(     recording.name );
       out.push(   "</span>" );
 
-      out.push( "<span>" );
+      // out.push( "<span>" );
+      // out.push(   "<audio controls>");
+      // out.push(     "<source src=\""+recording.url+"\" type=\"audio/wav\">" );
+      // out.push(   "</audio>");
+      // out.push( "</span>" );
 
-      out.push(   "<audio controls>");
+      out.push( "<span>" );
+      out.push(   "<audio>");
       out.push(     "<source src=\""+recording.url+"\" type=\"audio/wav\">" );
       out.push(   "</audio>");
-
       out.push( "</span>" );
+
+      out.push( "<span>" );
+      out.push(   vSAC(recording.id) );
+      out.push( "</span>" );
+
 
       out.push(   "<span>" );
       out.push(     '<button onclick=\'saveClicked("'+recording.id+'")\'>save</button>' );

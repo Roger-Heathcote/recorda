@@ -9,30 +9,78 @@
       <script src="scripts/respond.js"></script>
   <![endif]-->
   <style>
-    .wrapper { width:100%; height: 300px; }
+    body{
+      padding: 0px;
+      margin: 0px;
+    }
+    /*.wrapper { width:100%; height:600px; }*/
     ul {
       list-style-type: none;
       margin:0px;
       padding:0px;
+      display: table;
+      width: 100%;
+    }
+    .recordingListItem{
+      display: table-row;
+      height: 1.5em;
     }
     .recordingListItem > span {
       display: table-cell;
       vertical-align: middle;
+    }
+    .recordingListItem > span + span {
       padding-left: 1em;
     }
-    .recordingListItem{
-      /*background: #f00;*/
-      /*display: block;*/
-      padding-top: 5px;
+    .recordingListItem > span:first-child {
+      padding-left: 0.5em;
     }
+
+
+
+    .vSAC_outer{
+      margin-left: 1em;
+      background: #AAA;
+      width: 200px;
+      height: 1em;
+      margin-right:1em;
+      border-radius: 0.5em;
+      vertical-align: middle;
+    }
+    .vSAC_timeline{
+      width: calc(100% - 1em);
+
+    }
+    .vSAC_cursor{
+      background: #555;
+      height: 1em;
+      width: 1em;
+      padding: 0px;
+      margin-left: 0%; /* modulate this */
+      border-radius: 50%;
+    }
+    .playBtn{
+      float: left;
+      /*background: #0F0;*/
+    }
+    .svg-triangle{
+      width: 1em;
+      height: 1em;
+      fill: #555;
+    }
+    .svg-triangle:hover{ fill: #999; }
   </style>
 </head>
 <body>
-  <!--
-  <div>Test padding, test padding, test padding, test padding, test padding, test padding, test padding, test padding, test padding, test padding, test padding, test padding, test padding, test padding, test padding, test padding, test padding, test padding, test padding, test padding, test padding, test padding, test padding, test padding, test padding, test padding, test padding, test padding, test padding, test padding, test paddingd</div>
-  -->
+
+  <!-- <div id="vSACtest">
+  </div> -->
+
   <div id="wrapper">
      <canvas id="waveform"></canvas>
+  </div>
+
+  <div id="recordingsBlock">
   </div>
 
   <div id="dataDisplayBlock">
@@ -41,14 +89,14 @@
   <div id="optionsBlock">
   </div>
 
-  <div id="recordingsBlock">
-  </div>
+
 
   <button onclick='audioPassthroughClicked()'>audio passthrough</button>
   <button onclick='refreshDataDisplayClicked()'>Refresh data display</button>
   <!--<button onclick='refreshOptionsView()'>refreshOptionsView</button>-->
 
 
+  <script src="scripts/vSAC.js"></script>
   <script src="scripts/views.js"></script>
   <script src="scripts/OptionalAudioConstraints.js"></script>
   <script src="scripts/globalFunctions.js"></script>

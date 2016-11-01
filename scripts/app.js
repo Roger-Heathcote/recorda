@@ -23,6 +23,7 @@ resizeCanvas();
 refreshOptionsView();
 refreshDataDisplay();
 setInterval( refreshDataDisplay, 5 * 1000 ); // and then every 5 seconds
+refreshvSACtest();
 
 // console.log( "Supported constraints are:", navigator.mediaDevices.getSupportedConstraints() );
 
@@ -51,6 +52,8 @@ function saveClicked(recordingID) {
   anchor.click();
 }
 
+
+
 function deleteClicked(recordingID) {
   // DELETE BUTTONS HANDLER: recording_id => recording deleted
   recorder.deleteRecordingByUuid(recordingID);
@@ -61,6 +64,13 @@ function deleteClicked(recordingID) {
 function resizeCanvas() { canvas.width = document.getElementById("wrapper").offsetWidth; }
 
 // VIEW REFRESHERS
+function refreshvSACtest(){
+  let block = document.getElementById("vSACtest");
+  block.innerHTML = "<span>"+vSAC(1234)+"</span>";
+}
+let recording = recorder.getRecordingByUuid("vSACtest");
+recording.innerHTML();
+
 function refreshOptionsView(){
   let block = document.getElementById("optionsBlock");
   block.innerHTML = views.optionsBlock(recorder.vm_options());
