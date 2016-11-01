@@ -23,7 +23,8 @@ resizeCanvas();
 refreshOptionsView();
 refreshDataDisplay();
 setInterval( refreshDataDisplay, 5 * 1000 ); // and then every 5 seconds
-refreshvSACtest();
+setInterval( refreshRecordings, 60 * 1000 ); // and then every 5 seconds
+//refreshvSACtest();
 
 // console.log( "Supported constraints are:", navigator.mediaDevices.getSupportedConstraints() );
 
