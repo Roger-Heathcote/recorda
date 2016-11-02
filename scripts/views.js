@@ -21,13 +21,13 @@ views = {
       // out.push( "</span>" );
 
       out.push( "<span>" );
-      out.push(   "<audio>");
+      out.push(   "<audio id=\"audio_"+recording.id+"\">");
       out.push(     "<source src=\""+recording.url+"\" type=\"audio/wav\">" );
       out.push(   "</audio>");
       out.push( "</span>" );
 
       out.push( "<span>" );
-      out.push(   vSAC(recording.id) );
+      out.push(   vSAC(recording.id).body() );
       out.push( "</span>" );
 
 
