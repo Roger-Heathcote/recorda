@@ -1,27 +1,3 @@
-Hmm custom audio elements are harder than I thought!
-  Callbacks need to be attached for several things but
-  Our refresh mechanism replaces the whole block each time with innerHTML method
-  This kills any callbacks we have already
-    Adding them back every time looks to be a memory problem (1GB+ after a couple of hours)
-  Also the event handlers seem to interact
-    Urgh.
-  Also, rendering to strings means
-    any callbacks need to be attached elsewhere which increases coupling
-  And, replacing the whole block means deleting the audio elements which naturally
-    stops playback!
-
-  Solution...
-    Stop deleting the audio nodes and the audioControl handlers!
-  How then???
-
-    render straight to dom
-    only add/change/remove what needs updating
-    Most stuff doesn't change so we only need to handle few cases
-      1) A new recording is added
-      2) A recording is deleted
-      3) The times change - every minute or so
-
-    So do we keep the existing viewModel and add extra state?
 
 
 
@@ -30,6 +6,11 @@ Hmm custom audio elements are harder than I thought!
 Mono/Float recording
 
 DONE-------------------------
+
+Added custom audio element and redesigned both
+  recordings view and audio elements to render straight to dom
+  only changing what is necessary each time.
+  
 
 Fixed chrome pasthorugh issue
 

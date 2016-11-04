@@ -24,6 +24,7 @@
     .recordingListItem{
       display: table-row;
       height: 1.5em;
+      width: 100%;
     }
     .recordingListItem > span {
       display: table-cell;
@@ -35,8 +36,6 @@
     .recordingListItem > span:first-child {
       padding-left: 0.5em;
     }
-
-
 
     .vSAC_outer{
       margin-left: 1em;
@@ -61,7 +60,9 @@
     }
     .playBtn{
       float: left;
-      /*background: #0F0;*/
+      /*background: #0F0;
+      width: 1em;
+      height: 1em;*/
     }
     .svg-triangle{
       width: 1em;
@@ -81,6 +82,8 @@
   </div>
 
   <div id="recordingsBlock">
+    <ul id="recordingsListInner">
+    </ul>
   </div>
 
   <div id="dataDisplayBlock">

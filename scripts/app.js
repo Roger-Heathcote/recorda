@@ -52,12 +52,12 @@ function saveClicked(recordingID) {
   document.body.appendChild(anchor);
   anchor.click();
 }
-function vSACPlayClicked(recordingID) {
-  console.log("Got play click");
-  audioElement = document.getElementById("audio_"+recordingID);
-  console.log("AudElem:", audioElement);
-  audioElement.play();
-}
+// function vSACPlayClicked(recordingID) {
+//   console.log("Got play click");
+//   audioElement = document.getElementById("audio_"+recordingID);
+//   console.log("AudElem:", audioElement);
+//   audioElement.play();
+// }
 
 
 
@@ -89,22 +89,11 @@ function refreshDataDisplay(){
 }
 function refreshRecordings(){
   let block = document.getElementById("recordingsBlock");
+  let listInner = document.getElementById("recordingsListInner");
   let recordingsList = recorder.vm_recordings();
-  // Render HTML
-  block.innerHTML = views.recordingsBlock( recordingsList );
-  console.log("Adding event handlers now...");
-  // Add event handlers
-  recordingsList.forEach(function viewForEach(recording) {
-    audioElement = document.getElementById("audio_"+recording.id);
-    audioElement.addEventListener("timeupdate", function(event) {
-        audioCursor = document.getElementById("cursor_"+recording.id);
-        let pos = parseInt(((audioElement.currentTime / audioElement.duration) * 100), 10) + "%";
-        audioCursor.style.marginLeft = pos;
-    });
-  });
-
+  views.recordingsBlock2( document, listInner, recordingsList );
 }
 
 // RECORDER NOTIFICATION CALLBACK HANDLERS
-function recordingsListChangedCallback(){ console.log("refRecs!"); refreshRecordings(); refreshDataDisplay(); }
+function recordingsListChangedCallback(){ refreshRecordings(); refreshDataDisplay(); }
 function dataDisplayChangedCallback(){ refreshDataDisplay(); }

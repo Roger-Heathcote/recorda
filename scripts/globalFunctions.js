@@ -55,7 +55,7 @@ function humanReadableLocalDate (dateStamp) {
   let dateObject = new Date();
   dateObject.setTime(dateStamp);
   //var newDateObject = addTimezoneOffsetTo(dateObject);
-  return dateObject.toDateString();
+  return dateObject.toDateString() + " at " + dateObject.toTimeString().substring(0,8);
 }
 
 function addTimezoneOffsetTo(dateObject) {

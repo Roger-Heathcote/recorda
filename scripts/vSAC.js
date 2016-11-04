@@ -1,32 +1,49 @@
-var vSAC = function verySimpleAudioControl(id){
-  let handlerSet = false;
-  let playState = false;
-  let control = [];
-  control.push(   '<div class="vSAC">' );
-  control.push(     '<div class="playBtn">' );
-  control.push(       '<svg xmlns="http://www.w3.org/2000/svg" ' );
-  control.push(       'version="1.1" ' );
-  control.push(       'onclick=\'vSACPlayClicked("'+id+'")\' ' );
-  control.push(       'class="svg-triangle">' );
-  control.push(         '<svg viewBox="0 0 1 1" height="1em" width="1em" >' );
-  control.push(             '<polygon points="0.1 0.1, 0.1 0.9, 0.9 0.5" />' );
-  control.push(         '</svg>' );
-  control.push(       '</svg>' );
-  control.push(     '</div>' );
-  control.push(     '<div class="vSAC_outer">' );
-  control.push(       '<div class="vSAC_timeline">' );
-  control.push(         '<div class="vSAC_cursor" ' );
-  control.push(           'id=\'cursor_'+id+'\'');
-  control.push(         '>' );
-  control.push(         '</div>' );
-  control.push(       '</div>' );
-  control.push(     '</div>' );
-  control.push(   '</div>' );
-  control = control.join("");
-  return {
-    body: function(){ return control; },
-    status: function(){ return status; },
-    changeState: function(){
-       status = !status; }
+var vSAC = function verySimpleAudioControl(doc, id, audioElement){
+
+  let mainDiv = doc.createElement("div");
+  mainDiv.setAttribute("class", "vSAC");
+    let buttonDiv = doc.createElement("div"); mainDiv.appendChild(buttonDiv);
+    buttonDiv.setAttribute("class","playBtn");
+      let outerSVG = doc.createElementNS("http://www.w3.org/2000/svg", "svg"); buttonDiv.appendChild(outerSVG);
+      outerSVG.setAttribute("version", "1.1");
+      outerSVG.setAttribute("class", 'svg-triangle');
+      outerSVG.addEventListener("click", playClicked);
+        let innerSVG = doc.createElementNS("http://www.w3.org/2000/svg", "svg"); outerSVG.appendChild(innerSVG);
+        innerSVG.setAttribute("viewBox", "0 0 1 1");
+        innerSVG.setAttribute("height", "1em");
+        innerSVG.setAttribute("width", "1em");
+          let polygon = doc.createElementNS("http://www.w3.org/2000/svg", "polygon"); innerSVG.appendChild(polygon);
+          polygon.setAttribute("points", "0.1 0.1, 0.1 0.9, 0.9 0.5");
+
+    let vsacOuter = doc.createElement("div"); mainDiv.appendChild(vsacOuter);
+    vsacOuter.setAttribute("class","vSAC_outer");
+      let vsac_timeline = doc.createElement("div"); vsacOuter.appendChild(vsac_timeline);
+      vsac_timeline.setAttribute("class", "vSAC_timeline");
+      vsac_timeline.addEventListener("click", timelineClicked);
+        let vsac_cursor = doc.createElement("div"); vsac_timeline.appendChild(vsac_cursor);
+        vsac_cursor.setAttribute("class", "vSAC_cursor");
+        vsac_cursor.setAttribute("id", "cursor_" + id);
+        //vsac_cursor.addEventListener("mousedown", cursorHeld);
+
+  return mainDiv;
+
+  function playClicked(){
+    if(audioElement.paused){
+      console.log("play");
+      audioElement.play();
+    } else {
+      console.log("pause");
+      audioElement.pause();
+    }
   }
+
+  function timelineClicked(mouseEvent){
+    let rect = vsac_timeline.getBoundingClientRect();
+    let ratio = (mouseEvent.clientX - rect.left) / rect.width;
+    console.log("ratio:", ratio);
+    audioElement.currentTime = audioElement.duration * ratio;
+  }
+
+
+
 };

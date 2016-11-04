@@ -101,7 +101,6 @@ var AudioEngine = function AudioEngine(GLOBALS, loResWaveformParams=false) {
     audioInput.catch( err => console.log("gUM ERROR:",err.name) );
     audioInput.then(
       function connectUpTheAudioStream(audioStream){
-        console.log("Wanky crisps, the audioStream is:", audioStream);
         this.mediaStreamTrack = audioStream.getAudioTracks()[0];
         let source = this.audioContext.createMediaStreamSource(audioStream);
         source.connect(this.scriptNode);
@@ -111,8 +110,7 @@ var AudioEngine = function AudioEngine(GLOBALS, loResWaveformParams=false) {
     );
   }
 
-  let scriptProcessor = function scriptProcessor(audioProcessingEvent, logon=false) {
-    if(logon){console.log("You triggered?");}
+  let scriptProcessor = function scriptProcessor(audioProcessingEvent) {
     this.codeNumber++;
     let left = audioProcessingEvent.inputBuffer.getChannelData (0);
     let right = audioProcessingEvent.inputBuffer.getChannelData (1);

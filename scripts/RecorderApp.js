@@ -96,7 +96,7 @@ var RecorderApp = function RecorderApp(
 
     GLOBALS.recordings.push({
       // TODO this should use monotonic counter rather than rec length as recs may be deleted at some point
-      name: humanReadableLocalDate(dateNow) + " - Untitled " + GLOBALS.recordings.length,
+      name: humanReadableLocalDate(dateNow),
       data: WAVFileBlob,
       UCTTimestamp: dateNow,
       localTimestamp: datestampToSystemLocalDatestamp(dateNow), // need to get adjustment from humanReadableDatetime and refactor / write dateLocal(dateNow)!
@@ -113,7 +113,7 @@ var RecorderApp = function RecorderApp(
     // do we accept a callback from above?
     // yup, think so!
     if(this.recordingsListChangedCallback !== false){
-      console.log("Firing rec list change callback");
+      // console.log("Firing rec list change callback");
       this.recordingsListChangedCallback();
     }
 
@@ -185,7 +185,7 @@ var RecorderApp = function RecorderApp(
     let output = [];
     Object.keys(viewModel).forEach(
       function(name, idx){
-        console.log( name, viewModel[name], idx);
+        // console.log( name, viewModel[name], idx);
         output.push( { name:name, status:viewModel[name] } );
       }
     );
@@ -195,7 +195,7 @@ var RecorderApp = function RecorderApp(
   this.vm_recordings = function vm_recordings(){
     let list = [];
     let recordings = GLOBALS.recordings.slice();
-    recordings.reverse();
+    //recordings.reverse();
     recordings.forEach(function recordingsForEach(recording) {
       let recObj = {
         id: recording.uuid,
@@ -210,23 +210,8 @@ var RecorderApp = function RecorderApp(
   }.bind(this);
 
   this.vm_OptionalAudioConstraints = function vm_OptionalAudioConstraints(){
-    console.log("vm_OptionalAudioConstraints returns this:", this.audEng.currentAudioConstraints());
     return this.audEng.currentAudioConstraints();
   };
-
-  // this.vm_recordings = function vm_recordings() {
-  //   let out = [];
-  //   this.GLOBALS.recordings.forEach(function viewForEach(recording) {
-  //     out.push({
-  //       color: recording.color,
-  //       date: recording.date,
-  //       name: recording.name,
-  //       url: recording.url,
-  //       id: recording.id
-  //     });
-  //   });
-  //   return out;
-  // }.bind(this);
 
   this.getMemory = function getMemory() {
     let out = {};
