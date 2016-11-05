@@ -1,22 +1,28 @@
+Do some tidying
 
-
-
-
+Do some testing?
 
 Mono/Float recording
 
 DONE-------------------------
 
+Long saves blocked script processor and caused glitches
+  Made saving process into a generator
+    large array copy yields on each click of the outer loop
+    next is called on it's own separate timer
+    callback adds recording once completed
+
 Added custom audio element and redesigned both
   recordings view and audio elements to render straight to dom
   only changing what is necessary each time.
-  
+
 
 Fixed chrome pasthorugh issue
 
 Allow recording deletion
 
 Come up with better uuid ssytem than just using timestamps!
+  uuids are now random alpha strings
 
 Get dataDisplay actually working
 

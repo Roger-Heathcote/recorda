@@ -12,7 +12,7 @@ var stateObject = {
   buffer: target => this.target.changeState(this.target.states.buffer),
   record: target => this.target.changeState(this.target.states.record),
   save: target => this.target.changeState(this.target.states.save),
-  exit: target => console.log(this.target.state.name+": exiting.")
+  exit: target => null //console.log(this.target.state.name+": exiting.")
 };
 
 var bufferState = createStateObject(stateObject, "buffer", "buffering");
@@ -55,6 +55,21 @@ var RecorderApp = function RecorderApp(
   this.toggleAudioPassthrough = function toggleAudioPassthrough(){
     this.audEng.toggleAudioPassthrough();
   };
+  this.saveEngineFiresEveryXMilliseconds = 100;
+  this.saveEngineRunsForAtLeastXMilliseconds = 33;
+  this.saveEngine = function(){
+    if(this.currentSave){
+      let timeOut = Date.now() + this.saveEngineRunsForAtLeastXMilliseconds;
+      let blocksProcessed = 0;
+      do {
+        blocksProcessed++;
+        this.currentSave.next();
+      }
+      while ( Date.now() < timeOut );
+      console.log(blocksProcessed, "blocks processed")
+    }
+  }.bind(this);
+  setInterval(this.saveEngine, this.saveEngineFiresEveryXMilliseconds);
 
   bufferState.handleWaveformClick = function bufferStateHandleWaveformClick(code) {
     GLOBALS.inPoint = code;
@@ -82,40 +97,42 @@ var RecorderApp = function RecorderApp(
 
 
   saveState.execute = function saveStateExecute(arg) {
-    let WAVFileBlob = makeWAVFileBlob(
+
+    let addRecording = function addRecording(WAVFileBlob){
+      let dateNow = Date.now();
+      GLOBALS.recordings.push({
+        name: humanReadableLocalDate(dateNow),
+        data: WAVFileBlob,
+        UCTTimestamp: dateNow,
+        localTimestamp: datestampToSystemLocalDatestamp(dateNow), // need to get adjustment from humanReadableDatetime and refactor / write dateLocal(dateNow)!
+        sampleRate: this.audEng.sampleRate,
+        size: WAVFileBlob.size, // 16 bit
+        color: randomColorCode(175,250),
+        url: GLOBALS.win.URL.createObjectURL(WAVFileBlob),
+        uuid: randomUUID(8)
+      });
+      // Move to next state when complete
+      if(this.recordingsListChangedCallback !== false){
+        // console.log("Firing rec list change callback");
+        this.recordingsListChangedCallback();
+      }
+      this.currentSave = undefined;
+      this.buffer();
+    }.bind(this);
+
+
+    this.currentSave = makeWAVFileBlobGenerator(
       this.audEng.interleaved16BitAudio,
       this.audEng.codeChannel,
       GLOBALS.inPoint,
       GLOBALS.outPoint,
       this.audEng.sampleRate,
       this.audEng.channels,
-      this.audEng.bitDepth
+      this.audEng.bitDepth,
+      addRecording
     );
 
-    let dateNow = Date.now();
-
-    GLOBALS.recordings.push({
-      // TODO this should use monotonic counter rather than rec length as recs may be deleted at some point
-      name: humanReadableLocalDate(dateNow),
-      data: WAVFileBlob,
-      UCTTimestamp: dateNow,
-      localTimestamp: datestampToSystemLocalDatestamp(dateNow), // need to get adjustment from humanReadableDatetime and refactor / write dateLocal(dateNow)!
-      sampleRate: this.audEng.sampleRate,
-      size: WAVFileBlob.size, // 16 bit
-      color: randomColorCode(175,250),
-      url: GLOBALS.win.URL.createObjectURL(WAVFileBlob),
-      uuid: randomUUID(8)
-    });
-
-    this.buffer();
-
-    // TODO - figure out how to signal data display needs updating from here
-    // do we accept a callback from above?
-    // yup, think so!
-    if(this.recordingsListChangedCallback !== false){
-      // console.log("Firing rec list change callback");
-      this.recordingsListChangedCallback();
-    }
+    // console.log("this.currentSave is", this.currentSave);
 
   }.bind(this);
 
