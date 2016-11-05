@@ -65,11 +65,11 @@ var RecorderApp = function RecorderApp(
         blocksProcessed++;
         this.currentSave.next();
       }
-      while ( Date.now() < timeOut );
+      while ( this.currentSave && Date.now() < timeOut );
       console.log(blocksProcessed, "blocks processed")
     }
   }.bind(this);
-  setInterval(this.saveEngine, this.saveEngineFiresEveryXMilliseconds);
+  // Moved to init... setInterval(this.saveEngine, this.saveEngineFiresEveryXMilliseconds);
 
   bufferState.handleWaveformClick = function bufferStateHandleWaveformClick(code) {
     GLOBALS.inPoint = code;
@@ -142,11 +142,11 @@ var RecorderApp = function RecorderApp(
   };
 
   this.toggleOptionalAudioConstraint = function recorderToggleOptionalAudioConstraint(constraintName){
-    // console.log("attempting to TOGGLE THE OPTIONAL CONSTRAINT:", constraintName);
     this.audEng.toggleOptionalAudioConstraint(constraintName);
   };
 
   this.init = function RecorderAppInit() {
+    // console.log("INIT RECORDER APP!!!");
     this.inPoint = undefined;
     this.outPoint = undefined;
     this.states.buffer.init(this);
@@ -171,6 +171,7 @@ var RecorderApp = function RecorderApp(
         this.waveformClicked);
     }
 
+    setInterval(this.saveEngine, this.saveEngineFiresEveryXMilliseconds);
     this.state.enter();
     this.state.execute();
   };
