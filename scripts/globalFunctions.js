@@ -121,9 +121,17 @@ function writeUTFBytes(view, offset, string){
 }
 
 
-
+function blob2arrayBuffer(blob, callback){
+  let arrayBuffer;
+  let fileReader = new FileReader();
+  fileReader.onload = function() {
+    callback(this.result);
+  };
+  fileReader.readAsArrayBuffer(blob);
+}
 
 function bytes2Hex(bytes){
+  console.log("typeof(bytes)", typeof(bytes), bytes);
   let hexArray = [];
   let dataView = new DataView(bytes);
   for(i=0; i<bytes.byteLength; i++){

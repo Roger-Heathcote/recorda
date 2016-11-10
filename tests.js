@@ -2,13 +2,6 @@
 var fs = require('fs');
 var loadRawJS = function(fileName){ (1,eval)( fs.readFileSync(fileName,'utf8') ); }.bind(this);
 
-// //eval(fs.readFileSync('./scripts/globalFunctions.js','utf8'));
-// loadRawJS('./scripts/globalFunctions.js');
-//
-// //console.log(hslToRgb(327.0,0.91,0.71));
-// //randomColorCode
-//
-// console.log(randomColorCode(90,100));
 ( function() {
   return;
   require("web-audio-test-api");
@@ -64,18 +57,6 @@ var loadRawJS = function(fileName){ (1,eval)( fs.readFileSync(fileName,'utf8') )
   recorder.globals.inPoint = recorder.audEng.codeChannel[0];
   console.log("recGLOBS:", recorder.globals);
   recorder.record();
-
-  // (function stayAliveFor(i) {
-  //   setTimeout(function () {
-  //     recorder.audEng.scriptNode.__process();
-  //     console.log("left Channel Length:", recorder.audEng.leftChannel.length);
-  //     console.log("left Channel [0]:", recorder.audEng.leftChannel[0]);
-  //     console.log("Code number:", recorder.audEng.codeNumber);
-  //     if (--i) {          // If i > 0, keep going
-  //       stayAliveFor(i);       // Call the loop again, and pass it the current value of i
-  //     }
-  //   }, 2000);
-  // })(5);
 }());
 
 
@@ -153,6 +134,10 @@ function makeBufferTestFixture(inputString){
       return fakeMediaStreamSource;
     };
   };
+  window.URL = {};
+  window.URL.createObjectURL = function fakeCreateObjectURL(blob){
+    return "http://fake.url.for.testing";
+  }
 
   let navigator = {};
   navigator.mediaDevices = {};
@@ -211,13 +196,9 @@ function makeBufferTestFixture(inputString){
     bufferLength
   );
   recorder.init();
-  // recorder.globals.inPoint = recorder.audEng.codeChannel[0];
-  // console.log("recGLOBS:", recorder.globals);
   recorder.record();
 
-  console.log("Borls");
-
-  var ScriptNodeTestFixture = function ScriptNodeTestFixture(){
+  let ScriptNodeTestFixture = function ScriptNodeTestFixture(){
       this.data = Float32Array.from(createScriptProcessorTestFixture(4096));
       this.inputBuffer = {
         getChannelData: function(index){
@@ -229,17 +210,38 @@ function makeBufferTestFixture(inputString){
           return 1;
         }
       };
-  };
+  }.bind(this);
 
   scriptNodeTestFixture = new ScriptNodeTestFixture();
-  recorder.audEng.scriptNode.onaudioprocess( scriptNodeTestFixture, true );
-  recorder.audEng.scriptNode.onaudioprocess( scriptNodeTestFixture, true );
   console.log("yeah done");
-  setInterval( recorder.audEng.scriptNode.onaudioprocess, 1000, scriptNodeTestFixture, true );
+  //setInterval( recorder.audEng.scriptNode.onaudioprocess, 1000, scriptNodeTestFixture, true );
+  for(cnt=0; cnt<10; cnt++){
+    recorder.audEng.scriptNode.onaudioprocess(scriptNodeTestFixture, true);
+  }
+
+  recorder.globals.inPoint=0;
+  recorder.globals.outPoint=recorder.audEng.codeNumber;
+  console.log("recorder.audEng", recorder.audEng);
+  console.log("WAAAAAAAAAANNNNNNGGGGGGG", recorder.globals);
+  recorder.save();
+
+  setTimeout(
+    nextstep,
+    0,
+    recorder
+  );
 
 })();
 
-
+function nextstep(recorder) {
+  console.log("YEah bwoy");
+  blob = recorder.globals.recordings[0].data;
+  blob2arrayBuffer(blob, function(data){
+    console.log("Data is", typeof(data), data.byteLength, data);
+    console.log( bytes2Hex(data) );
+    console.log( bytes2AsciiAndNumbers(data) );
+  });
+}
 
 function createScriptProcessorTestFixture(lenf){
   out = [];
