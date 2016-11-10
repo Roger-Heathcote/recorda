@@ -1,8 +1,9 @@
-Do some tidying
-
-Do some testing?
-
 Mono/Float recording
+  write an end to end test so we can refactor a bit more safely?
+
+refactor views into theri own files
+  combining display code and event handlers into one file.
+
 
 DONE-------------------------
 

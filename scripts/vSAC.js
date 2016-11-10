@@ -1,3 +1,5 @@
+//jshint esversion: 6
+
 var vSAC = function verySimpleAudioControl(doc, id, audioElement){
 
   let mainDiv = doc.createElement("div");
@@ -23,7 +25,6 @@ var vSAC = function verySimpleAudioControl(doc, id, audioElement){
         let vsac_cursor = doc.createElement("div"); vsac_timeline.appendChild(vsac_cursor);
         vsac_cursor.setAttribute("class", "vSAC_cursor");
         vsac_cursor.setAttribute("id", "cursor_" + id);
-        //vsac_cursor.addEventListener("mousedown", cursorHeld);
 
   return mainDiv;
 
@@ -43,7 +44,5 @@ var vSAC = function verySimpleAudioControl(doc, id, audioElement){
     console.log("ratio:", ratio);
     audioElement.currentTime = audioElement.duration * ratio;
   }
-
-
 
 };

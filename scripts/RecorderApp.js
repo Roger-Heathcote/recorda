@@ -187,7 +187,6 @@ var RecorderApp = function RecorderApp(
     }
   };
 
-
   this.waveformClicked = function waveformClicked(code) {
     this.state.handleWaveformClick(code);
   }.bind(this);
@@ -237,8 +236,6 @@ var RecorderApp = function RecorderApp(
     out.buffers = formatBytes(this.audEng.interleaved16BitAudio.length * this.audEng.scriptProcessorBuffer);
     return out;
   }.bind(this);
-
-  // this.
 
   this.getRecordingByUuid = function getRecordingByUuid(id) {
     return GLOBALS.recordings.filter( (obj) => obj.uuid === id )[0];

@@ -3,17 +3,12 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>RECORDA</title>
-	<!--[if le IE 9]>
-      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-      <script src="scripts/respond.js"></script>
-  <![endif]-->
+	<title>RECORDA - buffering recorder</title>
   <style>
     body{
       padding: 0px;
       margin: 0px;
     }
-    /*.wrapper { width:100%; height:600px; }*/
     ul {
       list-style-type: none;
       margin:0px;
@@ -36,7 +31,6 @@
     .recordingListItem > span:first-child {
       padding-left: 0.5em;
     }
-
     .vSAC_outer{
       margin-left: 1em;
       background: #AAA;
@@ -48,7 +42,6 @@
     }
     .vSAC_timeline{
       width: calc(100% - 1em);
-
     }
     .vSAC_cursor{
       background: #555;
@@ -60,9 +53,6 @@
     }
     .playBtn{
       float: left;
-      /*background: #0F0;
-      width: 1em;
-      height: 1em;*/
     }
     .svg-triangle{
       width: 1em;
@@ -73,9 +63,6 @@
   </style>
 </head>
 <body>
-
-  <!-- <div id="vSACtest">
-  </div> -->
 
   <div id="wrapper">
      <canvas id="waveform"></canvas>
@@ -92,13 +79,10 @@
   <div id="optionsBlock">
   </div>
 
-
-
   <button onclick='audioPassthroughClicked()'>audio passthrough</button>
   <button onclick='refreshDataDisplayClicked()'>Refresh data display</button>
-  <!--<button onclick='refreshOptionsView()'>refreshOptionsView</button>-->
 
-
+  <!-- SCRIPT IMPORTS BELOW THIS LINE ONLY -->
   <script src="scripts/vSAC.js"></script>
   <script src="scripts/views.js"></script>
   <script src="scripts/OptionalAudioConstraints.js"></script>

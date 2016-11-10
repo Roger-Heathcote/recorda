@@ -70,7 +70,7 @@ function refreshRecordings(){
   let block = document.getElementById("recordingsBlock");
   let listInner = document.getElementById("recordingsListInner");
   let recordingsList = recorder.vm_recordings();
-  views.recordingsBlock2( document, listInner, recordingsList );
+  views.recordingsBlock( document, listInner, recordingsList );
 }
 
 // RECORDER NOTIFICATION CALLBACK HANDLERS
