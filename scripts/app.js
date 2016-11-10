@@ -34,9 +34,8 @@ function optionToggleClicked(name){ this.recorder.toggleOptionalAudioConstraint(
 function saveClicked(recordingID) {
   // SAVE BUTTONS HANDLER: recording_id => browser download
   let recording = recorder.getRecordingByUuid(recordingID);
-  let url = window.URL.createObjectURL(recording.data);
   anchor = document.createElement("a");
-  anchor.href = url;
+  anchor.href = recording.url;
   anchor.download = recording.name + ".wav";
   document.body.appendChild(anchor);
   anchor.click();
