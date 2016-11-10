@@ -88,7 +88,7 @@ views = {
         rootNode.insertBefore(li, rootNode.firstChild);
       }
       let idx = currentlyDisplayed.indexOf("recording_"+recording.id);
-      if(idx!=-1){ currentlyDisplayed.splice(idx, 1) }
+      if(idx!=-1){ currentlyDisplayed.splice(idx, 1); }
 
 
   });
@@ -98,7 +98,7 @@ views = {
   currentlyDisplayed.forEach(function(each){
     let node = doc.getElementById(each);
     rootNode.removeChild(node);
-  })
+  });
 
   // let items2 = [].slice.call(rootNode.getElementsByTagName("li"));
   // let toDelete = items2.filter( function(each){
@@ -209,7 +209,7 @@ views = {
         output.push(   "</span>" );
         output.push( "</li>" );
       }
-    );
+             );
     return ["<ul class=\"tabloid\">", ...output, "</ul>"].join("");
   }
 
