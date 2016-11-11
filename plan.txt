@@ -5,6 +5,22 @@ Mono/Float recording
       // TODO inPoint and outPoint are relative to loResCodeChannel
       // This doesn't even exist when we're runnig headless!
       // Fuuuuuuuuu
+
+      Everything is relative to loRes code chanel up until makeWAVFileBlobGenerator
+      Have renames inPoint and outPoint to reflect this.
+      Internally recorder should use full res in/outPoints
+        it should leave the loRes in place as these are global and the waveform display
+        uses them and converting them back may be imprecise.
+        only point of loRes ingress to recorder is in
+          bufferStateHandleWaveformClick(code) and
+          recordStateHandleWaveformClick(code)
+            so update two other properties of recorder whenever these are modified
+              can we (and should we) use es6 proxies for this??
+              it looks like proxies only work on the properties of objects
+                so we could proxy all of GLOBALS
+                or make inPoint and outPoint properties of a new obj and
+                  just proxy that.
+
       // function* makeWAVFileBlobGenerator(
 
       make makeWAVFileBlobGenerator work on actual full rescode channel

@@ -47,7 +47,7 @@ let WaveformDisplay = function WaveformDisplay(GLOBALS, the_window, canvas, mous
 
     record: function waveDrawStates_record(GLOBALS, mouse, canvas, canvasCtx, codeChan) {
       let mouseStatus = mouse.status();
-      let inPointX = ratio(codeChan, GLOBALS.inPoint, canvas.width);
+      let inPointX = ratio(codeChan, GLOBALS.loResInPoint, canvas.width);
       //console.log(mouseStatus.x, inPointX);
       if (mouseStatus.over && (mouseStatus.x>inPointX)) {
         //console.log("happenin!");
@@ -65,8 +65,8 @@ let WaveformDisplay = function WaveformDisplay(GLOBALS, the_window, canvas, mous
 
     save: function waveDrawStates_save(GLOBALS, mouse, canvas, canvasCtx, codeChan) {
       let mouseStatus = mouse.status();
-      let inPointX = ratio(codeChan, GLOBALS.inPoint, canvas.width);
-      let outPointX = ratio(codeChan, GLOBALS.outPoint, canvas.width);
+      let inPointX = ratio(codeChan, GLOBALS.loResInPoint, canvas.width);
+      let outPointX = ratio(codeChan, GLOBALS.loResOutPoint, canvas.width);
       canvasCtx.fillStyle = 'rgb(255, 255, 255)';
       canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
       canvasCtx.fillStyle = 'rgb(150, 150, 150)';

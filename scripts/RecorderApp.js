@@ -32,13 +32,28 @@ var RecorderApp = function RecorderApp(
     dataDisplayChangedCallback=false
   ){
   let instance = this;
+
   let GLOBALS = {
     win:window,
     nav:navigator,
     state:"buffer",
     secondsToBuffer: bufferLength,
-    inPoint: undefined,
-    outPoint: undefined,
+    loResInPoint: undefined,
+    loResOutPoint: undefined,
+    fullResInPoint: undefined,
+    fullResOutPoint: undefined,
+    setLoResInPoint: function(v){
+      this.loResInPoint = v;
+      console.log("In set to", v);
+      this.fullResInPoint = binarySearch(instance.audEng.codeChannel, v);
+      console.log("full res in set to", this.fullResInPoint);
+    },
+    setLoResOutPoint: function(v){
+      this.loResOutPoint = v;
+      console.log("Out set to", v);
+      this.fullResOutPoint = binarySearch(instance.audEng.codeChannel, v);
+      console.log("full res out set to", this.fullResOutPoint);
+    },
     recordings: new Array(0)
   };
   this.audEng = undefined;
@@ -46,8 +61,8 @@ var RecorderApp = function RecorderApp(
   this.mouse = undefined;
   this.state = undefined;
   this.mouse = undefined;
-  this.inPoint = undefined;
-  this.outPoint = undefined;
+  // this.loResInPoint = undefined;
+  // this.loResOutPoint = undefined;
   this.states = { buffer: bufferState, record: recordState, save: saveState };
   this.globals = GLOBALS;
   this.recordingsListChangedCallback = recordingsListChangedCallback;
@@ -66,23 +81,25 @@ var RecorderApp = function RecorderApp(
         this.currentSave.next();
       }
       while ( this.currentSave && Date.now() < timeOut );
-      console.log(blocksProcessed, "blocks processed by save engine")
+      console.log(blocksProcessed, "blocks processed by save engine");
     }
   }.bind(this);
   // Moved to init... setInterval(this.saveEngine, this.saveEngineFiresEveryXMilliseconds);
 
   bufferState.handleWaveformClick = function bufferStateHandleWaveformClick(code) {
-    GLOBALS.inPoint = code; // relative to loResCodeChannel
-    console.log("inPoint set:", GLOBALS.inPoint);
+    // GLOBALS.loResInPoint = code; // relative to loResCodeChannel
+    GLOBALS.setLoResInPoint(code);
+    console.log("inPoint set as:", GLOBALS.loResInPoint);
     GLOBALS.state = "record";
     this.record();
   }.bind(this);
 
   recordState.handleWaveformClick = function recordStateHandleWaveformClick(code) {
-    if(code >= GLOBALS.inPoint) // outpoint must be after in point!
+    if(code >= GLOBALS.loResInPoint) // outpoint must be after in point!
       {
-        GLOBALS.outPoint = code;
-        console.log("outPoint set:", GLOBALS.outPoint);
+        // GLOBALS.loResOutPoint = code;
+        GLOBALS.setLoResOutPoint(code);
+        console.log("outPoint set as:", GLOBALS.loResOutPoint);
         GLOBALS.state = "save";
         this.save();
       } else {
@@ -124,21 +141,23 @@ var RecorderApp = function RecorderApp(
     this.currentSave = makeWAVFileBlobGenerator(
       this.audEng.interleaved16BitAudio,
       this.audEng.codeChannel, // Erm, why this all zeros?
-      GLOBALS.inPoint,
-      GLOBALS.outPoint,
+      //GLOBALS.loResInPoint,
+      GLOBALS.fullResInPoint,
+      //GLOBALS.loResOutPoint,
+      GLOBALS.fullResOutPoint,
       this.audEng.sampleRate,
       this.audEng.channels,
       this.audEng.bitDepth,
       addRecording
     );
 
-    // console.log("this.currentSave is", this.currentSave);
+    console.log("this.currentSave is", this.currentSave);
 
   }.bind(this);
 
   saveState.exit = function saveStateExit(arg){
-    GLOBALS.inPoint = undefined;
-    GLOBALS.outPoint = undefined;
+    GLOBALS.setLoResInPoint(undefined);
+    GLOBALS.setLoResOutPoint(undefined);
   };
 
   this.toggleOptionalAudioConstraint = function recorderToggleOptionalAudioConstraint(constraintName){
@@ -146,20 +165,12 @@ var RecorderApp = function RecorderApp(
   };
 
   this.init = function RecorderAppInit() {
-    // console.log("INIT RECORDER APP!!!");
-    this.inPoint = undefined;
-    this.outPoint = undefined;
     this.states.buffer.init(this);
     this.states.record.init(this);
     this.states.save.init(this);
     this.state = this.states.buffer;
-
     this.audEng = new AudioEngine(GLOBALS, loResWaveformParams, this.optionalMediaConstraints);
-
-    if(MouseStatus) {
-      this.mouse = new MouseStatus(canvas);
-    }
-
+    if(MouseStatus) { this.mouse = new MouseStatus(canvas); }
     if(WaveformDisplay){
       this.waveDisp = new WaveformDisplay(
         GLOBALS,
@@ -170,7 +181,6 @@ var RecorderApp = function RecorderApp(
         this.audEng.loResCodeChannel,
         this.waveformClicked);
     }
-
     setInterval(this.saveEngine, this.saveEngineFiresEveryXMilliseconds);
     this.state.enter();
     this.state.execute();
@@ -258,6 +268,6 @@ function createStateObject(stateObject, stateName, stateIng) {
 }
 
 function getURLOrDont(win, blob){
-  if(win.URL){ return win.URL.createObjectURL(WAVFileBlob); }
+  if(win.URL){ return win.URL.createObjectURL(blob); }
   return "http://no.URL.on.window.object.probably.running.headless";
 }

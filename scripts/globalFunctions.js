@@ -1,30 +1,30 @@
 //jshint esversion: 6
 
 function binarySearch(array, key, zeroOrThrow=0) {
-    let lo = 0,
-        hi = array.length - 1,
-        mid,
-        element;
-    while (lo <= hi) {
-        mid = ((lo + hi) >> 1);
-        element = array[mid];
-        if (element < key) {
-            lo = mid + 1;
-        } else if (element > key) {
-            hi = mid - 1;
-        } else {
-            return mid;
-        }
+  if(!key){ return undefined; }
+  let lo = 0,
+    hi = array.length - 1,
+    mid,
+    element;
+  while (lo <= hi) {
+    mid = ((lo + hi) >> 1);
+    element = array[mid];
+    if (element < key) {
+      lo = mid + 1;
+    } else if (element > key) {
+      hi = mid - 1;
+    } else {
+      return mid;
     }
-    console.log("Search array:", array);
-    if (zeroOrThrow)
-      {
-        throw( new Error("Not Found!") );
-      } else {
-        return 0;
-      }
+  }
+  console.log("Search array:", array);
+  if (zeroOrThrow)
+    {
+      throw( new Error("Not Found!") );
+    } else {
+      return 0;
+    }
 }
-
 
 function sanitize( dirty ){
   var ESC_MAP = {
@@ -258,8 +258,9 @@ function* makeWAVFileBlobGenerator(
   bitDepth,
   callback
 ){
-  properInFrame = binarySearch(code, inPoint);
-  properOutFrame = binarySearch(code, outPoint);
+
+  properInFrame = inPoint; //binarySearch(code, inPoint);
+  properOutFrame = inPoint; //binarySearch(code, outPoint);
   frameSize = audioChunks[audioChunks.length-1].length;
   frameSizeInBytes = audioChunks[audioChunks.length-1].length * 2;
   numFrames = outPoint - inPoint;
@@ -269,6 +270,7 @@ function* makeWAVFileBlobGenerator(
   // Write audio data
   let audioSection = new DataView( fileBuffer, 44 );
   let frameOffset = 0;
+
   for(sourceIndex = properInFrame; sourceIndex < (properInFrame + numFrames); sourceIndex++){
     for(destIndex = 0; destIndex < (frameSize); destIndex++){
       audioSection.setInt16(frameOffset + (destIndex*2), audioChunks[sourceIndex][destIndex],true);
