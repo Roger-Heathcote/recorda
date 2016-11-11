@@ -244,6 +244,9 @@ function randomUUID(UUIDLength){
 }
 
 
+// TODO inPoint and outPoint are relative to loResCodeChannel
+// This doesn't even exist when we're runnig headless!
+// Fuuuuuuuuu
 
 function* makeWAVFileBlobGenerator(
   audioChunks,

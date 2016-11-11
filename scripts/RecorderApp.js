@@ -66,7 +66,7 @@ var RecorderApp = function RecorderApp(
         this.currentSave.next();
       }
       while ( this.currentSave && Date.now() < timeOut );
-      console.log(blocksProcessed, "blocks processed")
+      console.log(blocksProcessed, "blocks processed by save engine")
     }
   }.bind(this);
   // Moved to init... setInterval(this.saveEngine, this.saveEngineFiresEveryXMilliseconds);
@@ -99,6 +99,7 @@ var RecorderApp = function RecorderApp(
   saveState.execute = function saveStateExecute(arg) {
 
     let addRecording = function addRecording(WAVFileBlob){
+      console.log("Adding recording, blob is:", WAVFileBlob);
       let dateNow = Date.now();
       GLOBALS.recordings.push({
         name: humanReadableLocalDate(dateNow),
@@ -120,10 +121,9 @@ var RecorderApp = function RecorderApp(
       this.buffer();
     }.bind(this);
 
-
     this.currentSave = makeWAVFileBlobGenerator(
       this.audEng.interleaved16BitAudio,
-      this.audEng.codeChannel,
+      this.audEng.codeChannel, // Erm, why this all zeros?
       GLOBALS.inPoint,
       GLOBALS.outPoint,
       this.audEng.sampleRate,

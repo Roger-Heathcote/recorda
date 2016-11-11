@@ -1,5 +1,18 @@
 Mono/Float recording
   write an end to end test so we can refactor a bit more safely?
+    Fun fun fun!!!
+
+      // TODO inPoint and outPoint are relative to loResCodeChannel
+      // This doesn't even exist when we're runnig headless!
+      // Fuuuuuuuuu
+      // function* makeWAVFileBlobGenerator(
+
+      make makeWAVFileBlobGenerator work on actual full rescode channel
+      split out loRes to hiRes conversion
+      make calling code in waveform do that conversion first
+      don't convert in tests
+        just chase to first real value in full res code channels for inPoint
+        and set outpoint as codeNumber
 
 refactor views into theri own files
   combining display code and event handlers into one file.

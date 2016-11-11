@@ -199,10 +199,11 @@ function makeBufferTestFixture(inputString){
   recorder.record();
 
   let ScriptNodeTestFixture = function ScriptNodeTestFixture(){
-      this.data = Float32Array.from(createScriptProcessorTestFixture(4096));
+      let data = Float32Array.from(createScriptProcessorTestFixture(4096));
       this.inputBuffer = {
         getChannelData: function(index){
-          return 1;
+          let wevs = data;
+          return data;
         }
       };
       this.outputBuffer = {
@@ -215,19 +216,24 @@ function makeBufferTestFixture(inputString){
   scriptNodeTestFixture = new ScriptNodeTestFixture();
   console.log("yeah done");
   //setInterval( recorder.audEng.scriptNode.onaudioprocess, 1000, scriptNodeTestFixture, true );
-  for(cnt=0; cnt<10; cnt++){
+  for(cnt=0; cnt<5; cnt++){
     recorder.audEng.scriptNode.onaudioprocess(scriptNodeTestFixture, true);
   }
 
-  recorder.globals.inPoint=0;
-  recorder.globals.outPoint=recorder.audEng.codeNumber;
+  //recorder.globals.inPoint=0;
+  let myindex = 0;
+  //debugger
+  while (recorder.audEng.codeChannel[myindex] === 0) {myindex++;}
+  //debugger
+  recorder.globals.inPoint=myindex; // TODO, coords are currently loRes, we need hi!
+  recorder.globals.outPoint=recorder.globals.inPoint + recorder.audEng.codeNumber;
   console.log("recorder.audEng", recorder.audEng);
   console.log("WAAAAAAAAAANNNNNNGGGGGGG", recorder.globals);
   recorder.save();
 
   setTimeout(
     nextstep,
-    0,
+    2000,
     recorder
   );
 
