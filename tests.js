@@ -1,66 +1,13 @@
 /*jshint esversion: 6 */
+/*jshint -W027 */
+/*jshint -W067 */
+
+
 var fs = require('fs');
 var loadRawJS = function(fileName){ (1,eval)( fs.readFileSync(fileName,'utf8') ); }.bind(this);
 
-( function() {
-  return;
-  require("web-audio-test-api");
-
-  let navigator = {};
-    // This program is licensed under the MIT License.
-  navigator.getUserMedia = function(opt, ok, ng) {
-    console.log("Sure I'm GetUserMedia, come on over.");
-    console.log("THIS IS: ", this, ok);
-    let audioStream = this.audioContext.createMediaStreamSource();
-    ok(audioStream);
-    //ok(null);
-  };
-  AudioContext.prototype.createMediaStreamSource = function() {
-      var osc = this.createOscillator();
-      osc.type = 'sine';
-      var gain = this.createGain();
-      gain.gain.value = 0.0;
-      osc.connect(gain);
-      osc.start(0);
-      setInterval(function() {
-          gain.gain.value = 0.5;
-          setTimeout(function() { gain.gain.value = 0.0; }, 800);
-      }, 1000);
-      return gain;
-  };
-
-  a = new AudioContext();
-  console.log(a);
-  //b = new window.AudioContext;
-  //console.log(b);
-
-  let window = {};
-  window.AudioContext = AudioContext;
-
-  loadRawJS('./scripts/globalFunctions.js');
-  loadRawJS('./scripts/humane_dates.js');
-  loadRawJS('./scripts/AudioEngine.js');
-  loadRawJS('./scripts/RecorderApp.js');
-  //loadRawJS('./scripts/.js');
-  //sloadRawJS('./scripts/.js');
-
-  const bufferLength = 30;
-  const loResWaveformParams = { dataPoints: 300, secondsToDisplay: bufferLength };
-  console.log("Constructing new RecorderApp");
-  recorder = new RecorderApp(
-    window,
-    navigator,
-    AudioEngine,
-    bufferLength
-  );
-  recorder.init();
-  recorder.globals.inPoint = recorder.audEng.codeChannel[0];
-  console.log("recGLOBS:", recorder.globals);
-  recorder.record();
-}());
-
-
 ( function () {
+  return;
   let testName = "Test stereoFloat32ToInterleavedInt16";
   loadRawJS('./scripts/globalFunctions.js');
   left = Float32Array.from([1,0.5,0,-0.5]);
@@ -134,10 +81,10 @@ function makeBufferTestFixture(inputString){
       return fakeMediaStreamSource;
     };
   };
-  window.URL = {};
-  window.URL.createObjectURL = function fakeCreateObjectURL(blob){
-    return "http://fake.url.for.testing";
-  }
+  // window.URL = {};
+  // window.URL.createObjectURL = function fakeCreateObjectURL(blob){
+  //   return "http://fake.url.for.testing";
+  // }
 
   let navigator = {};
   navigator.mediaDevices = {};
@@ -166,20 +113,6 @@ function makeBufferTestFixture(inputString){
     );
 
   };
-
-
-
-
-
-
-  // function(opt, ok, ng) {
-  //   console.log("Sure I'm GetUserMedia, come on over.");
-  //   console.log("THIS IS: ", this, ok);
-  //   //let audioStream = this.audioContext.createMediaStreamSource();
-  //   //ok(audioStream);
-  //   //ok(null);
-  // };
-
 
   loadRawJS('./scripts/OptionalAudioConstraints.js');
   loadRawJS('./scripts/globalFunctions.js');

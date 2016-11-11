@@ -72,7 +72,7 @@ var RecorderApp = function RecorderApp(
   // Moved to init... setInterval(this.saveEngine, this.saveEngineFiresEveryXMilliseconds);
 
   bufferState.handleWaveformClick = function bufferStateHandleWaveformClick(code) {
-    GLOBALS.inPoint = code;
+    GLOBALS.inPoint = code; // relative to loResCodeChannel
     console.log("inPoint set:", GLOBALS.inPoint);
     GLOBALS.state = "record";
     this.record();
@@ -109,7 +109,7 @@ var RecorderApp = function RecorderApp(
         sampleRate: this.audEng.sampleRate,
         size: WAVFileBlob.size, // 16 bit
         color: randomColorCode(175,250),
-        url: GLOBALS.win.URL.createObjectURL(WAVFileBlob),
+        url: getURLOrDont(GLOBALS.win,WAVFileBlob),
         uuid: randomUUID(8)
       });
       // Move to next state when complete
@@ -255,4 +255,9 @@ function createStateObject(stateObject, stateName, stateIng) {
   newObject.name = stateName;
   newObject[stateName] = target => console.log(this.target.state.name+": already "+stateIng+".");
   return newObject;
+}
+
+function getURLOrDont(win, blob){
+  if(win.URL){ return win.URL.createObjectURL(WAVFileBlob); }
+  return "http://no.URL.on.window.object.probably.running.headless";
 }
