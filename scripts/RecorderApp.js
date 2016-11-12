@@ -44,15 +44,12 @@ var RecorderApp = function RecorderApp(
     fullResOutPoint: undefined,
     setLoResInPoint: function(v){
       this.loResInPoint = v;
-      console.log("In set to", v);
       this.fullResInPoint = binarySearch(instance.audEng.codeChannel, v);
-      console.log("full res in set to", this.fullResInPoint);
+      console.log("GLOBALS:", GLOBALS);
     },
     setLoResOutPoint: function(v){
       this.loResOutPoint = v;
-      console.log("Out set to", v);
       this.fullResOutPoint = binarySearch(instance.audEng.codeChannel, v);
-      console.log("full res out set to", this.fullResOutPoint);
     },
     recordings: new Array(0)
   };
@@ -61,8 +58,6 @@ var RecorderApp = function RecorderApp(
   this.mouse = undefined;
   this.state = undefined;
   this.mouse = undefined;
-  // this.loResInPoint = undefined;
-  // this.loResOutPoint = undefined;
   this.states = { buffer: bufferState, record: recordState, save: saveState };
   this.globals = GLOBALS;
   this.recordingsListChangedCallback = recordingsListChangedCallback;
@@ -70,11 +65,11 @@ var RecorderApp = function RecorderApp(
   this.toggleAudioPassthrough = function toggleAudioPassthrough(){
     this.audEng.toggleAudioPassthrough();
   };
-  this.saveEngineFiresEveryXMilliseconds = 100;
-  this.saveEngineRunsForAtLeastXMilliseconds = 33;
+  this.saveEngineFiresEveryXMs = 100;
+  this.saveEngineRunsForAboutXMs = 33;
   this.saveEngine = function(){
     if(this.currentSave){
-      let timeOut = Date.now() + this.saveEngineRunsForAtLeastXMilliseconds;
+      let timeOut = Date.now() + this.saveEngineRunsForAboutXMs;
       let blocksProcessed = 0;
       do {
         blocksProcessed++;
@@ -84,7 +79,7 @@ var RecorderApp = function RecorderApp(
       console.log(blocksProcessed, "blocks processed by save engine");
     }
   }.bind(this);
-  // Moved to init... setInterval(this.saveEngine, this.saveEngineFiresEveryXMilliseconds);
+  // Moved to init... setInterval(this.saveEngine, this.saveEngineFiresEveryXMs);
 
   bufferState.handleWaveformClick = function bufferStateHandleWaveformClick(code) {
     // GLOBALS.loResInPoint = code; // relative to loResCodeChannel
@@ -141,9 +136,7 @@ var RecorderApp = function RecorderApp(
     this.currentSave = makeWAVFileBlobGenerator(
       this.audEng.interleaved16BitAudio,
       this.audEng.codeChannel, // Erm, why this all zeros?
-      //GLOBALS.loResInPoint,
       GLOBALS.fullResInPoint,
-      //GLOBALS.loResOutPoint,
       GLOBALS.fullResOutPoint,
       this.audEng.sampleRate,
       this.audEng.channels,
@@ -181,7 +174,7 @@ var RecorderApp = function RecorderApp(
         this.audEng.loResCodeChannel,
         this.waveformClicked);
     }
-    setInterval(this.saveEngine, this.saveEngineFiresEveryXMilliseconds);
+    setInterval(this.saveEngine, this.saveEngineFiresEveryXMs);
     this.state.enter();
     this.state.execute();
   };
