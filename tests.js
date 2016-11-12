@@ -2,7 +2,6 @@
 /*jshint -W027 */
 /*jshint -W067 */
 
-
 var fs = require('fs');
 var loadRawJS = function(fileName){ (1,eval)( fs.readFileSync(fileName,'utf8') ); }.bind(this);
 
@@ -21,7 +20,6 @@ var loadRawJS = function(fileName){ (1,eval)( fs.readFileSync(fileName,'utf8') )
   }
 }());
 
-
 ( function () {
   let testName = "Test stereoFloat32ToInterleavedInt16 empty";
   loadRawJS('./scripts/globalFunctions.js');
@@ -36,8 +34,6 @@ var loadRawJS = function(fileName){ (1,eval)( fs.readFileSync(fileName,'utf8') )
   }
 }());
 
-
-
 function makeBufferTestFixture(inputString){
   let buffer = new ArrayBuffer(inputString.length);
   let view = new DataView(buffer);
@@ -47,9 +43,6 @@ function makeBufferTestFixture(inputString){
   }
   return buffer;
 }
-
-
-
 
 ( function(){
 
@@ -81,10 +74,6 @@ function makeBufferTestFixture(inputString){
       return fakeMediaStreamSource;
     };
   };
-  // window.URL = {};
-  // window.URL.createObjectURL = function fakeCreateObjectURL(blob){
-  //   return "http://fake.url.for.testing";
-  // }
 
   let navigator = {};
   navigator.mediaDevices = {};
@@ -147,14 +136,14 @@ function makeBufferTestFixture(inputString){
   }.bind(this);
 
   scriptNodeTestFixture = new ScriptNodeTestFixture();
+
   console.log("yeah done");
-  //setInterval( recorder.audEng.scriptNode.onaudioprocess, 1000, scriptNodeTestFixture, true );
   for(cnt=0; cnt<5; cnt++){
     recorder.audEng.scriptNode.onaudioprocess(scriptNodeTestFixture, true);
   }
   let myindex = 0;
   while (recorder.audEng.codeChannel[myindex] === 0) {myindex++;}
-  recorder.fullResInPoint=myindex; // TODO, coords are currently loRes, we need hi!
+  recorder.fullResInPoint=myindex;
   recorder.fullResOutPoint=recorder.fullResInPoint + recorder.audEng.codeNumber;
   recorder.save();
 
@@ -173,6 +162,7 @@ function nextstep(recorder) {
 }
 
 function createScriptProcessorTestFixture(lenf){
+  // lets make this a gernerator that returns chunks of an actual test wav
   out = [];
   cur = 0;
   ofs = 0.01;
