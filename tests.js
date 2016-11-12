@@ -152,21 +152,13 @@ function makeBufferTestFixture(inputString){
   for(cnt=0; cnt<5; cnt++){
     recorder.audEng.scriptNode.onaudioprocess(scriptNodeTestFixture, true);
   }
-
-  //recorder.globals.loResInPoint=0;
   let myindex = 0;
   while (recorder.audEng.codeChannel[myindex] === 0) {myindex++;}
-  recorder.globals.fullResInPoint=myindex; // TODO, coords are currently loRes, we need hi!
-  recorder.globals.fullResOutPoint=recorder.globals.fullResInPoint + recorder.audEng.codeNumber;
-  console.log("recorder.audEng", recorder.audEng);
-  console.log("WAAAAAAAAAANNNNNNGGGGGGG", recorder.globals);
+  recorder.fullResInPoint=myindex; // TODO, coords are currently loRes, we need hi!
+  recorder.fullResOutPoint=recorder.fullResInPoint + recorder.audEng.codeNumber;
   recorder.save();
 
-  setTimeout(
-    nextstep,
-    2000,
-    recorder
-  );
+  setTimeout( nextstep, 0, recorder ); // Need to let the event loop turn
 
 })();
 

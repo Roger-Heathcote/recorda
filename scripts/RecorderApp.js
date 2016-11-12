@@ -40,19 +40,19 @@ var RecorderApp = function RecorderApp(
     secondsToBuffer: bufferLength,
     loResInPoint: undefined,
     loResOutPoint: undefined,
-    fullResInPoint: undefined,
-    fullResOutPoint: undefined,
     setLoResInPoint: function(v){
       this.loResInPoint = v;
-      this.fullResInPoint = binarySearch(instance.audEng.codeChannel, v);
+      instance.fullResInPoint = binarySearch(instance.audEng.codeChannel, v);
       console.log("GLOBALS:", GLOBALS);
     },
     setLoResOutPoint: function(v){
       this.loResOutPoint = v;
-      this.fullResOutPoint = binarySearch(instance.audEng.codeChannel, v);
+      instance.fullResOutPoint = binarySearch(instance.audEng.codeChannel, v);
     },
     recordings: new Array(0)
   };
+  this.fullResInPoint = undefined;
+  this.fullResOutPoint = undefined;
   this.audEng = undefined;
   this.waveDisp = undefined;
   this.mouse = undefined;
@@ -136,8 +136,8 @@ var RecorderApp = function RecorderApp(
     this.currentSave = makeWAVFileBlobGenerator(
       this.audEng.interleaved16BitAudio,
       this.audEng.codeChannel, // Erm, why this all zeros?
-      GLOBALS.fullResInPoint,
-      GLOBALS.fullResOutPoint,
+      this.fullResInPoint,
+      this.fullResOutPoint,
       this.audEng.sampleRate,
       this.audEng.channels,
       this.audEng.bitDepth,
