@@ -1,4 +1,5 @@
 //jshint esversion: 6
+//jshint -W027
 
 function binarySearch(array, key, zeroOrThrow=0) {
   if(!key){ return undefined; }
@@ -272,11 +273,12 @@ function* makeWAVFileBlobGenerator(
   let frameOffset = 0;
 
   for(sourceIndex = properInFrame; sourceIndex < (properInFrame + numFrames); sourceIndex++){
+    // console.log("Copying block:", sourceIndex);
     for(destIndex = 0; destIndex < (frameSize); destIndex++){
       audioSection.setInt16(frameOffset + (destIndex*2), audioChunks[sourceIndex][destIndex],true);
     }
     frameOffset = frameOffset + frameSizeInBytes;
-    yield false;
+    yield (sourceIndex - properInFrame) / numFrames;
   }
 
   // Write header
@@ -301,17 +303,41 @@ function* makeWAVFileBlobGenerator(
 
   // Return file blob
   // yield new Blob([fileBuffer], {type: "audio/wav"});
+  yield 1;
   callback( new Blob([fileBuffer], {type: "audio/wav"}) );
 
 }
 
-
-
-
-tests: {
-  break tests;
-  console.log("Tests enabled");
-  let uuid = randomUUID(16);
-  if (uuid.length !== 16) { throw new Error("randomUUID (length should be 16) :", uuid); }
-  console.log("randomUUID is:", uuid);
+function importProperties(sourceObject, destinationScope){
+  if(!sourceObject) return;
+  Object.keys(sourceObject).forEach(function(property){
+    destinationScope[property] = sourceObject[property];
+    console.log("SETTING:", property,":",sourceObject[property]);
+  });
 }
+
+function runTests(){
+
+  console.log("Running tests");
+
+  test1: {
+    //break test1;
+    let uuid = randomUUID(16);
+    if (uuid.length !== 16) { throw new Error("randomUUID (length should be 16) :", uuid); }
+  }
+
+  test2: {
+    //break test2;
+    let Schwang = function SchwangConstructor(a,opt=false){
+      importProperties(opt, this);
+      this.a = a;
+    };
+    schwang = new Schwang("paste",{b:"flange"});
+    if(schwang.b !== "flange"){ throw new Error("importProperties test fail"); }
+  }
+
+  console.log("Done.");
+
+}
+
+//runTests();

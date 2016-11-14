@@ -1,7 +1,7 @@
 /*jshint esversion: 6 */
 
 // INIT RECORDER
-let canvas = document.getElementById("waveform");
+let theCanvas = document.getElementById("waveform");
 const bufferLength = 60;
 const loResWaveformParams = { dataPoints: 500, secondsToDisplay: bufferLength };
 recorder = new RecorderApp(
@@ -9,12 +9,15 @@ recorder = new RecorderApp(
   navigator,
   AudioEngine,
   bufferLength,
-  canvas,
-  MouseStatus,
-  WaveformDisplay,
-  loResWaveformParams,
-  recordingsListChangedCallback,
-  dataDisplayChangedCallback
+  {
+    canvas: theCanvas,
+    MouseStatus: MouseStatus,
+    WaveformDisplay: WaveformDisplay,
+    loResWaveformParams: loResWaveformParams,
+    recordingsListChangedCallback: recordingsListChangedCallback,
+    dataDisplayChangedCallback: dataDisplayChangedCallback,
+    scriptProcessorBufferLength: 16384
+  }
 );
 recorder.init();
 
@@ -46,7 +49,7 @@ function deleteClicked(recordingID) {
 }
 
 // CANVAS RESIZE HANDLER. Make canvas responsive to scale changes
-function resizeCanvas() { canvas.width = document.getElementById("wrapper").offsetWidth; }
+function resizeCanvas() { theCanvas.width = document.getElementById("wrapper").offsetWidth; }
 
 // VIEW REFRESHERS
 function refreshvSACtest(){

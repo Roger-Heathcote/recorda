@@ -1,8 +1,9 @@
 /*jshint esversion: 6 */
 /*jshint -W056 */
 
-var AudioEngine = function AudioEngine(GLOBALS, loResWaveformParams=false) {
-
+var AudioEngine = function AudioEngine(GLOBALS, options) { //loResWaveformParams=false
+  // ADD/OVERWRITE PROPERTIES FROM OPTIONS OBJECT
+  importProperties(options, this);
   this.totalBlocksHandled = 0;
   this.updateBlockTotal = function updateBlockTotal() {
     this.totalBlocksHandled++;
@@ -11,20 +12,20 @@ var AudioEngine = function AudioEngine(GLOBALS, loResWaveformParams=false) {
      }
   };
 
-  this.scriptProcessorBuffer = 16384 / 4; //64;
-  this.channels = 2;
-  this.bitDepth = 16;
+  this.scriptProcessorBufferLength = this.scriptProcessorBufferLength || 16384 / 4;
+  this.channels = this.channels || 2;
+  this.bitDepth = this.bitDepth || 16;
   this.audioContext = new (GLOBALS.win.AudioContext || GLOBALS.win.webkitAudioContext)();
   this.sampleRate = this.audioContext.sampleRate;
   this.gainNode = this.audioContext.createGain(); // Master volume, just in case we need it!
-  this.scriptNode = this.audioContext.createScriptProcessor(this.scriptProcessorBuffer, 2, 2);
-  this.recBufArrayLength = Math.ceil((GLOBALS.secondsToBuffer * this.sampleRate) / this.scriptProcessorBuffer);
+  this.scriptNode = this.audioContext.createScriptProcessor(this.scriptProcessorBufferLength, 2, 2);
+  this.recBufArrayLength = Math.ceil((GLOBALS.secondsToBuffer * this.sampleRate) / this.scriptProcessorBufferLength);
   this.codeChannel = new Array(this.recBufArrayLength).fill(0);
   this.interleaved16BitAudio = new Array(this.recBufArrayLength).fill(0);
   this.codeNumber = 0;
   this.maxAmplitude = 0;
   this.mediaStreamTrack = false;
-  this.passthrough = false;
+  this.passthrough = this.passthrough || false;
   this.toggleAudioPassthrough = function toggleAudioPassthrough(){
     this.passthrough = !this.passthrough;
     console.log("passthrough is now:", this.passthrough);
@@ -45,25 +46,38 @@ var AudioEngine = function AudioEngine(GLOBALS, loResWaveformParams=false) {
       console.log("NoMST");
     }
   }.bind(this);
-  this.optionalAudioConstraints = new OptionalAudioConstraints(this.reapplyConstraints, echo=false, noise=false, gain=false, high=false);
+  this.optionalAudioConstraints = this.optionalAudioConstraints || new OptionalAudioConstraints(this.reapplyConstraints, echo=false, noise=false, gain=false, high=false);
   this.currentAudioConstraints = function(){ return this.optionalAudioConstraints.state(); };
   this.toggleOptionalAudioConstraint = function audioToggleAudioConstraint(constraintName){
     this.optionalAudioConstraints.toggleConstraint(constraintName);
   };
-  this.loResWaveformParams = loResWaveformParams;
-  if(loResWaveformParams){
+  if(this.loResWaveformParams){
     this.loResWaveformDataPoints = loResWaveformParams.dataPoints;
     this.loResWaveformSecondsToDisplay = loResWaveformParams.secondsToDisplay;
     this.loResWaveform = new Array(this.loResWaveformDataPoints).fill(0);
     this.loResCodeChannel = new Array(this.loResWaveformDataPoints).fill(0);
-    this.loResOffset = undefined;
     this.samplesPerDataPoint = (
       this.sampleRate *
       loResWaveformParams.secondsToDisplay) /
       loResWaveformParams.dataPoints;
     this.dispCount = this.samplesPerDataPoint;
   }
-
+  this.presets = {
+    "16bit Stereo Interleaved": {
+      bitRate: 16,
+      channels: 2,
+      interleave: true
+    },
+    "16bit Dual Mono": {
+      bitRate: 16,
+      channels: 2,
+      interleave: true
+    },
+    "16bit Mono": {
+      bitRate: 16,
+      channels: 1
+    }
+  };
 
 
   // // TODO Check if these are all needed - mid 2016
@@ -119,7 +133,7 @@ var AudioEngine = function AudioEngine(GLOBALS, loResWaveformParams=false) {
     let rightout = audioProcessingEvent.outputBuffer.getChannelData (1);
     this.codeChannel.push (this.codeNumber);
 
-    for (let sample = 0; sample < this.scriptProcessorBuffer; sample++) {
+    for (let sample = 0; sample < this.scriptProcessorBufferLength; sample++) {
 
       // enable pass through option
       if(this.passthrough) {
@@ -131,7 +145,7 @@ var AudioEngine = function AudioEngine(GLOBALS, loResWaveformParams=false) {
       // track max amplitude encountered
       if (left[sample] > this.maxAmplitude) { this.maxAmplitude = left[sample]; }
       if (left[sample] < -this.maxAmplitude) { this.maxAmplitude = -left[sample]; } // TODO check both
-      if(loResWaveformParams){ // TODO move this check to block above, don't need maxamp if no waveform display!
+      if(this.loResWaveformParams){ // TODO move this check to block above, don't need maxamp if no waveform display!
         // if enough samples have elapsed push a display data point & reset counter
         this.dispCount--;
         if (this.dispCount < 0) {

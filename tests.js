@@ -5,6 +5,12 @@
 var fs = require('fs');
 var loadRawJS = function(fileName){ (1,eval)( fs.readFileSync(fileName,'utf8') ); }.bind(this);
 
+loadRawJS('./scripts/OptionalAudioConstraints.js');
+loadRawJS('./scripts/globalFunctions.js');
+loadRawJS('./scripts/humane_dates.js');
+loadRawJS('./scripts/AudioEngine.js');
+loadRawJS('./scripts/RecorderApp.js');
+
 ( function () {
   return;
   let testName = "Test stereoFloat32ToInterleavedInt16";
@@ -34,54 +40,81 @@ var loadRawJS = function(fileName){ (1,eval)( fs.readFileSync(fileName,'utf8') )
   }
 }());
 
-function makeBufferTestFixture(inputString){
-  let buffer = new ArrayBuffer(inputString.length);
-  let view = new DataView(buffer);
-  for(i=0; i<inputString.length; i++){
-    view.setUint8(i, inputString.charCodeAt(i) );
-    // console.log( inputString.charCodeAt(i) );
-  }
-  return buffer;
-}
+// function makeBufferTestFixture(inputString){
+//   let buffer = new ArrayBuffer(inputString.length);
+//   let view = new DataView(buffer);
+//   for(i=0; i<inputString.length; i++){
+//     view.setUint8(i, inputString.charCodeAt(i) );
+//     // console.log( inputString.charCodeAt(i) );
+//   }
+//   return buffer;
+// }
 
-( function(){
 
+
+// BIG UGLY AUDIO ENGINE TO RECORDING END TO END TEST
+// BIG UGLY AUDIO ENGINE TO RECORDING END TO END TEST
+// BIG UGLY AUDIO ENGINE TO RECORDING END TO END TEST
+// BIG UGLY AUDIO ENGINE TO RECORDING END TO END TEST
+// BIG UGLY AUDIO ENGINE TO RECORDING END TO END TEST
+// BIG UGLY AUDIO ENGINE TO RECORDING END TO END TEST
+// BIG UGLY AUDIO ENGINE TO RECORDING END TO END TEST
+// BIG UGLY AUDIO ENGINE TO RECORDING END TO END TEST
+// BIG UGLY AUDIO ENGINE TO RECORDING END TO END TEST
+// BIG UGLY AUDIO ENGINE TO RECORDING END TO END TEST
+// BIG UGLY AUDIO ENGINE TO RECORDING END TO END TEST
+// BIG UGLY AUDIO ENGINE TO RECORDING END TO END TEST
+// BIG UGLY AUDIO ENGINE TO RECORDING END TO END TEST
+// BIG UGLY AUDIO ENGINE TO RECORDING END TO END TEST
+// BIG UGLY AUDIO ENGINE TO RECORDING END TO END TEST
+
+// FAKE WINDOW
+// FAKE WINDOW
+// FAKE WINDOW
+// FAKE WINDOW
+// FAKE WINDOW
+// FAKE WINDOW
+// FAKE WINDOW
+
+function fakeWindow(){
   let window = {};
   window.AudioContext = function fakeAudioContext(){
-    this.fakePropery1 = "fake";
-    console.log("I'm not real!");
     this.createGain = function fakeCreateGain(){
-      console.log("fakeCreateGain");
       let fakeGainNode = {
-        connect: function(){ console.log("fakeCreateGainConnectMethod");}
+        connect: function(){ /*console.log("fakeCreateGainConnectMethod");*/ }
       };
       return fakeGainNode;
     };
     this.createScriptProcessor = function fakeCreateScriptProcessor(bufferSize,y,z){
-      console.log("fakeCreateScriptProcessor, size =", bufferSize);
+      //console.log("fakeCreateScriptProcessor, size =", bufferSize);
       let scriptProcessor = {
-        connect: function(){ console.log("fakeCreateScriptProcessor connect method.");}
+        connect: function(){ /*console.log("fakeCreateScriptProcessor connect method.");*/ }
       };
-
       return scriptProcessor;
     };
     this.sampleRate = 44100;
     this.createMediaStreamSource = function createFakeMediaStreamSource(){
-      console.log("fakeCreateMediaStreamSource");
+      //console.log("fakeCreateMediaStreamSource");
       let fakeMediaStreamSource = {
-        connect: function fakeConnect(){ console.log("Arse pipes akimbo"); }
+        connect: function fakeConnect(){ /*console.log("fakeCreateMediaStreamSource connect method");*/ }
       };
       return fakeMediaStreamSource;
     };
   };
+  return window;
+}
 
+// FAKE NAVIGATOR
+// FAKE NAVIGATOR
+// FAKE NAVIGATOR
+// FAKE NAVIGATOR
+// FAKE NAVIGATOR
+// FAKE NAVIGATOR
+
+function fakeNavigator(){
   let navigator = {};
   navigator.mediaDevices = {};
   navigator.mediaDevices.getUserMedia = function fakeGetUserMedia(constraints){
-    console.log("Sure I'm GetUserMedia, come on over.");
-    console.log("THIS IS: ", this);
-    console.log("CONSTRAINTS ARE:", constraints);
-
     return new Promise(
       function(resolve, reject) {
         if ( true ) {
@@ -102,76 +135,135 @@ function makeBufferTestFixture(inputString){
     );
 
   };
+  return navigator;
+}
 
-  loadRawJS('./scripts/OptionalAudioConstraints.js');
-  loadRawJS('./scripts/globalFunctions.js');
-  loadRawJS('./scripts/humane_dates.js');
-  loadRawJS('./scripts/AudioEngine.js');
-  loadRawJS('./scripts/RecorderApp.js');
 
-  const bufferLength = 30;
-  console.log("Constructing new RecorderApp");
+
+
+// THE MEAT OF THE MATTER
+// THE MEAT OF THE MATTER
+// THE MEAT OF THE MATTER
+// THE MEAT OF THE MATTER
+// THE MEAT OF THE MATTER
+// THE MEAT OF THE MATTER
+// THE MEAT OF THE MATTER
+
+function* testFixtureGenerator(lenf, offset, source=false){
+  // lets make this a generator that returns chunks of an actual test wav
+  let cur = 0;
+  let ofs = offset;  //0.01;
+  let out = [];
+  while(true){
+    out = [];
+    for(x=0; x<lenf; x++){
+      cur = cur + ofs;
+      out.push(cur);
+      if (Math.abs(cur) > 0.9){
+        ofs = -ofs;
+      }
+    }
+    yield out;
+  }
+}
+//wang
+function BigUglyTestHarness(instanceName, numberOfChannels, options, callback){
+  importProperties(options, this);
+  let that = this;
+  let window = fakeWindow();
+  let navigator = fakeNavigator();
+
+  this.instanceName = instanceName;
+  this.bufferLength = this.bufferLength || 30;
+
   recorder = new RecorderApp(
     window,
     navigator,
     AudioEngine,
-    bufferLength
+    this.bufferLength,
+    { recordingsListChangedCallback: whenRecordingAdded }
   );
+  console.log("recorder --->", recorder);
   recorder.init();
   recorder.record();
 
-  let ScriptNodeTestFixture = function ScriptNodeTestFixture(){
-      let data = Float32Array.from(createScriptProcessorTestFixture(4096));
-      this.inputBuffer = {
-        getChannelData: function(index){
-          let wevs = data;
-          return data;
-        }
-      };
-      this.outputBuffer = {
-        getChannelData: function(index){
-          return 1;
-        }
-      };
-  }.bind(this);
+  let FakeInputStream = function FakeInputStream(blockSize, sourceFile=false){
+    testFixtures = [];
+    if(!sourceFile){
+      for(channel=0; channel<recorder.audEng.channels; channel++){
+        testFixtures.push( testFixtureGenerator(blockSize,0.01,sourceFile) );
+      }
+    }
+    this.inputBuffer = {
+      getChannelData: function fakeGetChannelDataForInputBuffer(index){
+        let data = testFixtures[index].next();
+        //debugger
+        return data.value;
+      }
+    };
+    this.outputBuffer = {
+      getChannelData: function fakeGetChannelDataForOuputBuffer(index){
+        return 1;
+      }
+    };
+  };
 
-  scriptNodeTestFixture = new ScriptNodeTestFixture();
+  fakeInputStream = new FakeInputStream(recorder.audEng.scriptProcessorBufferLength); // why undefined?
 
-  console.log("yeah done");
-  for(cnt=0; cnt<5; cnt++){
-    recorder.audEng.scriptNode.onaudioprocess(scriptNodeTestFixture, true);
+
+  //console.log(this.instanceName, "yeah done");
+  for(cnt=0; cnt<3; cnt++){
+    console.log(this.instanceName, "Running scriptNode");
+    recorder.audEng.scriptNode.onaudioprocess(fakeInputStream, true);
   }
+  //
+  // ASK DONT TELL!
+  // Add a select all method to recorder
   let myindex = 0;
   while (recorder.audEng.codeChannel[myindex] === 0) {myindex++;}
   recorder.fullResInPoint=myindex;
   recorder.fullResOutPoint=recorder.fullResInPoint + recorder.audEng.codeNumber;
+
+  // Also while were are it add a setInNow() and setOutNow()
+  //
+  // recorder.selectAll();
   recorder.save();
 
-  setTimeout( nextstep, 0, recorder ); // Need to let the event loop turn
+  //setTimeout( whenRecordingAdded, 2000, recorder ); // give async a couple of secs to complete
+  function whenRecordingAdded() {
+    blob = recorder.globals.recordings[0].data;
+    blob2arrayBuffer(blob, callback);
+  };
+};
 
-})();
+// Pre test test
+// BigUglyTestHarness(2, function stereoTest1(data){
+//   // console.log("Data is", typeof(data), data.byteLength, data);
+//   // console.log( bytes2Hex(data) );
+//   // console.log( bytes2AsciiAndNumbers(data) );
+//   // let nodeBuffer = new Buffer(data, 'binary');
+//   // fs.writeFileSync("testOut2.wav", nodeBuffer, {encoding:"binary"});
+// });
 
-function nextstep(recorder) {
-  console.log("YEah bwoy");
-  blob = recorder.globals.recordings[0].data;
-  blob2arrayBuffer(blob, function(data){
-    console.log("Data is", typeof(data), data.byteLength, data);
-    console.log( bytes2Hex(data) );
-    console.log( bytes2AsciiAndNumbers(data) );
-  });
-}
+// Test 1 - is anything returned at all
+console.log("Starting tests");
 
-function createScriptProcessorTestFixture(lenf){
-  // lets make this a gernerator that returns chunks of an actual test wav
-  out = [];
-  cur = 0;
-  ofs = 0.01;
-  for(x=0; x<lenf; x++){
-    cur = cur + ofs;
-    out.push(cur);
-    if (Math.abs(cur) > 0.9){
-      ofs = -ofs;
-    }
-  }
-  return out;
-}
+new BigUglyTestHarness("test1", 2, {}, function(data){
+  if(!data){ throw new Error("Nothing returned at all :/");}
+  console.log("Test1 passed");
+  console.log( bytes2AsciiAndNumbers(data) );
+
+  // new BigUglyTestHarness("test2", 2, { bufferLength:128 }, function(data){
+  //   console.log( bytes2AsciiAndNumbers(data) );
+  //
+  //   let nodeBuffer = new Buffer(data, 'binary');
+  //   fs.writeFileSync("testOut2.wav", nodeBuffer, {encoding:"binary"});
+  //
+  // });
+
+});
+// //
+// let test2 = new BigUglyTestHarness(2, function(data){
+//   console.log( bytes2AsciiAndNumbers(data) );
+// });
+// Test 1 - is anything returned at all
