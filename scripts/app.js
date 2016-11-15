@@ -69,7 +69,7 @@ function refreshDataDisplay(){
   block.innerHTML = views.dataDisplayBlock(recorder.vm_dataDisplayBlock());
 }
 function refreshRecordings(){
-  let block = document.getElementById("recordingsBlock");
+  //let block = document.getElementById("recordingsBlock");
   let listInner = document.getElementById("recordingsListInner");
   let recordingsList = recorder.vm_recordings();
   views.recordingsBlock( document, listInner, recordingsList );

@@ -40,17 +40,6 @@ loadRawJS('./scripts/RecorderApp.js');
   }
 }());
 
-// function makeBufferTestFixture(inputString){
-//   let buffer = new ArrayBuffer(inputString.length);
-//   let view = new DataView(buffer);
-//   for(i=0; i<inputString.length; i++){
-//     view.setUint8(i, inputString.charCodeAt(i) );
-//     // console.log( inputString.charCodeAt(i) );
-//   }
-//   return buffer;
-// }
-
-
 
 // BIG UGLY AUDIO ENGINE TO RECORDING END TO END TEST
 // BIG UGLY AUDIO ENGINE TO RECORDING END TO END TEST
@@ -149,55 +138,49 @@ function fakeNavigator(){
 // THE MEAT OF THE MATTER
 // THE MEAT OF THE MATTER
 
-function* testFixtureGenerator(lenf, offset, source=false){
-  // lets make this a generator that returns chunks of an actual test wav
+function* testFixtureGenerator(lenf, velocity, maxAmp){
+
   let cur = 0;
-  let ofs = offset;  //0.01;
+  let vel = velocity;  //0.01;
   let out = [];
   while(true){
     out = [];
     for(x=0; x<lenf; x++){
-      cur = cur + ofs;
+      cur = cur + vel;
       out.push(cur);
-      if (Math.abs(cur) > 0.9){
-        ofs = -ofs;
+      if (Math.abs(cur) > maxAmp){
+        vel = -vel;
       }
     }
     yield out;
   }
 }
 //wang
-function BigUglyTestHarness(instanceName, numberOfChannels, options, callback){
-  importProperties(options, this);
+function BigUglyTestHarness(instanceName, bufferLength, numberOfChannels, callsScriptProcessorXTimes, velocity, maxAmp, recorderOptions, callback){
+  //importProperties(options, this);
   let that = this;
   let window = fakeWindow();
   let navigator = fakeNavigator();
-
+  recorderOptions.recordingsListChangedCallback = whenRecordingAdded;
   this.instanceName = instanceName;
-  this.bufferLength = this.bufferLength || 30;
-
   recorder = new RecorderApp(
     window,
     navigator,
     AudioEngine,
-    this.bufferLength,
-    { recordingsListChangedCallback: whenRecordingAdded }
-  );
+    bufferLength,
+    recorderOptions );
   console.log("recorder --->", recorder);
   recorder.init();
   recorder.record();
 
-  let FakeInputStream = function FakeInputStream(blockSize, sourceFile=false){
+  let FakeInputStream = function FakeInputStream(blockSize, velocity, maxAmp){
     testFixtures = [];
-    if(!sourceFile){
-      for(channel=0; channel<recorder.audEng.channels; channel++){
-        testFixtures.push( testFixtureGenerator(blockSize,0.01,sourceFile) );
-      }
+    for(channel=0; channel<recorder.audEng.channels; channel++){
+      testFixtures.push( testFixtureGenerator(blockSize,0.01,0.9) );
     }
     this.inputBuffer = {
       getChannelData: function fakeGetChannelDataForInputBuffer(index){
         let data = testFixtures[index].next();
-        //debugger
         return data.value;
       }
     };
@@ -208,11 +191,11 @@ function BigUglyTestHarness(instanceName, numberOfChannels, options, callback){
     };
   };
 
-  fakeInputStream = new FakeInputStream(recorder.audEng.scriptProcessorBufferLength); // why undefined?
+  fakeInputStream = new FakeInputStream(recorder.audEng.scriptProcessorBufferLength, velocity, maxAmp); // why undefined?
 
 
   //console.log(this.instanceName, "yeah done");
-  for(cnt=0; cnt<3; cnt++){
+  for(cnt=0; cnt<callsScriptProcessorXTimes; cnt++){
     console.log(this.instanceName, "Running scriptNode");
     recorder.audEng.scriptNode.onaudioprocess(fakeInputStream, true);
   }
@@ -233,37 +216,62 @@ function BigUglyTestHarness(instanceName, numberOfChannels, options, callback){
   function whenRecordingAdded() {
     blob = recorder.globals.recordings[0].data;
     blob2arrayBuffer(blob, callback);
-  };
-};
+  }
+}
 
-// Pre test test
-// BigUglyTestHarness(2, function stereoTest1(data){
-//   // console.log("Data is", typeof(data), data.byteLength, data);
-//   // console.log( bytes2Hex(data) );
-//   // console.log( bytes2AsciiAndNumbers(data) );
+
 //   // let nodeBuffer = new Buffer(data, 'binary');
 //   // fs.writeFileSync("testOut2.wav", nodeBuffer, {encoding:"binary"});
-// });
 
 // Test 1 - is anything returned at all
 console.log("Starting tests");
 
-new BigUglyTestHarness("test1", 2, {}, function(data){
-  if(!data){ throw new Error("Nothing returned at all :/");}
-  console.log("Test1 passed");
-  console.log( bytes2AsciiAndNumbers(data) );
 
-  // new BigUglyTestHarness("test2", 2, { bufferLength:128 }, function(data){
-  //   console.log( bytes2AsciiAndNumbers(data) );
-  //
-  //   let nodeBuffer = new Buffer(data, 'binary');
-  //   fs.writeFileSync("testOut2.wav", nodeBuffer, {encoding:"binary"});
-  //
-  // });
+bigUglyTestOne = function bigUglyTestOne(){
+  let bufferLength = 30;
+  let scriptProcessorBufferLength = 4096;
+  let callsScriptProcessorXTimes = 7;
+  let textFixtureCursorVelocity = 0.1;
+  let testFixtureMaximumAmplitude = 0.9;
+  let numberOfChannels = 2;
+  let bytesPerChannel = 2;
+  let recorderConstructorOptions = {
+    scriptProcessorBufferLength: scriptProcessorBufferLength
+  };
+  new BigUglyTestHarness(
+    "test1",
+    bufferLength,
+    numberOfChannels,
+    callsScriptProcessorXTimes,
+    textFixtureCursorVelocity,
+    testFixtureMaximumAmplitude,
+    recorderConstructorOptions,
+    function(data){
+      console.log("Running test1 now...");
+      if(!data){ throw new Error("Big Ugly Test 1 - Nothing returned at all :/");}
+      console.log("Big Ugly Test 1 - passed");
 
-});
-// //
-// let test2 = new BigUglyTestHarness(2, function(data){
-//   console.log( bytes2AsciiAndNumbers(data) );
-// });
-// Test 1 - is anything returned at all
+      let blockSize = scriptProcessorBufferLength * numberOfChannels * bytesPerChannel;
+      let targetSize = (blockSize * callsScriptProcessorXTimes) + 44;
+      let actualSize = data.byteLength;
+      if(targetSize !== actualSize){
+        console.log("Size is supposed to be:", targetSize);
+        console.log("Size actually is:", actualSize);
+        throw new Error("Big Ugly Test 2 - Size don't match :/");
+      }
+      console.log("Big Ugly Test 2 - passed");
+
+      let actualLastByte = getByteFromArrayBuffer(data,actualSize-1);
+      let targetLastByte = 189;
+      if(actualLastByte !== targetLastByte){
+        console.log("Last bytes is suposed to be:", targetLastByte);
+        console.log("Actual last byte is:", actualLastByte);
+        throw new Error("Big Ugly Test 3 - Last byte not what we expected :/");
+      }
+      console.log("Big Ugly Test 3 - passed");
+
+    }
+  );
+};
+bigUglyTestOne();
+console.log("Tests concluded");

@@ -12,7 +12,8 @@ var AudioEngine = function AudioEngine(GLOBALS, options) { //loResWaveformParams
      }
   };
 
-  this.scriptProcessorBufferLength = this.scriptProcessorBufferLength || 16384 / 4;
+  this.scriptProcessorBufferLength = this.scriptProcessorBufferLength || 16384 / 4; // In units NOT bytes!
+  console.log("scriptProcessorBufferLength in constructor is.............", this.scriptProcessorBufferLength);
   this.channels = this.channels || 2;
   this.bitDepth = this.bitDepth || 16;
   this.audioContext = new (GLOBALS.win.AudioContext || GLOBALS.win.webkitAudioContext)();
@@ -62,22 +63,7 @@ var AudioEngine = function AudioEngine(GLOBALS, options) { //loResWaveformParams
       loResWaveformParams.dataPoints;
     this.dispCount = this.samplesPerDataPoint;
   }
-  this.presets = {
-    "16bit Stereo Interleaved": {
-      bitRate: 16,
-      channels: 2,
-      interleave: true
-    },
-    "16bit Dual Mono": {
-      bitRate: 16,
-      channels: 2,
-      interleave: true
-    },
-    "16bit Mono": {
-      bitRate: 16,
-      channels: 1
-    }
-  };
+
 
 
   // // TODO Check if these are all needed - mid 2016

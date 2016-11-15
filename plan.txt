@@ -1,12 +1,17 @@
 Mono/Float recording
-  write an end to end test so we can refactor a bit more safely?
-    Fun fun fun!!!
+  let's go!
+  
 
 refactor views into their own files
   combining display code and event handlers into one file.
 
 
 DONE-------------------------
+
+We have tests for the audio engine through creation of wav file.
+They are ugly, they are few and they only test a single case (a single 16 bit
+interleaved stereo wav) but that should help us refactor the audio engine and
+recorder to support multiple record and save formats.
 
 Made audio engine and recorder class use an options object for optional args
 MAde save generator output progress

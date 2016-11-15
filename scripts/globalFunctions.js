@@ -249,6 +249,11 @@ function randomUUID(UUIDLength){
 // This doesn't even exist when we're runnig headless!
 // Fuuuuuuuuu
 
+function getByteFromArrayBuffer(buffer, index){
+  let view = new Uint8Array(buffer);
+  return view[index];
+}
+
 function* makeWAVFileBlobGenerator(
   audioChunks,
   code,
@@ -265,8 +270,12 @@ function* makeWAVFileBlobGenerator(
   frameSize = audioChunks[audioChunks.length-1].length;
   frameSizeInBytes = audioChunks[audioChunks.length-1].length * 2;
   numFrames = outPoint - inPoint;
+  console.log("FRAMESIZE....................................", frameSize);
 
   let fileBuffer = new ArrayBuffer( 44 + frameSize * numFrames * 2 ); // size is in bytes and we have Int16s
+  console.log("frameSize............................", frameSize);
+  console.log("numFrames............................", numFrames);
+  console.log("fileBuffer.byteLength............................", fileBuffer.byteLength);
 
   // Write audio data
   let audioSection = new DataView( fileBuffer, 44 );
@@ -280,7 +289,7 @@ function* makeWAVFileBlobGenerator(
     frameOffset = frameOffset + frameSizeInBytes;
     yield (sourceIndex - properInFrame) / numFrames;
   }
-
+  console.log("Going to write header now thanks");
   // Write header
   let headerSection = new DataView( fileBuffer, 0 );
   //addWAVHeader(headerSection, audioChunks, channels, sampleRate, bitDepth);
@@ -304,6 +313,7 @@ function* makeWAVFileBlobGenerator(
   // Return file blob
   // yield new Blob([fileBuffer], {type: "audio/wav"});
   yield 1;
+  console.log("Going to fire callback...");
   callback( new Blob([fileBuffer], {type: "audio/wav"}) );
 
 }
