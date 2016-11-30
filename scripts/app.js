@@ -2,7 +2,7 @@
 
 // INIT RECORDER
 let theCanvas = document.getElementById("waveform");
-const bufferLength = 60;
+const bufferLength = 120;
 const loResWaveformParams = { dataPoints: 500, secondsToDisplay: bufferLength };
 recorder = new RecorderApp(
   window,
@@ -16,7 +16,7 @@ recorder = new RecorderApp(
     loResWaveformParams: loResWaveformParams,
     recordingsListChangedCallback: recordingsListChangedCallback,
     dataDisplayChangedCallback: dataDisplayChangedCallback,
-    scriptProcessorBufferLength: 16384
+    scriptProcessorBufferLength: 4096
   }
 );
 recorder.init();

@@ -253,10 +253,10 @@ function getURLOrDont(win, blob){
 }
 
 function formatPresets(formatName) {
-  let recordingFormats = {};
+  let recordingFormats = {  };
   let savingFormats = {};
   let presets = {
-    default:"Not yet implemented, sozballs."
+    "default":"Not yet implemented, sozballs."
   };
   return presets[formatName];
 }

@@ -1,6 +1,7 @@
 Mono/Float recording
   let's go!
-  
+
+make a "saving" placeholder with a cancel save button
 
 refactor views into their own files
   combining display code and event handlers into one file.
