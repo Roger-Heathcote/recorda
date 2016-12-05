@@ -94,8 +94,9 @@ var RecorderApp = function RecorderApp(
 
   saveState.execute = function saveStateExecute(arg) {
 
-    let addRecording = function addRecording(WAVFileBlob){
+    let saveCompleteCallback = function saveCompleteCallback(WAVFileBlob){
       console.log("Adding recording, blob is:", WAVFileBlob);
+      // Push recording onto recordings list
       let dateNow = Date.now();
       GLOBALS.recordings.push({
         name: humanReadableLocalDate(dateNow),
@@ -108,7 +109,7 @@ var RecorderApp = function RecorderApp(
         url: getURLOrDont(GLOBALS.win,WAVFileBlob),
         uuid: randomUUID(8)
       });
-      this.recordingsListChangedCallback && this.recordingsListChangedCallback();
+      if(this.recordingsListChangedCallback){this.recordingsListChangedCallback();}
       this.currentSave = undefined;
       this.buffer();
     }.bind(this);
@@ -121,7 +122,7 @@ var RecorderApp = function RecorderApp(
       this.audEng.sampleRate,
       this.audEng.channels,
       this.audEng.bitDepth,
-      addRecording
+      saveCompleteCallback
     );
 
     //console.log("this.currentSave is", this.currentSave);
@@ -235,7 +236,7 @@ var RecorderApp = function RecorderApp(
     let recording = this.getRecordingByUuid(id);
     let idx =  GLOBALS.recordings.indexOf(recording);
     GLOBALS.recordings.splice(idx, 1 );
-    this.recordingsListChangedCallback && this.recordingsListChangedCallback();
+    if(this.recordingsListChangedCallback) {this.recordingsListChangedCallback();}
   }.bind(this);
 
 };

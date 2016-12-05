@@ -7,6 +7,8 @@ make a "saving" placeholder with a cancel save button
     try hardcoding that then if it works ok switch it in & out
 
 refactor to browserify?!
+  raw node doesn't have Blob constructor so big ugly test works in devtool but not raw node.
+  and also beauty
 
 Mono/Float recording
   let's go!
