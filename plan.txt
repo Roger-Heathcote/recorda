@@ -1,7 +1,16 @@
+make a "saving" placeholder with a cancel save button
+  How should that work?
+    Saving message overlain on the waveform
+    try overlaying grey box on canvas
+    writing in white over the top
+    just html css?
+    try hardcoding that then if it works ok switch it in & out
+
+refactor to browserify?!
+
 Mono/Float recording
   let's go!
-
-make a "saving" placeholder with a cancel save button
+  Erm maybe not yet!
 
 refactor views into their own files
   combining display code and event handlers into one file.
