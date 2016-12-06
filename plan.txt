@@ -1,3 +1,6 @@
+Make it possible to change recording length
+  URL param + page reload?
+
 Find more accurate language for what is curretly "saving" and "save"
 
 Internationalize?
