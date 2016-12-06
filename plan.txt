@@ -1,10 +1,6 @@
-make a "saving" placeholder with a cancel save button
-  How should that work?
-    Saving message overlain on the waveform
-    try overlaying grey box on canvas
-    writing in white over the top
-    just html css?
-    try hardcoding that then if it works ok switch it in & out
+Find more accurate language for what is curretly "saving" and "save"
+
+Internationalize?
 
 refactor to browserify?!
   raw node doesn't have Blob constructor so big ugly test works in devtool but not raw node.
@@ -19,6 +15,11 @@ refactor views into their own files
 
 
 DONE-------------------------
+
+Fixed https server - it now generates it's own key&cert on the fly based on the
+current ip address and displays the URL where it may be accessed.
+
+Added saving status display with percentage progress
 
 We have tests for the audio engine through creation of wav file.
 They are ugly, they are few and they only test a single case (a single 16 bit

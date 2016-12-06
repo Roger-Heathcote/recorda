@@ -62,7 +62,8 @@ var RecorderApp = function RecorderApp(
       do {
         let progress = this.currentSave.next();
         if(!progress.done){
-          console.log("Save Progress:", progress.value);
+          if(this.saveModeUpdateCallback){saveModeUpdateCallback(progress.value);}
+          // console.log("this.saveModeUpdateCallback:", this.saveModeUpdateCallback);
         }
       }
       while ( this.currentSave && Date.now() < timeOut );
@@ -129,10 +130,15 @@ var RecorderApp = function RecorderApp(
 
   }.bind(this);
 
+  saveState.enter = function saveStateEnter(arg){
+    if(this.enteringSaveModeCallback){enteringSaveModeCallback();}
+  }.bind(this);
+
   saveState.exit = function saveStateExit(arg){
     GLOBALS.setLoResInPoint(undefined);
     GLOBALS.setLoResOutPoint(undefined);
-  };
+    if(this.exitingSaveModeCallback){exitingSaveModeCallback();}
+  }.bind(this);
 
   this.toggleOptionalAudioConstraint = function recorderToggleOptionalAudioConstraint(constraintName){
     this.audEng.toggleOptionalAudioConstraint(constraintName);

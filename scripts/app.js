@@ -15,6 +15,9 @@ recorder = new RecorderApp(
     WaveformDisplay: WaveformDisplay,
     loResWaveformParams: loResWaveformParams,
     recordingsListChangedCallback: recordingsListChangedCallback,
+    enteringSaveModeCallback: enteringSaveModeCallback,
+    exitingSaveModeCallback: exitingSaveModeCallback,
+    saveModeUpdateCallback: saveModeUpdateCallback,
     dataDisplayChangedCallback: dataDisplayChangedCallback,
     scriptProcessorBufferLength: 4096
   }
@@ -78,3 +81,55 @@ function refreshRecordings(){
 // RECORDER NOTIFICATION CALLBACK HANDLERS
 function recordingsListChangedCallback(){ refreshRecordings(); refreshDataDisplay(); }
 function dataDisplayChangedCallback(){ refreshDataDisplay(); }
+
+function enteringSaveModeCallback(){
+  this.overlay = document.createElement("div");
+  this.overlay.innerHTML = "Saving 00%";
+  let rect = theCanvas.getBoundingClientRect();
+  let pos = getPosition(theCanvas);
+  this.overlay.setAttribute("class", "saveOverlayDiv");
+  this.overlay.style.left = pos.x + "px";
+  this.overlay.style.top = pos.y + "px";
+  this.overlay.style.width = rect.right - rect.left + "px";
+  this.overlay.style.height = rect.bottom - rect.top + "px";
+  this.overlay.style.fontSize = (rect.bottom - rect.top)/6 + "px";
+  this.overlay.style.lineHeight = rect.bottom - rect.top + "px";
+  window.addEventListener("resize", function(event) {
+    console.log("wank badger - we should be getting a resize event here")
+    let rect = theCanvas.getBoundingClientRect();
+    this.overlay.style.width = rect.right - rect.left + "px";
+    this.overlay.style.height = rect.bottom - rect.top + "px";
+  }.bind(this));
+  document.body.appendChild(this.overlay);
+}
+
+function exitingSaveModeCallback(){
+  document.body.removeChild(this.overlay);
+}
+
+function saveModeUpdateCallback(val){
+  //console.log("save mode update callback", val);
+  let paddedPercentage = ("00" + parseInt(val*100,10)).substr(-2,2);
+  this.overlay.innerHTML = "Saving "+paddedPercentage+"%";
+}
+
+function getPosition(el) {
+  // https://www.kirupa.com/html5/get_element_position_using_javascript.htm
+  let xPos = 0;
+  let yPos = 0;
+  while (el) {
+    if (el.tagName == "BODY") {
+      // deal with browser quirks with body/window/document and page scroll
+      let xScroll = el.scrollLeft || document.documentElement.scrollLeft;
+      let yScroll = el.scrollTop || document.documentElement.scrollTop;
+      xPos += (el.offsetLeft - xScroll + el.clientLeft);
+      yPos += (el.offsetTop - yScroll + el.clientTop);
+    } else {
+      // for all other non-BODY elements
+      xPos += (el.offsetLeft - el.scrollLeft + el.clientLeft);
+      yPos += (el.offsetTop - el.scrollTop + el.clientTop);
+    }
+    el = el.offsetParent;
+  }
+  return { x: xPos, y: yPos };
+}

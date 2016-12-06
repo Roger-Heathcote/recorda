@@ -322,7 +322,7 @@ function importProperties(sourceObject, destinationScope){
   if(!sourceObject) return;
   Object.keys(sourceObject).forEach(function(property){
     destinationScope[property] = sourceObject[property];
-    console.log("SETTING:", property,":",sourceObject[property]);
+    // console.log("SETTING:", property,":",sourceObject[property]);
   });
 }
 
