@@ -1,21 +1,40 @@
-Make it possible to change recording length
-  URL param + page reload?
+Make into an actual page
 
-Find more accurate language for what is curretly "saving" and "save"
+  Basic checking/tarting up
 
-Internationalize?
+  Internationalize?
 
-refactor to browserify?!
-  raw node doesn't have Blob constructor so big ugly test works in devtool but not raw node.
-  and also beauty
+  Find more accurate language for what is curretly "saving" and "save"
 
-Mono/Float recording
+  Settings
+    recording length
+      Make it possible to change recording length
+        URL param + page reload?
+    max recording time limit
+    input selector?
+
+  refactor to browserify?!
+    raw node doesn't have Blob constructor so big ugly test works in devtool but not raw node.
+    and also beauty
+
+channels and bit rate
+  Mono/Float recording
   let's go!
   Erm maybe not yet!
 
-refactor views into their own files
-  combining display code and event handlers into one file.
+  Save as mp4?
 
+
+Longer term
+
+  Invent way to detect glitches due to thread blocking CPU starvation
+
+  refactor views into their own files
+    combining display code and event handlers into one file.
+
+
+
+    Multiple waveform display & multitrack recording?
 
 DONE-------------------------
 
