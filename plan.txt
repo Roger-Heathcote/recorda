@@ -1,10 +1,13 @@
 Make into an actual page
 
-  Basic checking/tarting up
-
   Internationalize?
 
+  Accessibilify!
+
+  HTML5inate (use more semantic tags)
+
   Find more accurate language for what is curretly "saving" and "save"
+    preparing|download?
 
   Settings
     recording length
@@ -37,6 +40,8 @@ Longer term
     Multiple waveform display & multitrack recording?
 
 DONE-------------------------
+
+Made design more responsive - good down to 240px now.
 
 Fixed https server - it now generates it's own key&cert on the fly based on the
 current ip address and displays the URL where it may be accessed.

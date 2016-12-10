@@ -1,109 +1,243 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width">
-	<title>RECORDA - buffering recorder</title>
-  <style>
-    body{
-      padding: 0px;
-      margin: 0px;
-    }
-    ul {
-      list-style-type: none;
-      margin:0px;
-      padding:0px;
-      display: table;
-      width: 100%;
-    }
-    .recordingListItem{
-      display: table-row;
-      height: 1.5em;
-      width: 100%;
-    }
-    .recordingListItem > span {
-      display: table-cell;
-      vertical-align: middle;
-    }
-    .recordingListItem > span + span {
-      padding-left: 1em;
-    }
-    .recordingListItem > span:first-child {
-      padding-left: 0.5em;
-    }
-    .vSAC_outer{
-      margin-left: 1em;
-      background: #AAA;
-      width: 200px;
-      height: 1em;
-      margin-right:1em;
-      border-radius: 0.5em;
-      vertical-align: middle;
-    }
-    .vSAC_timeline{
-      width: calc(100% - 1em);
-    }
-    .vSAC_cursor{
-      background: #555;
-      height: 1em;
-      width: 1em;
-      padding: 0px;
-      margin-left: 0%; /* modulate this */
-      border-radius: 50%;
-    }
-    .playBtn{
-      float: left;
-    }
-    .svg-triangle{
-      width: 1em;
-      height: 1em;
-      fill: #555;
-    }
-    .svg-triangle:hover{ fill: #999; }
-    .saveOverlayDiv{
-      display: table-cell;
-      text-align:center;
-      vertical-align: middle;
-      position: absolute;
-      zIndex: 2;
-      color: #FFF;
-      background: rgba(0, 0, 0, 0.5);
-      font-family: monospace;
-    }
-  </style>
-</head>
-<body>
+  <head>
+  	<meta charset="utf-8">
+  	<meta name="viewport" content="width=device-width">
+  	<title>recorda :: pre-buffering audio recorder</title>
+    <style>
 
-  <div id="wrapper">
-     <canvas id="waveform"></canvas>
-  </div>
+      /*-----------------------------------------------------*/
+      /*-----------------------------------------------------*/
+      /*----------------------- RESET -----------------------*/
+      /*-----------------------------------------------------*/
+      /*-----------------------------------------------------*/
 
-  <div id="recordingsBlock">
-    <ul id="recordingsListInner">
-    </ul>
-  </div>
+      html, body, div, span, applet, object, iframe,
+      h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+      a, abbr, acronym, address, big, cite, code,
+      del, dfn, em, img, ins, kbd, q, s, samp,
+      small, strike, strong, sub, sup, tt, var,
+      b, u, i, center,
+      dl, dt, dd, ol, ul, li,
+      fieldset, form, label, legend,
+      table, caption, tbody, tfoot, thead, tr, th, td,
+      article, aside, canvas, details, embed,
+      figure, figcaption, footer, header, hgroup,
+      menu, nav, output, ruby, section, summary,
+      time, mark, audio, video {
+      	margin: 0;
+      	padding: 0;
+      	border: 0;
+      	font-size: 100%;
+      	font: inherit;
+      	vertical-align: baseline;
+      }
+      /* HTML5 display-role reset for older browsers */
+      article, aside, details, figcaption, figure,
+      footer, header, hgroup, menu, nav, section {
+      	display: block;
+      }
+      body {
+      	line-height: 1;
+      }
+      ol, ul {
+      	list-style: none;
+      }
+      blockquote, q {
+      	quotes: none;
+      }
+      blockquote:before, blockquote:after,
+      q:before, q:after {
+      	content: '';
+      	content: none;
+      }
+      table {
+      	border-collapse: collapse;
+      	border-spacing: 0;
+      }
 
-  <div id="dataDisplayBlock">
-  </div>
+      /*--------------------------------------------------------------
+      --------------------------------------------------------------
+      --------------------------------------------------------------
+      --------------------------------------------------------------
+      --------------------------------------------------------------
+      */
 
-  <div id="optionsBlock">
-  </div>
+      body{
+        padding: 0px;
+        margin: 0px;
+        background: #333;
+        font-family: monospace;
+      }
+      ul {
+        list-style-type: none;
+        margin:0px;
+        padding:0px;
+        width: 100%;
+      }
+      .recordingListItem{
+        height: 2em;
+        margin-left: auto;
+        margin-right: auto;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .recordingListItemFlexbox{
+        height: 1.5em;
+        display: flex;
+        max-width: 700px;
+        min-width: 0px;
+        flex-grow: 1;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .recording_humanTime{
+        padding-left: 0.5em;
+        min-width: 5em;
+        max-width: 5em;
+      }
+      .recording_Name{
+        min-width: 0px;
+        max-width: 215;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        /*background: #F00;*/
+        padding-right: 1em;
+        flex-basis: 215px;
+      }
+      .vSAC{
+        /*background: #0F0;*/
+        flex-basis: 250px;
+        width: 100%;
+        min-width: 4em;
+        border-top: 2px solid rgba(0, 0, 0, 0); /* hack, unsure why reqd */
+      }
+      .vSAC_outer{
+        margin-left: 1em;
+        background: #AAA;
+        /*min-width: 0;*/
+        height: 1em;
+        margin-right:1em;
+        border-radius: 0.5em;
+      }
+      .vSAC_timeline{
+        width: calc(100% - 1em);
+      }
+      .vSAC_cursor{
+        background: #555;
+        height: 1em;
+        width: 1em;
+        padding: 0px;
+        margin-left: 0%; /* modulate this */
+        border-radius: 50%;
+      }
+      .playBtn{
+        float: left;
+      }
+      .svg-triangle{
+        width: 1em;
+        height: 1em;
+        fill: #555;
+      }
+      .svg-triangle:hover{ fill: #999; }
 
-  <button onclick='audioPassthroughClicked()'>audio passthrough</button>
-  <button onclick='refreshDataDisplayClicked()'>Refresh data display</button>
+      .saveOverlayDiv{
+        display: table-cell;
+        text-align:center;
+        vertical-align: middle;
+        position: absolute;
+        zIndex: 2;
+        color: #FFF;
+        background: rgba(0, 0, 0, 0.5);
+        font-family: monospace;
+      }
 
-  <!-- SCRIPT IMPORTS BELOW THIS LINE ONLY -->
-  <script src="scripts/vSAC.js"></script>
-  <script src="scripts/views.js"></script>
-  <script src="scripts/OptionalAudioConstraints.js"></script>
-  <script src="scripts/globalFunctions.js"></script>
-  <script src="scripts/humane_dates.js"></script>
-  <script src="scripts/MouseStatus.js"></script>
-  <script src="scripts/AudioEngine.js"></script>
-  <script src="scripts/WaveformDisplay.js"></script>
-  <script src="scripts/RecorderApp.js"></script>
-  <script src="scripts/app.js"></script>
+      .saveButton, .deleteButton {
+        font-size: 0.8em;
+        padding: 1px;
+        background: #BBB;
+        border-top: 2px solid #FFF;
+        border-left: 2px solid #FFF;
+        border-right: 2px solid #000;
+        border-bottom: 2px solid #000;
+        cursor: pointer;
+      }
 
-</body>
+      #main{
+        border: 5px solid #FFF;
+        background: #FFF;
+        width: 96%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 2%;
+      }
+
+      #title {
+        width: 100%;
+        overflow: hidden;
+        min-width: 200px;
+        padding-bottom: 0.5em;
+      }
+      h1 {
+        margin: 0px;
+        padding: 0px;
+      }
+      @media all and (min-width: 560px) {
+        h1{ font-size: 1.5em; }
+      }
+
+      @media all and (max-width: 559px) and (min-width: 320px) {
+        h1{ font-size: 3vw; }
+      }
+
+      @media all and (max-width: 319px) {
+        h1{ font-size: 0.8em; }
+      }
+
+    </style>
+  </head>
+  <body>
+    <div id="main">
+
+      <div id="title">
+        <h1>recorda :: pre-buffering audio recorder</h1>
+      </div>
+
+      <div id="wrapper">
+         <canvas id="waveform"></canvas>
+      </div>
+
+      <div id="recordingsBlock">
+        <ul id="recordingsList">
+        </ul>
+      </div>
+
+      <div id="dataDisplayBlock">
+      </div>
+
+      <div id="optionsBlock">
+      </div>
+
+      <button onclick='optionsToggleClicked()'>options</button>
+      <button onclick='audioPassthroughClicked()'>audio passthrough</button>
+
+    </div>
+
+    <!-- SCRIPT IMPORTS BELOW THIS LINE ONLY -->
+    <script src="scripts/vSAC.js"></script>
+    <script src="scripts/views.js"></script>
+    <script src="scripts/OptionalAudioConstraints.js"></script>
+    <script src="scripts/globalFunctions.js"></script>
+    <script src="scripts/humane_dates.js"></script>
+    <script src="scripts/MouseStatus.js"></script>
+    <script src="scripts/AudioEngine.js"></script>
+    <script src="scripts/WaveformDisplay.js"></script>
+    <script src="scripts/RecorderApp.js"></script>
+    <script src="scripts/app.js"></script>
+
+  </body>
 
 </html>

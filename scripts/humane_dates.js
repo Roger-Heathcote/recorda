@@ -20,21 +20,21 @@ function humaneDate(inputDate, inputCompareTo){
     if(!inputDate) { return; }
 
     let lang = {
-            ago: 'Ago',
+            ago: 'ago',
             from: '',
-            now: 'Just Now',
-            minute: 'Minute',
-            minutes: 'Minutes',
-            hour: 'Hour',
-            hours: 'Hours',
-            day: 'Day',
-            days: 'Days',
-            week: 'Week',
-            weeks: 'Weeks',
-            month: 'Month',
-            months: 'Months',
-            year: 'Year',
-            years: 'Years'
+            now: '<1m ago',
+            minute: 'm',
+            minutes: 'm',
+            hour: 'hr',
+            hours: 'hrs',
+            day: 'day',
+            days: 'days',
+            week: 'wk',
+            weeks: 'wks',
+            month: 'mn',
+            months: 'mn',
+            year: 'yr',
+            years: 'yr'
     };
     let formats = [
             [60, lang.now],
@@ -85,7 +85,6 @@ function humaneDate(inputDate, inputCompareTo){
             let val = Math.ceil(normalize(seconds, format[3]) / (format[3]));
 
             return val +
-                    ' ' +
                     (val != 1 ? format[2] : format[1]) +
                     (i > 0 ? token : '');
         }

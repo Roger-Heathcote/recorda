@@ -73,9 +73,9 @@ function refreshDataDisplay(){
 }
 function refreshRecordings(){
   //let block = document.getElementById("recordingsBlock");
-  let listInner = document.getElementById("recordingsListInner");
+  let listElement = document.getElementById("recordingsList");
   let recordingsList = recorder.vm_recordings();
-  views.recordingsBlock( document, listInner, recordingsList );
+  views.recordingsBlock( document, listElement, recordingsList );
 }
 
 // RECORDER NOTIFICATION CALLBACK HANDLERS
