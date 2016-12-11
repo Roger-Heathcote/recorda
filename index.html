@@ -76,7 +76,7 @@
         width: 100%;
       }
       .recordingListItem{
-        height: 2em;
+        /*height: 1em;*/
         margin-left: auto;
         margin-right: auto;
         width: 100%;
@@ -85,7 +85,7 @@
         align-items: center;
       }
       .recordingListItemFlexbox{
-        height: 1.5em;
+        /*height: 1em;*/
         display: flex;
         max-width: 700px;
         min-width: 0px;
@@ -104,12 +104,10 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        /*background: #F00;*/
         padding-right: 1em;
         flex-basis: 215px;
       }
       .vSAC{
-        /*background: #0F0;*/
         flex-basis: 250px;
         width: 100%;
         min-width: 4em;
@@ -118,7 +116,6 @@
       .vSAC_outer{
         margin-left: 1em;
         background: #AAA;
-        /*min-width: 0;*/
         height: 1em;
         margin-right:1em;
         border-radius: 0.5em;
@@ -154,16 +151,18 @@
         background: rgba(0, 0, 0, 0.5);
         font-family: monospace;
       }
-
-      .saveButton, .deleteButton {
-        font-size: 0.8em;
-        padding: 1px;
-        background: #BBB;
-        border-top: 2px solid #FFF;
-        border-left: 2px solid #FFF;
-        border-right: 2px solid #000;
-        border-bottom: 2px solid #000;
-        cursor: pointer;
+      button::-moz-focus-inner{
+        border: 0px;
+      	padding: 0px;
+      	margin-top:-3px;
+      	/*margin-bottom: -0px;*/
+      }
+      .saveButton, .deleteButton{
+        padding: 0px 6px 0px;
+        border-top: 1px solid #FFF;
+        border-left: 1px solid #FFF;
+        border-right: 1px solid #000;
+        border-bottom: 1px solid #000;
       }
 
       #main{
@@ -202,13 +201,16 @@
   <body>
     <div id="main">
 
-      <div id="title">
-        <h1>recorda :: pre-buffering audio recorder</h1>
-      </div>
+      <header>
+        <div id="title">
+          <h1>recorda :: pre-buffering audio recorder</h1>
+        </div>
+      </header>
 
-      <div id="wrapper">
-         <canvas id="waveform"></canvas>
-      </div>
+      <main>
+        <div id="wrapper">
+           <canvas id="waveform"></canvas>
+        </div>
 
       <div id="recordingsBlock">
         <ul id="recordingsList">
@@ -223,6 +225,11 @@
 
       <button onclick='optionsToggleClicked()'>options</button>
       <button onclick='audioPassthroughClicked()'>audio passthrough</button>
+    </main>
+
+    <footer>
+      Footer woo!
+    </footer>
 
     </div>
 

@@ -60,13 +60,13 @@ views = {
             li.appendChild( vSAC(doc, recording.id, audioElement) );
             // li.appendChild(audioControl);
 
-            let saveButton = doc.createElement("span");
+            let saveButton = doc.createElement("button");
             saveButton.setAttribute("class", "saveButton");
             saveButton.setAttribute("onclick", 'saveClicked("'+recording.id+'")');
             saveButton.innerHTML = "save";
             li.appendChild(saveButton);
 
-            let deleteButton = doc.createElement("span");
+            let deleteButton = doc.createElement("button");
             deleteButton.setAttribute("class", "deleteButton");
             deleteButton.setAttribute("onclick", 'deleteClicked("'+recording.id+'")');
             deleteButton.innerHTML = "delete";
