@@ -4,38 +4,36 @@ views = {
 
   recordingsBlock : function recordingsBlock(doc, rootNode, viewModel) {
   let items = [].slice.call(rootNode.getElementsByTagName("li"));
-  console.log("items:", items);
   let currentlyDisplayed = items.map( x => x.getAttribute("id") );
-  console.log("currently displayed array contains:", currentlyDisplayed);
   viewModel.forEach(
     function viewForEach(recording) {
       if( currentlyDisplayed.includes("recording_"+recording.id) ) {
-        console.log("I got this one already, updating time");
+        // update the time on existing recordings
         theLine = doc.getElementById("recording_"+recording.id);
         theDate = theLine.getElementsByClassName("recording_humanTime")[0];
         theDate.innerHTML = recording.date;
       } else {
-        console.log("Uuuh, I don't got this one yet, better add it");
+        // create new recordings
         let outerLi = doc.createElement("li");
         outerLi.setAttribute("class", "recordingListItem");
         outerLi.setAttribute("id", "recording_" + recording.id);
         outerLi.style.background = recording.color;
+        rootNode.insertBefore(outerLi, rootNode.firstChild); // most recent at the top
 
-          let li = doc.createElement("div");
-          li.setAttribute("class", "recordingListItemFlexbox");
-          // li.setAttribute("id", "recording_" + recording.id);
-          li.style.background = recording.color;
-          outerLi.appendChild(li);
+          let innerLi = doc.createElement("div");
+          innerLi.setAttribute("class", "recordingListItemFlexbox");
+          innerLi.style.background = recording.color;
+          outerLi.appendChild(innerLi);
 
             let date = doc.createElement("div");
             date.setAttribute("class", "recording_humanTime");
             date.innerHTML = recording.date;
-            li.appendChild(date);
+            innerLi.appendChild(date);
 
             let name = doc.createElement("div");
             name.setAttribute("class", "recording_Name");
             name.innerHTML = recording.name;
-            li.appendChild(name);
+            innerLi.appendChild(name);
 
             let audio_span = doc.createElement("div");
               let audioElement = doc.createElement("audio");
@@ -54,33 +52,29 @@ views = {
                 source_tag.setAttribute("type", "audio/wav");
                 audioElement.appendChild(source_tag);
 
-            li.appendChild(audio_span);
+            innerLi.appendChild(audio_span);
 
-            // let audioControl = doc.createElement("div");
-            li.appendChild( vSAC(doc, recording.id, audioElement) );
-            // li.appendChild(audioControl);
+            innerLi.appendChild( vSAC(doc, recording.id, audioElement) );
 
             let saveButton = doc.createElement("button");
             saveButton.setAttribute("class", "saveButton");
             saveButton.setAttribute("onclick", 'saveClicked("'+recording.id+'")');
             saveButton.innerHTML = "save";
-            li.appendChild(saveButton);
+            innerLi.appendChild(saveButton);
 
             let deleteButton = doc.createElement("button");
             deleteButton.setAttribute("class", "deleteButton");
             deleteButton.setAttribute("onclick", 'deleteClicked("'+recording.id+'")');
             deleteButton.innerHTML = "delete";
-            li.appendChild(deleteButton);
+            innerLi.appendChild(deleteButton);
 
-        // add list item to the front of the list (most recent first)
-        rootNode.insertBefore(outerLi, rootNode.firstChild);
       }
       // remove recording ids from this list as they are dealt with
       let idx = currentlyDisplayed.indexOf("recording_"+recording.id);
       if(idx!=-1){ currentlyDisplayed.splice(idx, 1); }
 
     });
-    // any recording ids left in the list must have been deleted so remove them
+    // only deleted ids remain in the list so remove them
     currentlyDisplayed.forEach(function(each){
       let node = doc.getElementById(each);
       rootNode.removeChild(node);
