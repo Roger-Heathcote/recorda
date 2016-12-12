@@ -13,7 +13,6 @@ var AudioEngine = function AudioEngine(GLOBALS, options) { //loResWaveformParams
   };
 
   this.scriptProcessorBufferLength = this.scriptProcessorBufferLength || 16384 / 4; // In units NOT bytes!
-  console.log("scriptProcessorBufferLength in constructor is.............", this.scriptProcessorBufferLength);
   this.channels = this.channels || 2;
   this.bitDepth = this.bitDepth || 16;
   this.audioContext = new (GLOBALS.win.AudioContext || GLOBALS.win.webkitAudioContext)();
@@ -29,7 +28,6 @@ var AudioEngine = function AudioEngine(GLOBALS, options) { //loResWaveformParams
   this.passthrough = this.passthrough || false;
   this.toggleAudioPassthrough = function toggleAudioPassthrough(){
     this.passthrough = !this.passthrough;
-    console.log("passthrough is now:", this.passthrough);
   };
   this.reapplyConstraints = function reapplyConstraints(constraintsObject){
     console.log("Here is where we will try to re-apply the constraints to the audioTrack");
