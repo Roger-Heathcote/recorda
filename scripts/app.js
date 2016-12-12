@@ -83,11 +83,17 @@ function recordingsListChangedCallback(){ refreshRecordings(); refreshDataDispla
 function dataDisplayChangedCallback(){ refreshDataDisplay(); }
 
 function enteringSaveModeCallback(){
+  theCanvas.setAttribute("aria-disabled", "true");
   this.overlay = document.createElement("div");
   this.overlay.innerHTML = "Saving 00%";
   let rect = theCanvas.getBoundingClientRect();
   let pos = getPosition(theCanvas);
   this.overlay.setAttribute("class", "saveOverlayDiv");
+  this.overlay.setAttribute("role", "progressbar");
+  this.overlay.setAttribute("aria-valuemin", 0);
+  this.overlay.setAttribute("aria-valuemax", 100);
+  this.overlay.setAttribute("aria-valuenow", 0);
+  this.overlay.setAttribute("aria-valuetext", "Saving");
   this.overlay.style.left = pos.x + "px";
   this.overlay.style.top = pos.y + "px";
   this.overlay.style.width = rect.right - rect.left + "px";
@@ -95,7 +101,6 @@ function enteringSaveModeCallback(){
   this.overlay.style.fontSize = (rect.bottom - rect.top)/6 + "px";
   this.overlay.style.lineHeight = rect.bottom - rect.top + "px";
   window.addEventListener("resize", function(event) {
-    console.log("wank badger - we should be getting a resize event here")
     let rect = theCanvas.getBoundingClientRect();
     this.overlay.style.width = rect.right - rect.left + "px";
     this.overlay.style.height = rect.bottom - rect.top + "px";
@@ -105,12 +110,16 @@ function enteringSaveModeCallback(){
 
 function exitingSaveModeCallback(){
   document.body.removeChild(this.overlay);
+  theCanvas.setAttribute("aria-disabled", "false");
+  this.overlay = undefined;
 }
 
 function saveModeUpdateCallback(val){
   //console.log("save mode update callback", val);
-  let paddedPercentage = ("00" + parseInt(val*100,10)).substr(-2,2);
+  let percentage = val*100;
+  let paddedPercentage = ("00" + parseInt(percentage,10)).substr(-2,2);
   this.overlay.innerHTML = "Saving "+paddedPercentage+"%";
+  this.overlay.setAttribute("aria-valuenow", percentage);
 }
 
 function getPosition(el) {
