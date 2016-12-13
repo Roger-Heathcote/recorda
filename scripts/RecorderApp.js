@@ -96,7 +96,6 @@ var RecorderApp = function RecorderApp(
   saveState.execute = function saveStateExecute(arg) {
 
     let saveCompleteCallback = function saveCompleteCallback(WAVFileBlob){
-      console.log("Adding recording, blob is:", WAVFileBlob);
       // Push recording onto recordings list
       let dateNow = Date.now();
       GLOBALS.recordings.push({

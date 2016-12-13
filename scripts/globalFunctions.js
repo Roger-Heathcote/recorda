@@ -270,12 +270,8 @@ function* makeWAVFileBlobGenerator(
   frameSize = audioChunks[audioChunks.length-1].length;
   frameSizeInBytes = audioChunks[audioChunks.length-1].length * 2;
   numFrames = outPoint - inPoint;
-  console.log("FRAMESIZE....................................", frameSize);
 
   let fileBuffer = new ArrayBuffer( 44 + frameSize * numFrames * 2 ); // size is in bytes and we have Int16s
-  console.log("frameSize............................", frameSize);
-  console.log("numFrames............................", numFrames);
-  console.log("fileBuffer.byteLength............................", fileBuffer.byteLength);
 
   // Write audio data
   let audioSection = new DataView( fileBuffer, 44 );
@@ -287,9 +283,8 @@ function* makeWAVFileBlobGenerator(
       audioSection.setInt16(frameOffset + (destIndex*2), audioChunks[sourceIndex][destIndex],true);
     }
     frameOffset = frameOffset + frameSizeInBytes;
-    yield (sourceIndex - properInFrame) / numFrames;
+    yield (sourceIndex - properInFrame) / numFrames; // % progress
   }
-  console.log("Going to write header now thanks");
   // Write header
   let headerSection = new DataView( fileBuffer, 0 );
   //addWAVHeader(headerSection, audioChunks, channels, sampleRate, bitDepth);
@@ -310,10 +305,7 @@ function* makeWAVFileBlobGenerator(
   writeUTFBytes(headerSection, 36, 'data');
   headerSection.setUint32(40, audioSection.byteLength, true);
 
-  // Return file blob
-  // yield new Blob([fileBuffer], {type: "audio/wav"});
-  yield 1;
-  console.log("Going to fire callback...");
+  yield 1; // e.g. 100% progress
   callback( new Blob([fileBuffer], {type: "audio/wav"}) );
 
 }
@@ -322,7 +314,6 @@ function importProperties(sourceObject, destinationScope){
   if(!sourceObject) return;
   Object.keys(sourceObject).forEach(function(property){
     destinationScope[property] = sourceObject[property];
-    // console.log("SETTING:", property,":",sourceObject[property]);
   });
 }
 

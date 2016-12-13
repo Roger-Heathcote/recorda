@@ -1,9 +1,10 @@
-Get rid of "new", refactor to module pattern
-
 refactor to common js and move to
+  let to some TDR (test driven refactoring!)
   browserify, or webpack!
   eliminate global state!
   raw node doesn't have Blob constructor so big ugly test works in devtool but not raw node.
+
+  Get rid of "new", refactor to module pattern
 
 Make into an actual page
   Settings
