@@ -1,24 +1,26 @@
+Get rid of "new", refactor to module pattern
+
+refactor to common js and move to
+  browserify, or webpack!
+  eliminate global state!
+  raw node doesn't have Blob constructor so big ugly test works in devtool but not raw node.
+
 Make into an actual page
+  Settings
+  recording length
+  Make it possible to change recording length
+  URL param + page reload?
+  max recording time limit
+  input selector?
 
   Internationalize?
 
   Accessibilify!
-
-  HTML5inate (use more semantic tags)
+    Add keyboard shortcuts
+    Improve aria story
 
   Find more accurate language for what is curretly "saving" and "save"
     preparing|download?
-
-  Settings
-    recording length
-      Make it possible to change recording length
-        URL param + page reload?
-    max recording time limit
-    input selector?
-
-  refactor to browserify?!
-    raw node doesn't have Blob constructor so big ugly test works in devtool but not raw node.
-    and also beauty
 
 channels and bit rate
   Mono/Float recording
@@ -40,6 +42,8 @@ Longer term
     Multiple waveform display & multitrack recording?
 
 DONE-------------------------
+
+HTML5inate (use more semantic tags)
 
 Made design more responsive - good down to 240px now.
 

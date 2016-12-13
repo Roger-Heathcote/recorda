@@ -46,3 +46,5 @@ var vSAC = function verySimpleAudioControl(doc, id, audioElement){
   }
 
 };
+
+module.exports = vSAC;

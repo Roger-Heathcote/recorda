@@ -15,9 +15,17 @@
 /*jshint esversion: 6 */
 /*jshint -W056 */
 
-function humaneDate(inputDate, inputCompareTo){
+// TODO ditch this, write own or get better module from npm
+// Don't need compare to
+// Don't need plurals
+// Hate formatting
+// Hate use of tertiary operator
+// Especially over multiple lines
+// Acknowldge that I suffer from "not written here syndrome"
 
-    if(!inputDate) { return; }
+var humaneDate = function humaneDate(inputDate, inputCompareTo){
+
+    if(!inputDate) { throw Error("humaneDate requires an inputDate"); }
 
     let lang = {
             ago: 'ago',
@@ -89,7 +97,7 @@ function humaneDate(inputDate, inputCompareTo){
                     (i > 0 ? token : '');
         }
     }
-}
+};
 
 if(typeof jQuery != 'undefined') {
     jQuery.fn.humaneDates = function jQueryFnHumaneDates(options)

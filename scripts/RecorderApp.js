@@ -1,24 +1,5 @@
 //jshint esversion: 6
 
-var stateObject = {
-  name: "Name not set",
-  init: target => this.target = target,
-  reset: target => this.target.init(),
-  enter: target => {
-    //console.log("Setting global state to", this.target.state.name);
-    this.target.globals.state = this.target.state.name;
-  },
-  execute: target => null, //console.log(this.target.state.name+": executing."),
-  buffer: target => this.target.changeState(this.target.states.buffer),
-  record: target => this.target.changeState(this.target.states.record),
-  save: target => this.target.changeState(this.target.states.save),
-  exit: target => null //console.log(this.target.state.name+": exiting.")
-};
-
-var bufferState = createStateObject(stateObject, "buffer", "buffering");
-var recordState = createStateObject(stateObject, "record", "recording");
-var saveState = createStateObject(stateObject, "save", "saving");
-
 var RecorderApp = function RecorderApp(
     window,
     navigator,
@@ -27,6 +8,26 @@ var RecorderApp = function RecorderApp(
     options=false
   ){
   importProperties(options, this);
+
+  var stateObject = {
+    name: "Name not set",
+    init: target => this.target = target,
+    reset: target => this.target.init(),
+    enter: target => {
+      //console.log("Setting global state to", this.target.state.name);
+      this.target.globals.state = this.target.state.name;
+    },
+    execute: target => null, //console.log(this.target.state.name+": executing."),
+    buffer: target => this.target.changeState(this.target.states.buffer),
+    record: target => this.target.changeState(this.target.states.record),
+    save: target => this.target.changeState(this.target.states.save),
+    exit: target => null //console.log(this.target.state.name+": exiting.")
+  };
+
+  var bufferState = createStateObject(stateObject, "buffer", "buffering");
+  var recordState = createStateObject(stateObject, "record", "recording");
+  var saveState = createStateObject(stateObject, "save", "saving");
+
   let instance = this;
   let GLOBALS = {
     win:window,
@@ -47,7 +48,6 @@ var RecorderApp = function RecorderApp(
     recordings: new Array(0)
   };
 
-  this.format = this.format || formatPresets["default"];
   this.states = { buffer: bufferState, record: recordState, save: saveState };
   this.globals = GLOBALS;
   this.toggleAudioPassthrough = function toggleAudioPassthrough(){
@@ -245,25 +245,18 @@ var RecorderApp = function RecorderApp(
     if(this.recordingsListChangedCallback) {this.recordingsListChangedCallback();}
   }.bind(this);
 
+  function createStateObject(stateObject, stateName, stateIng) {
+    newObject = Object.create(stateObject);
+    newObject.name = stateName;
+    newObject[stateName] = target => console.log(this.target.state.name+": already "+stateIng+".");
+    return newObject;
+  }
+
+  function getURLOrDont(win, blob){
+    if(win.URL){ return win.URL.createObjectURL(blob); }
+    return "http://no.URL.on.window.object.probably.running.headless";
+  }
+
 };
 
-function createStateObject(stateObject, stateName, stateIng) {
-  newObject = Object.create(stateObject);
-  newObject.name = stateName;
-  newObject[stateName] = target => console.log(this.target.state.name+": already "+stateIng+".");
-  return newObject;
-}
-
-function getURLOrDont(win, blob){
-  if(win.URL){ return win.URL.createObjectURL(blob); }
-  return "http://no.URL.on.window.object.probably.running.headless";
-}
-
-function formatPresets(formatName) {
-  let recordingFormats = {  };
-  let savingFormats = {};
-  let presets = {
-    "default":"Not yet implemented, sozballs."
-  };
-  return presets[formatName];
-}
+module.exports = RecorderApp;

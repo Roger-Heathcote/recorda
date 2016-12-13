@@ -160,3 +160,4 @@ var AudioEngine = function AudioEngine(GLOBALS, options) { //loResWaveformParams
   this.scriptNode.onaudioprocess = scriptProcessor;
 
 };
+module.exports = AudioEngine;

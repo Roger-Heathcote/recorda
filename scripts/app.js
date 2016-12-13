@@ -100,6 +100,9 @@ function enteringSaveModeCallback(){
   this.overlay.style.height = rect.bottom - rect.top + "px";
   this.overlay.style.fontSize = (rect.bottom - rect.top)/6 + "px";
   this.overlay.style.lineHeight = rect.bottom - rect.top + "px";
+  // Why is this firing AFTER save mode has been exited?
+  // Just not GC'd yet?
+  // Manually detactch this listener?
   window.addEventListener("resize", function(event) {
     let rect = theCanvas.getBoundingClientRect();
     this.overlay.style.width = rect.right - rect.left + "px";

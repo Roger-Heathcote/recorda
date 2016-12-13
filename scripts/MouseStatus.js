@@ -23,3 +23,4 @@ var MouseStatus = function MouseStatus(element){
   element.addEventListener('mouseover', this.isOver.bind(instance), false);
   element.addEventListener('mouseleave', this.notOver.bind(instance), false);
 };
+module.exports = MouseStatus;

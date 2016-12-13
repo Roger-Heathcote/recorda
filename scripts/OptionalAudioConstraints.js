@@ -59,17 +59,18 @@ var OptionalAudioConstraints = function OptionalAudioConstraints(reapplyCallback
       return immute(this.__state);
     };
 };
-
-quickTests: {
-  break quickTests;
-  console.log("Tests init...");
-
-  c = new OptionalAudioConstraints(echo=false, gain=false);
-  let cObj = c.asConstraintsObject();
-  if (cObj.audio.optional.googEchoCancellation === true ) { throw new Error("googEcho Should be off"); }
-  if (cObj.audio.optional.googHighpassFilter === false) { throw new Error("googHigh Should be on"); }
-  c.toggleConstraint("echoCancellation");
-  if (cObj.audio.optional.mozEchoCancellation === false) { throw new Error("mozEcho Should be on"); }
-
- console.log("Tests concluded");
-}
+//
+// quickTests: {
+//   break quickTests;
+//   console.log("Tests init...");
+//
+//   c = new OptionalAudioConstraints(echo=false, gain=false);
+//   let cObj = c.asConstraintsObject();
+//   if (cObj.audio.optional.googEchoCancellation === true ) { throw new Error("googEcho Should be off"); }
+//   if (cObj.audio.optional.googHighpassFilter === false) { throw new Error("googHigh Should be on"); }
+//   c.toggleConstraint("echoCancellation");
+//   if (cObj.audio.optional.mozEchoCancellation === false) { throw new Error("mozEcho Should be on"); }
+//
+//  console.log("Tests concluded");
+// }
+module.exports = OptionalAudioConstraints;

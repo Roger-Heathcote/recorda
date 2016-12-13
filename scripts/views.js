@@ -193,3 +193,5 @@ views = {
   }
 
 };
+
+module.exports = views;

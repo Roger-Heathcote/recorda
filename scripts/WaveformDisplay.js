@@ -104,3 +104,5 @@ function ratio(array, key, width, dfault=0) {
   if (result === -1) { return dfault; }
   return Math.floor( width * (result/array.length) );
 }
+
+module.exports = WaveformDisplay;
