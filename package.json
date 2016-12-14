@@ -1,0 +1,26 @@
+{
+  "name": "recorda",
+  "version": "0.1.0",
+  "description": "buffering audio recorder",
+  "main": "scripts/app.js",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha --reporter spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "."
+  },
+  "keywords": [
+    "pre-record",
+    "audio",
+    "wave",
+    "recorder"
+  ],
+  "author": "Roger Heathcote",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "devtool": "^2.3.0",
+    "mocha": "^3.2.0"
+  }
+}
