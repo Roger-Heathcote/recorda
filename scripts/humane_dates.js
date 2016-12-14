@@ -60,10 +60,18 @@ var humaneDate = function humaneDate(inputDate, inputCompareTo){
     let seconds = (compareTo - date + (compareTo.getTimezoneOffset() -
         // if we received a GMT time from a string, doesn't include time zone bias
         // if we got a date object, the time zone is built in, we need to remove it.
+
         (isString ? 0 : date.getTimezoneOffset())
         ) * 60000
     ) / 1000;
     let token;
+
+    // TODO: bugs!!!!!
+    // console.log("Date now is:       ", date);
+    // console.log("Date to compare is:", compareTo);
+    // console.log("Difference in s is:", seconds);
+    // console.log("Difference in m is:", seconds/60);
+    // console.log("Difference in h is:", seconds/60/60);
 
     if(seconds < 0) {
         seconds = Math.abs(seconds);
@@ -74,7 +82,7 @@ var humaneDate = function humaneDate(inputDate, inputCompareTo){
 
     function normalize(val, single)
     {
-        let margin = 0.1;
+        let margin = 1;
         if(val >= single && val <= single * (1+margin)) {
             return single;
         }
@@ -124,3 +132,4 @@ if(typeof jQuery != 'undefined') {
         });
     };
 }
+module.exports = humaneDate;
