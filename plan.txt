@@ -6,6 +6,14 @@ refactor to common js and move to
 
   Get rid of "new", refactor to module pattern
 
+Add confirm step to "delete" action
+
+rewrite pure functions in elm?
+
+lose the individual click handlers for save and delete buttons
+  refactor to use delegation on the containing div/ul
+    http://javascript.info/tutorial/event-delegation
+    
 Make into an actual page
   Settings
   recording length

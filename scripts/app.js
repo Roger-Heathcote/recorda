@@ -100,6 +100,7 @@ function enteringSaveModeCallback(){
   this.overlay.style.height = rect.bottom - rect.top + "px";
   this.overlay.style.fontSize = (rect.bottom - rect.top)/6 + "px";
   this.overlay.style.lineHeight = rect.bottom - rect.top + "px";
+  // TODO!!!
   // Why is this firing AFTER save mode has been exited?
   // Just not GC'd yet?
   // Manually detactch this listener?

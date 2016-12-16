@@ -4,7 +4,8 @@
   "description": "buffering audio recorder",
   "main": "scripts/app.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha --reporter spec"
+    "test": "./node_modules/.bin/mocha --reporter spec",
+    "start": "webpack --config webpack.config.js"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,7 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "devtool": "^2.3.0",
-    "mocha": "^3.2.0"
+    "mocha": "^3.2.0",
+    "webpack": "^1.14.0"
   }
 }

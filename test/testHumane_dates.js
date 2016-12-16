@@ -1,6 +1,6 @@
 /*jshint esversion:6*/
 
-require("./helpers/chai.js");
+require("./helpers/all.js");
 
 let expected, actual;
 

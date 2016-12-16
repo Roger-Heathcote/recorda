@@ -18,7 +18,6 @@ function binarySearch(array, key, zeroOrThrow=0) {
       return mid;
     }
   }
-  console.log("Search array:", array);
   if (zeroOrThrow)
     {
       throw( new Error("Not Found!") );
@@ -65,11 +64,6 @@ function addTimezoneOffsetTo(dateObject) {
     let output = new Date( offsetTime );
 }
 
-
-function relativeDateTime(date) {
-  return humaneDate(date);
-}
-
 function formatBytes(bytes,decimals) {
    if(bytes === 0) return '0 Byte';
    var k = 1000; // or 1024 for binary
@@ -79,16 +73,12 @@ function formatBytes(bytes,decimals) {
    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 
-
 function randomColorCode(min=0, max=255){
   let color = ["#"];
   while(color.length < 4)
     { color.push(("00"+parseInt(Math.floor(Math.random()*(max-min+1))+min,10).toString(16).toUpperCase()).slice(-2)); }
   return color.join("");
 }
-
-
-
 
 function monoFloat32ToInt16(float32Array) {
   let length = float32Array.length;
@@ -113,14 +103,12 @@ function stereoFloat32ToInterleavedInt16(left, right) {
   return int16Array;
 }
 
-
 function writeUTFBytes(view, offset, string){
   var lng = string.length;
   for (var i = 0; i < lng; i++){
     view.setUint8(offset + i, string.charCodeAt(i));
   }
 }
-
 
 function blob2arrayBuffer(blob, callback){
   let arrayBuffer;
@@ -170,9 +158,6 @@ function bytes2AsciiAndNumbers(bytes){
   }
   return asciiArray;
 }
-
-
-
 
 function makeWAVFileBlob(
   audioChunks,
@@ -341,4 +326,26 @@ function runTests(){
 
 }
 
+module.exports = {
+  binarySearch,
+  sanitize,
+  datestampToSystemLocalDatestamp,
+  humanReadableLocalDate,
+  addTimezoneOffsetTo,
+  formatBytes,
+  randomColorCode,
+  monoFloat32ToInt16,
+  stereoFloat32ToInterleavedInt16,
+  writeUTFBytes,
+  blob2arrayBuffer,
+  bytes2Hex,
+  bytes2Ascii,
+  bytes2AsciiAndNumbers,
+  makeWAVFileBlob,
+  immute,
+  randomUUID,
+  getByteFromArrayBuffer,
+  makeWAVFileBlobGenerator,
+  importProperties
+};
 //runTests();

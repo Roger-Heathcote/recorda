@@ -213,7 +213,7 @@ var RecorderApp = function RecorderApp(
       let recObj = {
         id: recording.uuid,
         color: recording.color,
-        date: relativeDateTime( new Date(recording.localTimestamp) ),
+        date: humaneDate( new Date(recording.localTimestamp) ),
         name: sanitize(recording.name),
         url: recording.url
       };
