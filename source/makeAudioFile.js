@@ -2,7 +2,21 @@
 
 let writeUTFBytes = require("./pureGeneralFunctions.js").writeUTFBytes;
 
-let makeWAVFileBlobGenerator = pureMakeWAVFileBlobGenerator.bind(null, Blob, writeUTFBytes);
+let BlobConstructor;
+if(typeof(window) === "undefined"){
+  BlobConstructor = function fakeBlob(ArrayOfBlobParts, blobPropertyBag){
+    this.readme = "Note, I'm not a real blob, just a wee mock!";
+    this.data = ArrayOfBlobParts[0];
+    this.size = 123;
+    this.type = blobPropertyBag;
+    this.slice = function(start, end, contentType){ throw new Error("Not implemented"); };
+  };
+} else {
+  BlobConstructor = Blob;
+  console.log("Found a window object, using Blob from that", BlobConstructor);
+}
+
+let makeWAVFileBlobGenerator = pureMakeWAVFileBlobGenerator.bind(null, BlobConstructor, writeUTFBytes);
 
 function* pureMakeWAVFileBlobGenerator(
   BlobConstructor,

@@ -4,7 +4,7 @@ require("./helpers/all.js");
 
 let expected, actual;
 
-let humaneDate = require("../scripts/humaneDates").humaneDate;
+let humaneDate = require("../source/humane_dates").humaneDate;
 describe("Let's test humane dates", function(){
 
   let localCurrentDateObject = function(secondsAgo=0){

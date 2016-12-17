@@ -1,10 +1,8 @@
-refactor to common js and move to
-  let to some TDR (test driven refactoring!)
-  browserify, or webpack!
-  eliminate global state!
-  raw node doesn't have Blob constructor so big ugly test works in devtool but not raw node.
+eliminate global state!
 
-  Get rid of "new", refactor to module pattern
+
+
+Get rid of "new", refactor to module pattern
 
 Add confirm step to "delete" action
 
@@ -13,7 +11,7 @@ rewrite pure functions in elm?
 lose the individual click handlers for save and delete buttons
   refactor to use delegation on the containing div/ul
     http://javascript.info/tutorial/event-delegation
-    
+
 Make into an actual page
   Settings
   recording length
@@ -51,6 +49,17 @@ Longer term
     Multiple waveform display & multitrack recording?
 
 DONE-------------------------
+
+
+get big ugly test working again
+  raw node doesn't have Blob constructor so big ugly test works in devtool but not raw node.
+  refactored so blob constructor is now passed in
+  node doesn't support Blob yet (though it is in the pipeline) so
+    I have mocked it in makeAudioFile
+      which is really ugly - boo!
+      TODO: find a better way
+
+Refactor to common js and move to webpack!
 
 HTML5inate (use more semantic tags)
 

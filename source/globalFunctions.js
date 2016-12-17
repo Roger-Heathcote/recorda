@@ -30,16 +30,7 @@
 //
 //
 //
-//
-// function blob2arrayBuffer(blob, callback){
-//   let arrayBuffer;
-//   let fileReader = new FileReader();
-//   fileReader.onload = function() {
-//     callback(this.result);
-//   };
-//   fileReader.readAsArrayBuffer(blob);
-// }
-//
+
 // function bytes2Hex(bytes){
 //   console.log("typeof(bytes)", typeof(bytes), bytes);
 //   let hexArray = [];
@@ -86,11 +77,7 @@
 // // This doesn't even exist when we're runnig headless!
 // // Fuuuuuuuuu
 //
-// function getByteFromArrayBuffer(buffer, index){
-//   let view = new Uint8Array(buffer);
-//   return view[index];
-// }
-//
+
 //
 //
 // function runTests(){

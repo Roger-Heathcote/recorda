@@ -3,18 +3,27 @@
 /*jshint -W067 */
 var biguglyendtoendtest = function(){
   var fs = require('fs');
-  var loadRawJS = function(fileName){ (1,eval)( fs.readFileSync(fileName,'utf8') ); }.bind(this);
+  // var loadRawJS = function(fileName){ (1,eval)( fs.readFileSync(fileName,'utf8') ); }.bind(this);
 
-  loadRawJS('./scripts/OptionalAudioConstraints.js');
-  loadRawJS('./scripts/globalFunctions.js');
-  loadRawJS('./scripts/humane_dates.js');
-  loadRawJS('./scripts/AudioEngine.js');
-  loadRawJS('./scripts/RecorderApp.js');
+  // loadRawJS('./scripts/OptionalAudioConstraints.js');
+  // loadRawJS('./scripts/globalFunctions.js');
+  // loadRawJS('./scripts/humane_dates.js');
+  // loadRawJS('./scripts/AudioEngine.js');
+  // loadRawJS('./scripts/RecorderApp.js');
+
+  let OptionalAudioConstraints = require("../source/OptionalAudioConstraints.js");
+  let AudioEngine = require("../source/AudioEngine.js");
+  let RecorderApp = require("../source/RecorderApp.js");
+  // let x = require("../source/x");
+  // let x = require("../source/x");
+  // let x = require("../source/x");
+  // let x = require("../source/x");
+  // let x = require("../source/x");
+  // let x = require("../source/x");
 
   ( function () {
     return;
     let testName = "Test stereoFloat32ToInterleavedInt16";
-    loadRawJS('./scripts/globalFunctions.js');
     left = Float32Array.from([1,0.5,0,-0.5]);
     right = Float32Array.from([-1,-0.5,0,0.5]);
     let result = stereoFloat32ToInterleavedInt16(left, right);
@@ -28,7 +37,6 @@ var biguglyendtoendtest = function(){
 
   ( function () {
     let testName = "Test stereoFloat32ToInterleavedInt16 empty";
-    loadRawJS('./scripts/globalFunctions.js');
     left = Float32Array.from([]);
     right = Float32Array.from([]);
     let result = stereoFloat32ToInterleavedInt16(left, right);
@@ -254,6 +262,8 @@ var biguglyendtoendtest = function(){
           throw new Error("Big Ugly Test 3 - Last byte not what we expected :/");
         }
         console.log("Big Ugly Test 3 - passed");
+        debugger;
+        process.exit();
 
       }
     );
@@ -261,5 +271,24 @@ var biguglyendtoendtest = function(){
   bigUglyTester();
   console.log("Tests scheduled");
 };
+
+
+function blob2arrayBuffer(blob, callback){
+  if(blob.hasOwnProperty("readme")){
+    callback(blob.data);
+  } else {
+    let arrayBuffer;
+    let fileReader = new FileReader();
+    fileReader.onload = function() {
+      callback(this.result);
+    };
+    fileReader.readAsArrayBuffer(blob);
+  }
+}
+
+function getByteFromArrayBuffer(buffer, index){
+  let view = new Uint8Array(buffer);
+  return view[index];
+}
 
 module.exports = biguglyendtoendtest();
