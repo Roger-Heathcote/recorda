@@ -22,8 +22,9 @@
 // Hate use of tertiary operator
 // Especially over multiple lines
 // Acknowldge that I suffer from "not written here syndrome"
+let humaneDate = pureHumaneDate.bind(null, Date);
 
-var humaneDate = function humaneDate(inputDate, inputCompareTo){
+function pureHumaneDate(DateConstructor, inputDate, inputCompareTo){
 
     if(!inputDate) { throw Error("humaneDate requires an inputDate"); }
 
@@ -55,8 +56,8 @@ var humaneDate = function humaneDate(inputDate, inputCompareTo){
     ];
     let isString = typeof inputDate == 'string';
     let date = isString ?
-        new Date(('' + inputDate).replace(/-/g,"/").replace(/[TZ]/g," ")) : inputDate;
-    let compareTo = inputCompareTo || new Date();
+        new DateConstructor(('' + inputDate).replace(/-/g,"/").replace(/[TZ]/g," ")) : inputDate;
+    let compareTo = inputCompareTo || new DateConstructor();
     let seconds = (compareTo - date + (compareTo.getTimezoneOffset() -
         // if we received a GMT time from a string, doesn't include time zone bias
         // if we got a date object, the time zone is built in, we need to remove it.
@@ -132,4 +133,7 @@ if(typeof jQuery != 'undefined') {
         });
     };
 }
-module.exports = humaneDate;
+module.exports = {
+  humaneDate,
+  pureHumaneDate
+};

@@ -1,5 +1,19 @@
 //jshint esversion: 6
 
+let importProperties = require("./pureGeneralFunctions.js").importProperties;
+let formatBytes = require("./pureGeneralFunctions.js").formatBytes;
+let binarySearch = require("./pureGeneralFunctions.js").binarySearch;
+let sanitize = require("./pureGeneralFunctions.js").sanitize;
+
+let makeWAVFileBlobGenerator = require("./makeAudioFile.js").makeWAVFileBlobGenerator;
+let humaneDate = require("./humane_dates.js").humaneDate;
+
+let humanReadableLocalDate = require("./impureGeneralFunctions.js").humanReadableLocalDate;
+let UTCToSystemLocalTimestamp = require("./impureGeneralFunctions.js").UTCToSystemLocalTimestamp;
+let randomColorCode = require("./impureGeneralFunctions.js").randomColorCode;
+let randomUUID = require("./impureGeneralFunctions.js").randomUUID;
+
+
 var RecorderApp = function RecorderApp(
     window,
     navigator,
@@ -62,7 +76,7 @@ var RecorderApp = function RecorderApp(
       do {
         let progress = this.currentSave.next();
         if(!progress.done){
-          if(this.saveModeUpdateCallback){saveModeUpdateCallback(progress.value);}
+          if(this.saveModeUpdateCallback){ this.saveModeUpdateCallback(progress.value);}
           // console.log("this.saveModeUpdateCallback:", this.saveModeUpdateCallback);
         }
       }
@@ -102,7 +116,7 @@ var RecorderApp = function RecorderApp(
         name: humanReadableLocalDate(dateNow),
         data: WAVFileBlob,
         UCTTimestamp: dateNow,
-        localTimestamp: datestampToSystemLocalDatestamp(dateNow), // need to get adjustment from humanReadableDatetime and refactor / write dateLocal(dateNow)!
+        localTimestamp: UTCToSystemLocalTimestamp(dateNow), // need to get adjustment from humanReadableDatetime and refactor / write dateLocal(dateNow)!
         sampleRate: this.audEng.sampleRate,
         size: WAVFileBlob.size, // 16 bit
         color: randomColorCode(175,250),
@@ -130,13 +144,13 @@ var RecorderApp = function RecorderApp(
   }.bind(this);
 
   saveState.enter = function saveStateEnter(arg){
-    if(this.enteringSaveModeCallback){enteringSaveModeCallback();}
+    if(this.enteringSaveModeCallback){this.enteringSaveModeCallback();}
   }.bind(this);
 
   saveState.exit = function saveStateExit(arg){
     GLOBALS.setLoResInPoint(undefined);
     GLOBALS.setLoResOutPoint(undefined);
-    if(this.exitingSaveModeCallback){exitingSaveModeCallback();}
+    if(this.exitingSaveModeCallback){this.exitingSaveModeCallback();}
   }.bind(this);
 
   this.toggleOptionalAudioConstraint = function recorderToggleOptionalAudioConstraint(constraintName){

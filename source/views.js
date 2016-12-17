@@ -1,5 +1,7 @@
 //jshint esversion: 6
 
+let vSAC = require("./vSAC.js");
+
 views = {
 
   recordingsBlock : function recordingsBlock(doc, rootNode, viewModel) {
@@ -58,13 +60,17 @@ views = {
 
             let saveButton = doc.createElement("button");
             saveButton.setAttribute("class", "saveButton");
-            saveButton.setAttribute("onclick", 'saveClicked("'+recording.id+'")');
+            saveButton.setAttribute("name", "save");
+            saveButton.setAttribute("value", recording.id);
+            // saveButton.setAttribute("onclick", 'saveClicked("'+recording.id+'")');
             saveButton.innerHTML = "save";
             innerLi.appendChild(saveButton);
 
             let deleteButton = doc.createElement("button");
             deleteButton.setAttribute("class", "deleteButton");
-            deleteButton.setAttribute("onclick", 'deleteClicked("'+recording.id+'")');
+            deleteButton.setAttribute("name", "delete");
+            deleteButton.setAttribute("value", recording.id);
+            // deleteButton.setAttribute("onclick", 'deleteClicked("'+recording.id+'")');
             deleteButton.innerHTML = "delete";
             innerLi.appendChild(deleteButton);
 
@@ -179,7 +185,8 @@ views = {
         output.push( "<li class=\"cellular\">" );
         output.push(   "<span>" );
         output.push(   "<input type=\"checkbox\" " );
-        output.push(     "onclick=\"optionToggleClicked('"+optionObject.name+"')\"" );
+        output.push(     "name=\"optionToggle\"" );
+        output.push(     "value=\""+optionObject.name+"\"" );
         output.push(     optionObject.status ? " checked": "" );
         output.push(   ">" );
         output.push(   "</span>" );

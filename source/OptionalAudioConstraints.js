@@ -1,5 +1,7 @@
 //jshint esversion: 6
 
+let immute = require("./pureGeneralFunctions.js").immute;
+
 var OptionalAudioConstraints = function OptionalAudioConstraints(reapplyCallback, echo=true, noise=true, gain=true, high=true){
 
     this.reapplyCallback = reapplyCallback;
@@ -20,18 +22,6 @@ var OptionalAudioConstraints = function OptionalAudioConstraints(reapplyCallback
       };
       return map[constraintName];
     };
-
-    // Moz only set for testing
-    // this.__mapToConstraintsList = function mapToConstrainsName(constraintName, truth){
-    //   let map = {
-    //     echoCancellation: [ {echoCancellation: truth} ],
-    //     noiseReduction: [ {mozNoiseSuppression: truth} ],
-    //     autoGainControl: [ {mozAutoGainControl: truth} ],
-    //     highPassFilter: [ ]
-    //   };
-    //   return map[constraintName];
-    // };
-
 
     // compiles settings into a constraintsObject suitable for getUserMEdia
     this.asConstraintsObject = function compileConstraintsObject(){

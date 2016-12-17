@@ -1,5 +1,7 @@
 /*jshint esversion: 6 */
 
+let binarySearch = require("./pureGeneralFunctions.js").binarySearch;
+
 let WaveformDisplay = function WaveformDisplay(GLOBALS, the_window, canvas, mouse, loResWaveform, loResCodeChannel, clickHandler) {
   instance = this;
   //this.state = "buffer";

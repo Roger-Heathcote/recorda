@@ -6,7 +6,7 @@
   	<title>recorda :: pre-buffering audio recorder</title>
     <script>
       // Whilst refactoring to common.js!
-      module = {};
+      // module = {};
     </script>
     <style>
 
@@ -212,42 +212,36 @@
       </header>
 
       <main>
+
         <div id="wrapper">
            <canvas id="waveform"></canvas>
         </div>
 
-      <div id="recordingsBlock">
-        <ul id="recordingsList">
-        </ul>
-      </div>
+        <div id="stuff">
 
-      <div id="dataDisplayBlock">
-      </div>
+          <div id="recordingsBlock">
+            <ul id="recordingsList">
+            </ul>
+          </div>
 
-      <div id="optionsBlock">
-      </div>
+          <div id="dataDisplayBlock">
+          </div>
 
-      <button onclick='optionsToggleClicked()'>options</button>
-      <button onclick='audioPassthroughClicked()'>audio passthrough</button>
-    </main>
+          <div id="optionsBlock">
+          </div>
 
-    <footer>
-      Footer woo!
-    </footer>
+          <button name='optionsToggle'>options</button>
+          <button name='audioPassthrough'>audio passthrough</button>
+
+        </div>
+
+      </main>
+
+      <footer>
+        McTwimflaps
+      </footer>
 
     </div>
-
-    <!-- SCRIPT IMPORTS BELOW THIS LINE ONLY -->
-    <script src="scripts/vSAC.js"></script>
-    <script src="scripts/views.js"></script>
-    <script src="scripts/OptionalAudioConstraints.js"></script>
-    <script src="scripts/globalFunctions.js"></script>
-    <script src="scripts/humane_dates.js"></script>
-    <script src="scripts/MouseStatus.js"></script>
-    <script src="scripts/AudioEngine.js"></script>
-    <script src="scripts/WaveformDisplay.js"></script>
-    <script src="scripts/RecorderApp.js"></script>
-    <script src="scripts/app.js"></script>
 
   </body>
 

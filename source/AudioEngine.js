@@ -1,6 +1,10 @@
 /*jshint esversion: 6 */
 /*jshint -W056 */
 
+let importProperties = require("./pureGeneralFunctions.js").importProperties;
+let OptionalAudioConstraints = require("./OptionalAudioConstraints.js");
+stereoFloat32ToInterleavedInt16 = require("./pureGeneralFunctions.js").stereoFloat32ToInterleavedInt16;
+
 var AudioEngine = function AudioEngine(GLOBALS, options) { //loResWaveformParams=false
   // ADD/OVERWRITE PROPERTIES FROM OPTIONS OBJECT
   importProperties(options, this);
@@ -51,14 +55,14 @@ var AudioEngine = function AudioEngine(GLOBALS, options) { //loResWaveformParams
     this.optionalAudioConstraints.toggleConstraint(constraintName);
   };
   if(this.loResWaveformParams){
-    this.loResWaveformDataPoints = loResWaveformParams.dataPoints;
-    this.loResWaveformSecondsToDisplay = loResWaveformParams.secondsToDisplay;
+    this.loResWaveformDataPoints = this.loResWaveformParams.dataPoints;
+    this.loResWaveformSecondsToDisplay = this.loResWaveformParams.secondsToDisplay;
     this.loResWaveform = new Array(this.loResWaveformDataPoints).fill(0);
     this.loResCodeChannel = new Array(this.loResWaveformDataPoints).fill(0);
     this.samplesPerDataPoint = (
       this.sampleRate *
-      loResWaveformParams.secondsToDisplay) /
-      loResWaveformParams.dataPoints;
+      this.loResWaveformParams.secondsToDisplay) /
+      this.loResWaveformParams.dataPoints;
     this.dispCount = this.samplesPerDataPoint;
   }
 
