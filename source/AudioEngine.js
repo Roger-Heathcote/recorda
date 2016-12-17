@@ -12,22 +12,26 @@ var AudioEngine = function AudioEngine(GLOBALS, audioOptions, options) { //loRes
   this.updateBlockTotal = function updateBlockTotal() {
     this.totalBlocksHandled++;
     if(this.totalBlocksHandled % 10000 === 0){
-      console.log( "Total audio blocks handled so far:", this.totalBlocksHandled + ". Audio array length is", this.interleaved16BitAudio.length );
+      console.log( "Total audio blocks handled so far:", this.totalBlocksHandled + ". Audio array length is", this.audioData.length );
      }
   };
 
   console.log("Need to apply audioOptions in Audio Engine now", audioOptions);
 
   this.scriptProcessorBufferLength = this.scriptProcessorBufferLength || 16384 / 4; // In units NOT bytes!
-  this.channels = this.channels || 2;
-  this.bitDepth = this.bitDepth || 16;
+  // this.channels = this.channels || 2;
+  // this.bitDepth = this.bitDepth || 16;
   this.audioContext = new (GLOBALS.win.AudioContext || GLOBALS.win.webkitAudioContext)();
   this.sampleRate = this.audioContext.sampleRate;
   this.gainNode = this.audioContext.createGain(); // Master volume, just in case we need it!
-  this.scriptNode = this.audioContext.createScriptProcessor(this.scriptProcessorBufferLength, 2, 2);
+  this.scriptNode = this.audioContext.createScriptProcessor(
+    this.scriptProcessorBufferLength,
+    audioOptions.channels,
+    audioOptions.channels
+  );
   this.recBufArrayLength = Math.ceil((GLOBALS.secondsToBuffer * this.sampleRate) / this.scriptProcessorBufferLength);
   this.codeChannel = new Array(this.recBufArrayLength).fill(0);
-  this.interleaved16BitAudio = new Array(this.recBufArrayLength).fill(0);
+  this.audioData = new Array(this.recBufArrayLength).fill(0);
   this.codeNumber = 0;
   this.maxAmplitude = 0;
   this.mediaStreamTrack = false;
@@ -96,7 +100,7 @@ var AudioEngine = function AudioEngine(GLOBALS, audioOptions, options) { //loRes
     let leftout = audioProcessingEvent.outputBuffer.getChannelData (0);
     let rightout = audioProcessingEvent.outputBuffer.getChannelData (1);
 
-    this.interleaved16BitAudio.push ( stereoFloat32ToInterleavedInt16(left, right) );
+    this.audioData.push ( stereoFloat32ToInterleavedInt16(left, right) );
 
     for (let sample = 0; sample < this.scriptProcessorBufferLength; sample++) {
 
@@ -128,10 +132,10 @@ var AudioEngine = function AudioEngine(GLOBALS, audioOptions, options) { //loRes
     } // end for
 
     // Trim element from the fron of the audio array
-    while ((GLOBALS.state === "buffer") && (this.interleaved16BitAudio.length > this.recBufArrayLength)) {
-      let trimLength = this.interleaved16BitAudio.length - this.recBufArrayLength;
+    while ((GLOBALS.state === "buffer") && (this.audioData.length > this.recBufArrayLength)) {
+      let trimLength = this.audioData.length - this.recBufArrayLength;
       if(trimLength>1) { console.log("trimLength =", trimLength); }
-      this.interleaved16BitAudio.splice(0, trimLength);
+      this.audioData.splice(0, trimLength);
       this.codeChannel.splice(0, trimLength);
     }
 

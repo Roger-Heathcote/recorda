@@ -26,8 +26,7 @@ function* pureMakeWAVFileBlobGenerator(
   inPoint,
   outPoint,
   sampleRate,
-  channels,
-  bitDepth,
+  audioOptions,
   callback
 ){
 
@@ -62,11 +61,11 @@ function* pureMakeWAVFileBlobGenerator(
   headerSection.setUint32(16, 16, true);  // bitDepth?
   headerSection.setUint16(20, 1, true);
   // stereo (2 channels)
-  headerSection.setUint16(22, channels, true);
+  headerSection.setUint16(22, audioOptions.channels, true);
   headerSection.setUint32(24, sampleRate, true);
   headerSection.setUint32(28, sampleRate * 4, true);
   headerSection.setUint16(32, 4, true);
-  headerSection.setUint16(34, 16, true); // bitDepth?
+  headerSection.setUint16(34, audioOptions.bitDepth, true); // bitDepth?
   // data sub-chunk
   writeUTFBytes(headerSection, 36, 'data');
   headerSection.setUint32(40, audioSection.byteLength, true);

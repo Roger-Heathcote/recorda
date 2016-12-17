@@ -174,7 +174,7 @@ var biguglyendtoendtest = function(){
 
     let FakeInputStream = function FakeInputStream(blockSize, velocity, maxAmp){
       testFixtures = [];
-      for(channel=0; channel<recorder.audEng.channels; channel++){
+      for(channel=0; channel<recorder.audioOptions.channels; channel++){
         testFixtures.push( testFixtureGenerator(blockSize,0.01,0.9) );
       }
       this.inputBuffer = {

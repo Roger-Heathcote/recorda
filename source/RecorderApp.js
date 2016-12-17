@@ -117,7 +117,7 @@ var RecorderApp = function RecorderApp(
         data: WAVFileBlob,
         UCTTimestamp: dateNow,
         localTimestamp: UTCToSystemLocalTimestamp(dateNow), // need to get adjustment from humanReadableDatetime and refactor / write dateLocal(dateNow)!
-        sampleRate: this.audEng.sampleRate,
+        // sampleRate: this.audEng.sampleRate,
         size: WAVFileBlob.size, // 16 bit
         color: randomColorCode(175,250),
         url: getURLOrDont(GLOBALS.win,WAVFileBlob),
@@ -129,13 +129,12 @@ var RecorderApp = function RecorderApp(
     }.bind(this);
 
     this.currentSave = makeWAVFileBlobGenerator(
-      this.audEng.interleaved16BitAudio,
+      this.audEng.audioData,
       this.audEng.codeChannel, // Erm, why this all zeros?
       this.fullResInPoint,
       this.fullResOutPoint,
       this.audEng.sampleRate,
-      this.audEng.channels,
-      this.audEng.bitDepth,
+      audioOptions,
       saveCompleteCallback
     );
 
@@ -244,7 +243,7 @@ var RecorderApp = function RecorderApp(
   this.getMemory = function getMemory() {
     let out = {};
     out.recordings = formatBytes(GLOBALS.recordings.reduce( (t,r) => t + r.size, 0));
-    out.buffers = formatBytes(this.audEng.interleaved16BitAudio.length * this.audEng.scriptProcessorBufferLength);
+    out.buffers = formatBytes(this.audEng.audioData.length * this.audEng.scriptProcessorBufferLength);
     return out;
   }.bind(this);
 
