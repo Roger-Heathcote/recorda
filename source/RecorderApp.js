@@ -13,12 +13,12 @@ let UTCToSystemLocalTimestamp = require("./impureGeneralFunctions.js").UTCToSyst
 let randomColorCode = require("./impureGeneralFunctions.js").randomColorCode;
 let randomUUID = require("./impureGeneralFunctions.js").randomUUID;
 
-
 var RecorderApp = function RecorderApp(
     window,
     navigator,
     AudioEngine,
     bufferLength,
+    audioOptions,
     options=false
   ){
   importProperties(options, this);
@@ -61,7 +61,7 @@ var RecorderApp = function RecorderApp(
     },
     recordings: new Array(0)
   };
-
+  this.audioOptions = audioOptions;
   this.states = { buffer: bufferState, record: recordState, save: saveState };
   this.globals = GLOBALS;
   this.toggleAudioPassthrough = function toggleAudioPassthrough(){
@@ -164,6 +164,7 @@ var RecorderApp = function RecorderApp(
     this.state = this.states.buffer;
     this.audEng = new AudioEngine(
       GLOBALS,
+      audioOptions,
       {
         loResWaveformParams: this.loResWaveformParams,
         optionalMediaConstraints: this.optionalMediaConstraints,

@@ -5,7 +5,7 @@ let importProperties = require("./pureGeneralFunctions.js").importProperties;
 let OptionalAudioConstraints = require("./OptionalAudioConstraints.js");
 stereoFloat32ToInterleavedInt16 = require("./pureGeneralFunctions.js").stereoFloat32ToInterleavedInt16;
 
-var AudioEngine = function AudioEngine(GLOBALS, options) { //loResWaveformParams=false
+var AudioEngine = function AudioEngine(GLOBALS, audioOptions, options) { //loResWaveformParams=false
   // ADD/OVERWRITE PROPERTIES FROM OPTIONS OBJECT
   importProperties(options, this);
   this.totalBlocksHandled = 0;
@@ -15,6 +15,8 @@ var AudioEngine = function AudioEngine(GLOBALS, options) { //loResWaveformParams
       console.log( "Total audio blocks handled so far:", this.totalBlocksHandled + ". Audio array length is", this.interleaved16BitAudio.length );
      }
   };
+
+  console.log("Need to apply audioOptions in Audio Engine now", audioOptions);
 
   this.scriptProcessorBufferLength = this.scriptProcessorBufferLength || 16384 / 4; // In units NOT bytes!
   this.channels = this.channels || 2;
@@ -66,37 +68,6 @@ var AudioEngine = function AudioEngine(GLOBALS, options) { //loResWaveformParams
     this.dispCount = this.samplesPerDataPoint;
   }
 
-
-
-  // // TODO Check if these are all needed - mid 2016
-  // // Oh, navigator.getUserMedia is dprecated according to mozilla
-  // // we should be using MediaDevices.getUserMedia
-  // GLOBALS.nav.getUserMedia = (GLOBALS.nav.getUserMedia ||
-  //                           GLOBALS.nav.webkitGetUserMedia ||
-  //                           GLOBALS.nav.mozGetUserMedia ||
-  //                           GLOBALS.nav.msGetUserMedia);
-  //
-  // if (GLOBALS.nav.getUserMedia) {
-  //   GLOBALS.nav.getUserMedia (
-  //     // { audio: true },
-  //     { audio: true },
-  //     function didGetUserMedia(audioStream) {
-  //       var source = this.audioContext.createMediaStreamSource(audioStream);
-  //       source.connect(this.scriptNode);
-  //       this.scriptNode.connect(this.gainNode);
-  //       this.gainNode.connect(this.audioContext.destination);
-  //     }.bind(this),
-  //     function didNotGetUserMedia(streamError) { throw( new Error("The following gUM Error occured: " + streamError) ); }
-  //   );
-  // } else {
-  //    throw( new Error("getUserMedia not supported on your browser!") );
-  // }
-
-  // let this.mediaConstraints = { audio: { optional: [{echoCancellation:false}] } };
-  //
-
-
-
   // WIRE UP THE INPUT TO OUR SCRIPTPROCESSOR NODE
   if (GLOBALS.nav.mediaDevices.getUserMedia){
     let audioInput = GLOBALS.nav.mediaDevices.getUserMedia( this.optionalAudioConstraints.asConstraintsObject() );
@@ -112,14 +83,20 @@ var AudioEngine = function AudioEngine(GLOBALS, options) { //loResWaveformParams
     );
   }
 
+  // let scriptProcessor = function scriptProcessor(audioProcessingEvent) {
   let scriptProcessor = function scriptProcessor(audioProcessingEvent) {
+    // We need to know
+    // Number of input channels
+    // Resample
+    // Interleave
     this.codeNumber++;
+    this.codeChannel.push (this.codeNumber);
     let left = audioProcessingEvent.inputBuffer.getChannelData (0);
     let right = audioProcessingEvent.inputBuffer.getChannelData (1);
-    this.interleaved16BitAudio.push ( stereoFloat32ToInterleavedInt16(left, right) );
     let leftout = audioProcessingEvent.outputBuffer.getChannelData (0);
     let rightout = audioProcessingEvent.outputBuffer.getChannelData (1);
-    this.codeChannel.push (this.codeNumber);
+
+    this.interleaved16BitAudio.push ( stereoFloat32ToInterleavedInt16(left, right) );
 
     for (let sample = 0; sample < this.scriptProcessorBufferLength; sample++) {
 
@@ -150,6 +127,7 @@ var AudioEngine = function AudioEngine(GLOBALS, options) { //loResWaveformParams
       } //end if
     } // end for
 
+    // Trim element from the fron of the audio array
     while ((GLOBALS.state === "buffer") && (this.interleaved16BitAudio.length > this.recBufArrayLength)) {
       let trimLength = this.interleaved16BitAudio.length - this.recBufArrayLength;
       if(trimLength>1) { console.log("trimLength =", trimLength); }

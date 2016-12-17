@@ -14,6 +14,8 @@ var biguglyendtoendtest = function(){
   let OptionalAudioConstraints = require("../source/OptionalAudioConstraints.js");
   let AudioEngine = require("../source/AudioEngine.js");
   let RecorderApp = require("../source/RecorderApp.js");
+  const audioOptions = require("../source/audioPresets.js").defaultPreset;
+
   // let x = require("../source/x");
   // let x = require("../source/x");
   // let x = require("../source/x");
@@ -176,6 +178,7 @@ var biguglyendtoendtest = function(){
       navigator,
       AudioEngine,
       bufferLength,
+      audioOptions,
       recorderOptions );
     recorder.init();
     recorder.record();

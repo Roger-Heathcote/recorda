@@ -1,20 +1,23 @@
 /*jshint esversion: 6 */
-RecorderApp = require("./RecorderApp.js");
-AudioEngine = require("./AudioEngine.js");
-MouseStatus = require("./MouseStatus.js");
-WaveformDisplay = require("./WaveformDisplay.js");
-views = require("./views.js");
+const RecorderApp = require("./RecorderApp.js");
+const AudioEngine = require("./AudioEngine.js");
+const MouseStatus = require("./MouseStatus.js");
+const WaveformDisplay = require("./WaveformDisplay.js");
+const views = require("./views.js");
+const audioOptions = require("./audioPresets.js").defaultPreset;
 
 function main(){
   // INIT RECORDER
   let theCanvas = document.getElementById("waveform");
   const bufferLength = 120;
   const loResWaveformParams = { dataPoints: 500, secondsToDisplay: bufferLength };
+
   recorder = new RecorderApp(
     window,
     navigator,
     AudioEngine,
     bufferLength,
+    audioOptions,
     {
       canvas: theCanvas,
       MouseStatus: MouseStatus,
