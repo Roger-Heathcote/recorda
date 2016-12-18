@@ -2,9 +2,9 @@
 
 require("./helpers/all.js");
 
-let expected, actual;
+describe("Test helper tests! ", function(){
 
-describe("Let's test some global functions! ", function(){
+  let expected, actual;
 
   it("Should throw when passed nothing", function(){
     expect(array2GenFunc()).to.throw();

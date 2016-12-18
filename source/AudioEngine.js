@@ -19,8 +19,6 @@ var AudioEngine = function AudioEngine(GLOBALS, audioOptions, options) { //loRes
   console.log("Need to apply audioOptions in Audio Engine now", audioOptions);
 
   this.scriptProcessorBufferLength = this.scriptProcessorBufferLength || 16384 / 4; // In units NOT bytes!
-  // this.channels = this.channels || 2;
-  // this.bitDepth = this.bitDepth || 16;
   this.audioContext = new (GLOBALS.win.AudioContext || GLOBALS.win.webkitAudioContext)();
   this.sampleRate = this.audioContext.sampleRate;
   this.gainNode = this.audioContext.createGain(); // Master volume, just in case we need it!
@@ -89,31 +87,34 @@ var AudioEngine = function AudioEngine(GLOBALS, audioOptions, options) { //loRes
 
   // let scriptProcessor = function scriptProcessor(audioProcessingEvent) {
   let scriptProcessor = function scriptProcessor(audioProcessingEvent) {
-    // We need to know
-    // Number of input channels
-    // Resample
-    // Interleave
+
     this.codeNumber++;
     this.codeChannel.push (this.codeNumber);
-    let left = audioProcessingEvent.inputBuffer.getChannelData (0);
-    let right = audioProcessingEvent.inputBuffer.getChannelData (1);
-    let leftout = audioProcessingEvent.outputBuffer.getChannelData (0);
-    let rightout = audioProcessingEvent.outputBuffer.getChannelData (1);
 
-    this.audioData.push ( stereoFloat32ToInterleavedInt16(left, right) );
+    channels = getChannels(audioOptions.channels, audioProcessingEvent);
+    this.audioData.push ( stereoFloat32ToInterleavedInt16(channels[0].in, channels[1].in) );
 
+    // this.audioData.push ( resampleAndInterleave(
+    //   audioOptions.bitDepth,
+    //   audioOptions.interleave,
+    //   channels
+    // ) );
+
+    let channelIndex;
     for (let sample = 0; sample < this.scriptProcessorBufferLength; sample++) {
 
       // enable pass through option
-      if(this.passthrough) {
-        leftout[sample] = left[sample]; rightout[sample] = right[sample];
-      } else {
-        leftout[sample] = 0.0; rightout[sample] = 0.0;
+      for(channelIndex=0; channelIndex<audioOptions.channels; channelIndex++){
+        if(this.passthrough) {
+          channels[channelIndex].out[sample] = channels[channelIndex].in[sample];
+        } else {
+          channels[channelIndex].out[sample] = 0.0;
+        }
       }
 
       // track max amplitude encountered
-      if (left[sample] > this.maxAmplitude) { this.maxAmplitude = left[sample]; }
-      if (left[sample] < -this.maxAmplitude) { this.maxAmplitude = -left[sample]; } // TODO check both
+      if (channels[0].in[sample] > this.maxAmplitude) { this.maxAmplitude = channels[0].in[sample]; }
+      if (channels[0].in[sample] < -this.maxAmplitude) { this.maxAmplitude = -channels[0].in[sample]; } // TODO check both
       if(this.loResWaveformParams){ // TODO move this check to block above, don't need maxamp if no waveform display!
         // if enough samples have elapsed push a display data point & reset counter
         this.dispCount--;
@@ -146,4 +147,16 @@ var AudioEngine = function AudioEngine(GLOBALS, audioOptions, options) { //loRes
   this.scriptNode.onaudioprocess = scriptProcessor;
 
 };
+
+function getChannels(numberOfChannels,scriptProcessorEvent){
+  let channelIndex, channels=[];
+  for(channelIndex=0; channelIndex<numberOfChannels; channelIndex++){
+    channels.push({
+      in:scriptProcessorEvent.inputBuffer.getChannelData(channelIndex),
+      out:scriptProcessorEvent.outputBuffer.getChannelData(channelIndex)
+    });
+  }
+  return channels;
+}
+
 module.exports = AudioEngine;

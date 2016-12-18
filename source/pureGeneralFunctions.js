@@ -7,19 +7,6 @@ function importProperties(sourceObject, destinationScope){
   });
 }
 
-function stereoFloat32ToInterleavedInt16(left, right) {
-  let sourceLength = left.length;
-  let int16Array = new Int16Array(sourceLength*2);
-  for(idx=0; idx<sourceLength; idx++)
-    {
-      l = Math.max(-1, Math.min(1, left[idx]));
-      r = Math.max(-1, Math.min(1, right[idx]));
-      int16Array[idx*2] = l < 0 ? l * 0x8000 : l * 0x7FFF;
-      int16Array[(idx*2)+1] = r < 0 ? r * 0x8000 : r * 0x7FFF;
-    }
-  return int16Array;
-}
-
 function immute(simple_object){
   // pass by value for simple objects
   // returns a "deep" copy of original Object
@@ -120,9 +107,53 @@ function sanitize( dirty ){
   return escapeHTML(dirty, true);
 }
 
+
+
+
+
+function stereoFloat32ToInterleavedInt16(left, right) {
+  let sourceLength = left.length;
+  let int16Array = new Int16Array(sourceLength*2);
+  for(idx=0; idx<sourceLength; idx++)
+    {
+      l = Math.max(-1, Math.min(1, left[idx]));
+      r = Math.max(-1, Math.min(1, right[idx]));
+      int16Array[idx*2] = l < 0 ? l * 0x8000 : l * 0x7FFF;
+      int16Array[(idx*2)+1] = r < 0 ? r * 0x8000 : r * 0x7FFF;
+    }
+  return int16Array;
+}
+
+function monoFloat32ToInt16(float32Array) {
+  let length = float32Array.length;
+  let int16Array = new Int16Array(length);
+  while (length--) {
+      s = Math.max(-1, Math.min(1, float32Array[length]));
+      int16Array[length] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+  }
+  return int16Array;
+}
+
+
+
+function resampleAndInterleave(bitDepth,interleave,channels){
+  let typedArrays = {
+    "8":Int8Array,
+    "16":Int16Array
+  };
+  return typedArrays[bitDepth].from([]);
+}
+
+
+
+
+
+
 module.exports = {
   importProperties,
   stereoFloat32ToInterleavedInt16,
+  monoFloat32ToInt16,
+  resampleAndInterleave,
   immute,
   formatBytes,
   binarySearch,

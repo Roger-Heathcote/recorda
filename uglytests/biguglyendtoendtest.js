@@ -2,54 +2,11 @@
 /*jshint -W027 */
 /*jshint -W067 */
 var biguglyendtoendtest = function(){
-  var fs = require('fs');
-  // var loadRawJS = function(fileName){ (1,eval)( fs.readFileSync(fileName,'utf8') ); }.bind(this);
-
-  // loadRawJS('./scripts/OptionalAudioConstraints.js');
-  // loadRawJS('./scripts/globalFunctions.js');
-  // loadRawJS('./scripts/humane_dates.js');
-  // loadRawJS('./scripts/AudioEngine.js');
-  // loadRawJS('./scripts/RecorderApp.js');
 
   let OptionalAudioConstraints = require("../source/OptionalAudioConstraints.js");
   let AudioEngine = require("../source/AudioEngine.js");
   let RecorderApp = require("../source/RecorderApp.js");
   const audioOptions = require("../source/audioPresets.js").defaultPreset;
-
-  // let x = require("../source/x");
-  // let x = require("../source/x");
-  // let x = require("../source/x");
-  // let x = require("../source/x");
-  // let x = require("../source/x");
-  // let x = require("../source/x");
-
-  ( function () {
-    return;
-    let testName = "Test stereoFloat32ToInterleavedInt16";
-    left = Float32Array.from([1,0.5,0,-0.5]);
-    right = Float32Array.from([-1,-0.5,0,0.5]);
-    let result = stereoFloat32ToInterleavedInt16(left, right);
-    let expected = Int16Array.from([ 32767, -32768, 16383, -16384, 0, 0, -16384, 16383 ]);
-    if (JSON.stringify(result) !== JSON.stringify(expected)) {
-      console.log(result);
-      console.log(expected);
-      throw new Error( testName );
-    }
-  }());
-
-  ( function () {
-    let testName = "Test stereoFloat32ToInterleavedInt16 empty";
-    left = Float32Array.from([]);
-    right = Float32Array.from([]);
-    let result = stereoFloat32ToInterleavedInt16(left, right);
-    let expected = Int16Array.from([]);
-    if (JSON.stringify(result) !== JSON.stringify(expected)) {
-      console.log(result);
-      console.log(expected);
-      throw new Error( testName );
-    }
-  }());
-
 
   // BIG UGLY AUDIO ENGINE TO RECORDING END TO END TEST
   // BIG UGLY AUDIO ENGINE TO RECORDING END TO END TEST
