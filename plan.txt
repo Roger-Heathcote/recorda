@@ -1,16 +1,21 @@
+channels and bit rate
+  Mono/Float recording
+  let's go!
+    better resampleAndInterleave - done
+    make WAV generator handle all cases
+
+
 eliminate global state!
 
-
-
-Get rid of "new", refactor to module pattern
+increase width of humane date div and add overflow hidden
 
 Add confirm step to "delete" action
 
+Get rid of "new", refactor to module pattern
+
 rewrite pure functions in elm?
 
-lose the individual click handlers for save and delete buttons
-  refactor to use delegation on the containing div/ul
-    http://javascript.info/tutorial/event-delegation
+
 
 Make into an actual page
   Settings
@@ -29,10 +34,7 @@ Make into an actual page
   Find more accurate language for what is curretly "saving" and "save"
     preparing|download?
 
-channels and bit rate
-  Mono/Float recording
-  let's go!
-  Erm maybe not yet!
+
 
   Save as mp4?
 
@@ -50,6 +52,9 @@ Longer term
 
 DONE-------------------------
 
+Rewrote resample and interleave.
+
+Replaced individual click handers with delegation
 
 get big ugly test working again
   raw node doesn't have Blob constructor so big ugly test works in devtool but not raw node.

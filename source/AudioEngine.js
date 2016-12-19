@@ -3,7 +3,8 @@
 
 let importProperties = require("./pureGeneralFunctions.js").importProperties;
 let OptionalAudioConstraints = require("./OptionalAudioConstraints.js");
-stereoFloat32ToInterleavedInt16 = require("./pureGeneralFunctions.js").stereoFloat32ToInterleavedInt16;
+let stereoFloat32ToInterleavedInt16 = require("./pureGeneralFunctions.js").stereoFloat32ToInterleavedInt16;
+let resampleAndInterleave = require("./pureGeneralFunctions.js").resampleAndInterleave;
 
 var AudioEngine = function AudioEngine(GLOBALS, audioOptions, options) { //loResWaveformParams=false
   // ADD/OVERWRITE PROPERTIES FROM OPTIONS OBJECT
@@ -92,13 +93,13 @@ var AudioEngine = function AudioEngine(GLOBALS, audioOptions, options) { //loRes
     this.codeChannel.push (this.codeNumber);
 
     channels = getChannels(audioOptions.channels, audioProcessingEvent);
-    this.audioData.push ( stereoFloat32ToInterleavedInt16(channels[0].in, channels[1].in) );
 
-    // this.audioData.push ( resampleAndInterleave(
-    //   audioOptions.bitDepth,
-    //   audioOptions.interleave,
-    //   channels
-    // ) );
+    // this.audioData.push ( stereoFloat32ToInterleavedInt16(channels[0].in, channels[1].in) );
+    this.audioData.push ( resampleAndInterleave(
+      audioOptions.bitDepth,
+      audioOptions.interleave,
+      [channels[0].in, channels[1].in]
+    ) );
 
     let channelIndex;
     for (let sample = 0; sample < this.scriptProcessorBufferLength; sample++) {
