@@ -6,7 +6,7 @@ let WaveformDisplay = function WaveformDisplay(GLOBALS, the_window, canvas, mous
   instance = this;
   //this.state = "buffer";
   this.minRefreshTime = 100;
-  this.secondsToDisplay = GLOBALS.secondsToBuffer;
+  // this.secondsToDisplay = GLOBALS.secondsToBuffer;
   this.window = the_window;
   this.canvas = canvas;
   this.waveform = loResWaveform;
@@ -14,6 +14,14 @@ let WaveformDisplay = function WaveformDisplay(GLOBALS, the_window, canvas, mous
   this.canvasCtx = canvas.getContext("2d");
   this.lastRedraw = 0;
   this.mouse = mouse;
+  this.dontquit = true; // twim
+
+  this.quit = function quit(){
+    canvas.removeEventListener('mouseup', this.waveformClicked);
+    console.log("Setting quit bit in waveform engine");
+    this.dontquit = false;
+    this.blankDisplay();
+  }.bind(this);
 
   this.waveformClicked = function waveformClickedInWaveformDisplay(event) {
     let rect = this.canvas.getBoundingClientRect();
@@ -25,13 +33,14 @@ let WaveformDisplay = function WaveformDisplay(GLOBALS, the_window, canvas, mous
   canvas.addEventListener('mouseup', this.waveformClicked, false);
 
   this.updateDisplay = function updateDisplay() {
-    requestAnimationFrame(instance.updateDisplay);
-    if (Date.now() > (instance.lastRedraw + instance.minRefreshTime)) {
-      instance.drawWave();
-      instance.lastRedraw = Date.now();
-      // stopped here for some reason
+    if(instance.dontquit){
+      requestAnimationFrame(instance.updateDisplay);
+      if (Date.now() > (instance.lastRedraw + instance.minRefreshTime)) {
+        instance.drawWave();
+        instance.lastRedraw = Date.now();
+        // stopped here for some reason
+      }
     }
-
   };
 
   this.waveDrawStates = {
@@ -93,6 +102,11 @@ let WaveformDisplay = function WaveformDisplay(GLOBALS, the_window, canvas, mous
       let y = instance.waveform[i] * instance.canvas.height;
       instance.canvasCtx.fillRect(i*sliceWidth, canvas.height-y, sliceWidth+1, y);
     }
+  };
+
+  this.blankDisplay = function blankDisplay(){
+    this.canvasCtx.fillStyle = 'rgb(255, 255, 255)';
+    this.canvasCtx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   };
 
   this.updateDisplay();

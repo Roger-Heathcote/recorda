@@ -1,4 +1,15 @@
-fix this.overlay is not defined / cannot read property "style" of undefined error
+Make into an actual page
+  Settings
+  recording length
+  Make it possible to change recording length
+    Can we just reset the AudioEngine?!?!?
+    Waveform would need to go too
+    So yeh... state!
+    Sorted I think, though refactoring needed.
+  URL param + page reload?
+  max recording time limit
+  input selector?
+
 
 channels and bit rate
   Mono/Float recording
@@ -7,7 +18,10 @@ channels and bit rate
     make WAV generator handle all cases
 
 
-eliminate global state!
+
+Accessibilify!
+Add keyboard shortcuts
+Improve aria story
 
 increase width of humane date div and add overflow hidden
 
@@ -17,21 +31,12 @@ Get rid of "new", refactor to module pattern
 
 rewrite pure functions in elm?
 
+saving overlay does not track waveform well when resizing!!!
 
 
-Make into an actual page
-  Settings
-  recording length
-  Make it possible to change recording length
-  URL param + page reload?
-  max recording time limit
-  input selector?
 
   Internationalize?
 
-  Accessibilify!
-    Add keyboard shortcuts
-    Improve aria story
 
   Find more accurate language for what is curretly "saving" and "save"
     preparing|download?
@@ -42,6 +47,8 @@ Make into an actual page
 
 
 Longer term
+
+  fix this.overlay is not defined / cannot read property "style" of undefined error
 
   Invent way to detect glitches due to thread blocking CPU starvation
 

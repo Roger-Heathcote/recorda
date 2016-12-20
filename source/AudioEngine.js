@@ -61,15 +61,21 @@ var AudioEngine = function AudioEngine(GLOBALS, audioOptions, options) { //loRes
   };
   if(this.loResWaveformParams){
     this.loResWaveformDataPoints = this.loResWaveformParams.dataPoints;
-    this.loResWaveformSecondsToDisplay = this.loResWaveformParams.secondsToDisplay;
+    // this.loResWaveformSecondsToDisplay = this.loResWaveformParams.secondsToDisplay;
     this.loResWaveform = new Array(this.loResWaveformDataPoints).fill(0);
     this.loResCodeChannel = new Array(this.loResWaveformDataPoints).fill(0);
     this.samplesPerDataPoint = (
       this.sampleRate *
-      this.loResWaveformParams.secondsToDisplay) /
+      GLOBALS.secondsToBuffer) /
       this.loResWaveformParams.dataPoints;
     this.dispCount = this.samplesPerDataPoint;
   }
+
+  this.quit = function quit(){
+    console.log("AudioEngine: Quit signal received!");
+    this.audioContext.close();
+    // this = undefined;
+  };
 
   // WIRE UP THE INPUT TO OUR SCRIPTPROCESSOR NODE
   if (GLOBALS.nav.mediaDevices.getUserMedia){
