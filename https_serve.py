@@ -5,7 +5,7 @@
 # THIS GENERATES A VALID PEM FILE
 # openssl req -new -x509 -keyout server.pem -out server.pem -days 365 -nodes
 
-import BaseHTTPServer, SimpleHTTPServer, ssl, sys, socket, os
+import BaseHTTPServer, SimpleHTTPServer, ssl, sys, socket, os, time
 from OpenSSL import crypto
 
 def get_ip():
@@ -28,7 +28,7 @@ def makeCert(ipAddress):
     # create a self-signed cert
     cert = crypto.X509()
     cert.set_version(2)
-    cert.set_serial_number(12860644472867221993)
+    cert.set_serial_number( int( time.time()*1000 ) )
     cert.get_subject().C = "UK"
     cert.get_subject().ST = "Wherever"
     cert.get_subject().L = "Londinium"
