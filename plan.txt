@@ -1,3 +1,5 @@
+fix this.overlay is not defined / cannot read property "style" of undefined error
+
 channels and bit rate
   Mono/Float recording
   let's go!
