@@ -1,9 +1,8 @@
-/*jshint esversion: 6 */
+"use strict";
 /*jshint -W056 */
 
 let importProperties = require("./pureGeneralFunctions.js").importProperties;
 let OptionalAudioConstraints = require("./OptionalAudioConstraints.js");
-let stereoFloat32ToInterleavedInt16 = require("./pureGeneralFunctions.js").stereoFloat32ToInterleavedInt16;
 let resampleAndInterleave = require("./pureGeneralFunctions.js").resampleAndInterleave;
 
 var AudioEngine = function AudioEngine(GLOBALS, audioOptions, options) { //loResWaveformParams=false
@@ -54,7 +53,7 @@ var AudioEngine = function AudioEngine(GLOBALS, audioOptions, options) { //loRes
       console.log("NoMST");
     }
   }.bind(this);
-  this.optionalAudioConstraints = this.optionalAudioConstraints || new OptionalAudioConstraints(this.reapplyConstraints, echo=false, noise=false, gain=false, high=false);
+  this.optionalAudioConstraints = this.optionalAudioConstraints || new OptionalAudioConstraints(this.reapplyConstraints, false, false, false, false);
   this.currentAudioConstraints = function(){ return this.optionalAudioConstraints.state(); };
   this.toggleOptionalAudioConstraint = function audioToggleAudioConstraint(constraintName){
     this.optionalAudioConstraints.toggleConstraint(constraintName);
@@ -98,23 +97,29 @@ var AudioEngine = function AudioEngine(GLOBALS, audioOptions, options) { //loRes
     this.codeNumber++;
     this.codeChannel.push (this.codeNumber);
 
-    channels = getChannels(audioOptions.channels, audioProcessingEvent);
+    let channels = getChannels(audioOptions.channels, audioProcessingEvent);
+    let array2Push = [];
+    let channelIndex;
+    for(channelIndex=0; channelIndex < audioOptions.channels; channelIndex++) {
+      array2Push.push( channels[channelIndex].in );
+    }
 
     // this.audioData.push ( stereoFloat32ToInterleavedInt16(channels[0].in, channels[1].in) );
     this.audioData.push ( resampleAndInterleave(
       audioOptions.bitDepth,
       audioOptions.interleave,
-      [channels[0].in, channels[1].in]
+      array2Push
     ) );
 
-    let channelIndex;
-    for (let sample = 0; sample < this.scriptProcessorBufferLength; sample++) {
+    let sample;
+    for (sample = 0; sample < this.scriptProcessorBufferLength; sample++) {
 
       // enable pass through option
       for(channelIndex=0; channelIndex<audioOptions.channels; channelIndex++){
         if(this.passthrough) {
           channels[channelIndex].out[sample] = channels[channelIndex].in[sample];
         } else {
+          // debugger;
           channels[channelIndex].out[sample] = 0.0;
         }
       }

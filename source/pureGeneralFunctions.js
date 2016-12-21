@@ -1,7 +1,7 @@
-/*jshint esversion: 6 */
+"use strict";
 
 function importProperties(sourceObject, destinationScope){
-  if(!sourceObject) return;
+  if(!sourceObject){ return; }
   Object.keys(sourceObject).forEach(function(property){
     destinationScope[property] = sourceObject[property];
   });
@@ -14,7 +14,7 @@ function immute(simple_object){
 }
 
 function formatBytes(bytes,decimals) {
-   if(bytes === 0) return '0 Byte';
+   if(bytes === 0){ return '0 Byte'; }
    var k = 1000; // or 1024 for binary
    var dm = decimals + 1 || 3;
    var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
@@ -29,7 +29,8 @@ function binarySearch(array, key, zeroOrThrow=0) {
     mid,
     element;
   while (lo <= hi) {
-    mid = ((lo + hi) >> 1);
+    //jshint -W016
+    mid = ((lo + hi) >> 1); //TODO bitshifts unperformant in javascript, refactor out
     element = array[mid];
     if (element < key) {
       lo = mid + 1;
@@ -63,7 +64,7 @@ function pureHumanReadableLocalDate (DateConstructor, dateStamp) {
 function pureUTCToSystemLocalTimestamp(DateConstructor, dateStamp) {
   let rawDate = new DateConstructor();
   rawDate.setTime(dateStamp);
-  offset = rawDate.getTimezoneOffset();
+  let offset = rawDate.getTimezoneOffset();
   var offsetTime = rawDate.getTime() + offset;
   return offsetTime;
 }
@@ -107,33 +108,6 @@ function sanitize( dirty ){
   return escapeHTML(dirty, true);
 }
 
-
-
-
-
-function stereoFloat32ToInterleavedInt16(left, right) {
-  let sourceLength = left.length;
-  let int16Array = new Int16Array(sourceLength*2);
-  for(idx=0; idx<sourceLength; idx++)
-    {
-      l = Math.max(-1, Math.min(1, left[idx]));
-      r = Math.max(-1, Math.min(1, right[idx]));
-      int16Array[idx*2] = l < 0 ? l * 0x8000 : l * 0x7FFF;
-      int16Array[(idx*2)+1] = r < 0 ? r * 0x8000 : r * 0x7FFF;
-    }
-  return int16Array;
-}
-
-function monoFloat32ToInt16(float32Array) {
-  let length = float32Array.length;
-  let int16Array = new Int16Array(length);
-  while (length--) {
-      s = Math.max(-1, Math.min(1, float32Array[length]));
-      int16Array[length] = s < 0 ? s * 0x8000 : s * 0x7FFF;
-  }
-  return int16Array;
-}
-
 //http://stackoverflow.com/questions/24048547/checking-if-an-object-is-array-like
 function isArrayLike(item) {
   return (
@@ -150,7 +124,7 @@ function isArrayLike(item) {
 }
 
 function allMembersAreOfSameType(array){
-  firstElementType = Object.prototype.toString.call(array[0]);
+  let firstElementType = Object.prototype.toString.call(array[0]);
   return allMembersOfXAreY(array, firstElementType);
 }
 
@@ -178,11 +152,14 @@ function resampleAndInterleave(bitDepth,interleave,channels){
   if(typeof(bitDepth)!=="number" || bitDepth < 1 || bitDepth > 32){ throw new Error("bitDepth must be between 1 and 32"); }
 
   // note no native 24bit in JS so use 32bit int instead
-  let ArrayConstructors = [Int8Array,Int16Array,Int32Array,Int32Array];
-  ArrayConstructor = ArrayConstructors[Math.ceil(bitDepth/8)-1];
+  let ArrayConstructors = [Uint8Array,Int16Array,Int32Array,Int32Array];
+  let ArrayConstructor = ArrayConstructors[Math.ceil(bitDepth/8)-1];
 
   let rMax = Math.pow(2,bitDepth-1);
   let rMin = rMax -1;
+
+  let adj8bit = 0;
+  if(bitDepth <= 8){ adj8bit=128; }
 
   let chunkLength = channels[0].length;
   let numberOfChannels = channels.length;
@@ -190,11 +167,11 @@ function resampleAndInterleave(bitDepth,interleave,channels){
   if(interleave || numberOfChannels===1){
     let outputArrayLength = chunkLength * numberOfChannels;
     let outputArray = new ArrayConstructor(outputArrayLength);
-    let idx, sX;
+    let ch, idx, sX; // TODO test speed, see if alternative with var is noticably more performant
     for(ch=0; ch<numberOfChannels; ch++){
       for(idx=0; idx<chunkLength; idx++){
         sX = Math.max(-1, Math.min(1, channels[ch][idx]));
-        outputArray[(idx*numberOfChannels)+ch] = sX < 0 ? sX * rMax : sX * rMin;
+        outputArray[(idx*numberOfChannels)+ch] = sX < 0 ? (sX * rMax)+adj8bit : (sX * rMin)+adj8bit;
       }
     }
     return outputArray;
@@ -204,14 +181,8 @@ function resampleAndInterleave(bitDepth,interleave,channels){
   }
 }
 
-
-
-
-
 module.exports = {
   importProperties,
-  stereoFloat32ToInterleavedInt16,
-  monoFloat32ToInt16,
   resampleAndInterleave,
   immute,
   formatBytes,

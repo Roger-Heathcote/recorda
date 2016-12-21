@@ -1,4 +1,4 @@
-//jshint esversion: 6
+"use strict";
 
 let immute = require("./pureGeneralFunctions.js").immute;
 
@@ -25,7 +25,7 @@ var OptionalAudioConstraints = function OptionalAudioConstraints(reapplyCallback
 
     // compiles settings into a constraintsObject suitable for getUserMEdia
     this.asConstraintsObject = function compileConstraintsObject(){
-      constraintList = [];
+      let constraintList = [];
       let obj = { audio: { optional: constraintList } };
       Object.keys(this.__state).forEach(function itterateConstraints(constraintName){
         let toAdd = this.__mapToConstraintsList(constraintName,this.__state[constraintName]);

@@ -1,4 +1,4 @@
-//jshint esversion: 6
+"use strict";
 
 let importProperties = require("./pureGeneralFunctions.js").importProperties;
 let formatBytes = require("./pureGeneralFunctions.js").formatBytes;
@@ -26,16 +26,16 @@ var RecorderApp = function RecorderApp(
   var stateObject = {
     name: "Name not set",
     init: target => this.target = target,
-    reset: target => this.target.init(),
-    enter: target => {
+    reset: () => this.target.init(),
+    enter: () => {
       //console.log("Setting global state to", this.target.state.name);
       this.target.globals.state = this.target.state.name;
     },
-    execute: target => null, //console.log(this.target.state.name+": executing."),
-    buffer: target => this.target.changeState(this.target.states.buffer),
-    record: target => this.target.changeState(this.target.states.record),
-    save: target => this.target.changeState(this.target.states.save),
-    exit: target => null //console.log(this.target.state.name+": exiting.")
+    execute: () => null, //console.log(this.target.state.name+": executing."),
+    buffer: () => this.target.changeState(this.target.states.buffer),
+    record: () => this.target.changeState(this.target.states.record),
+    save: () => this.target.changeState(this.target.states.save),
+    exit: () => null //console.log(this.target.state.name+": exiting.")
   };
 
   var bufferState = createStateObject(stateObject, "buffer", "buffering");
@@ -72,7 +72,6 @@ var RecorderApp = function RecorderApp(
   this.saveEngine = function(){
     if(this.currentSave){
       let timeOut = Date.now() + this.saveEngineRunsForAboutXMs;
-      let blocksProcessed = 0;
       do {
         let progress = this.currentSave.next();
         if(!progress.done){
@@ -105,11 +104,11 @@ var RecorderApp = function RecorderApp(
       }
   };
 
-  saveState.handleWaveformClick = function saveStateHandleWaveformClick(code) {
+  saveState.handleWaveformClick = function saveStateHandleWaveformClick() {
   };
 
 
-  saveState.execute = function saveStateExecute(arg) {
+  saveState.execute = function saveStateExecute() {
 
     let saveCompleteCallback = function saveCompleteCallback(WAVFileBlob){
       // Push recording onto recordings list
@@ -144,11 +143,11 @@ var RecorderApp = function RecorderApp(
 
   }.bind(this);
 
-  saveState.enter = function saveStateEnter(arg){
+  saveState.enter = function saveStateEnter(){
     if(this.enteringSaveModeCallback){this.enteringSaveModeCallback();}
   }.bind(this);
 
-  saveState.exit = function saveStateExit(arg){
+  saveState.exit = function saveStateExit(){
     GLOBALS.setLoResInPoint(undefined);
     GLOBALS.setLoResOutPoint(undefined);
     if(this.exitingSaveModeCallback){this.exitingSaveModeCallback();}
@@ -214,8 +213,7 @@ var RecorderApp = function RecorderApp(
     let viewModel = this.vm_OptionalAudioConstraints();
     let output = [];
     Object.keys(viewModel).forEach(
-      function(name, idx){
-        // console.log( name, viewModel[name], idx);
+      function(name){
         output.push( { name:name, status:viewModel[name] } );
       }
     );
@@ -317,9 +315,9 @@ var RecorderApp = function RecorderApp(
   }.bind(this);
 
   function createStateObject(stateObject, stateName, stateIng) {
-    newObject = Object.create(stateObject);
+    let newObject = Object.create(stateObject);
     newObject.name = stateName;
-    newObject[stateName] = target => console.log(this.target.state.name+": already "+stateIng+".");
+    newObject[stateName] = () => console.log(this.target.state.name+": already "+stateIng+".");
     return newObject;
   }
 

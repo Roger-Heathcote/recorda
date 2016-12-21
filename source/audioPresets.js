@@ -1,6 +1,12 @@
-//jshint esversion:6
+"use strict";
 
 let presets = {
+  "mono 8bit wav": {
+    channels: 1,
+    bitDepth: 8,
+    interleave: false,
+    conversion: false
+  },
   "mono 16bit wav": {
     channels: 1,
     bitDepth: 16,
@@ -45,7 +51,8 @@ let presets = {
   }
 };
 
-let defaultPreset = presets["stereo 16bit wav"];
+let defaultPreset = presets["mono 8bit wav"];
+// let defaultPreset = presets["stereo 16bit wav"];
 
 module.exports = {
   presets,

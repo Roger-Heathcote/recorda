@@ -1,4 +1,4 @@
-//jshint esversion: 6
+"use strict";
 
 var vSAC = function verySimpleAudioControl(doc, id, audioElement){
 

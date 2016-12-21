@@ -1,4 +1,4 @@
-/*jshint esversion:6*/
+"use strict";
 
 let writeUTFBytes = require("./pureGeneralFunctions.js").writeUTFBytes;
 
@@ -9,7 +9,7 @@ if(typeof(window) === "undefined"){
     this.data = ArrayOfBlobParts[0];
     this.size = 123;
     this.type = blobPropertyBag;
-    this.slice = function(start, end, contentType){ throw new Error("Not implemented"); };
+    this.slice = function( /*start, end, contentType*/ ){ throw new Error("Not implemented"); };
   };
 } else {
   BlobConstructor = Blob;
@@ -30,26 +30,30 @@ function* pureMakeWAVFileBlobGenerator(
   callback
 ){
 
-  properInFrame = inPoint; //binarySearch(code, inPoint);
-  properOutFrame = inPoint; //binarySearch(code, outPoint);
-  frameSize = audioChunks[audioChunks.length-1].length;
-  frameSizeInBytes = audioChunks[audioChunks.length-1].length * 2;
-  numFrames = outPoint - inPoint;
+  let bytesPerSample = Math.ceil(audioOptions.bitDepth/8);
+  let frameSize = audioChunks[audioChunks.length-1].length;
+  let frameSizeInBytes = audioChunks[audioChunks.length-1].length * (bytesPerSample);  // was 2, guessing this is bytes per sample
+  let numFrames = outPoint - inPoint;
 
-  let fileBuffer = new ArrayBuffer( 44 + frameSize * numFrames * 2 ); // size is in bytes and we have Int16s
+  let fileBuffer = new ArrayBuffer( 44 + frameSize * numFrames * (bytesPerSample) ); // again guessing this is bytes/smp
 
   // Write audio data
   let audioSection = new DataView( fileBuffer, 44 );
   let frameOffset = 0;
+  let numberOfChannels = audioOptions.channels;
 
-  for(sourceIndex = properInFrame; sourceIndex < (properInFrame + numFrames); sourceIndex++){
-    // console.log("Copying block:", sourceIndex);
+  let setter = { "8":"setInt8", "16":"setInt16" }[audioOptions.bitDepth];
+
+  let sourceIndex, destIndex;
+  for(sourceIndex = inPoint; sourceIndex < (inPoint + numFrames); sourceIndex++){
     for(destIndex = 0; destIndex < (frameSize); destIndex++){
-      audioSection.setInt16(frameOffset + (destIndex*2), audioChunks[sourceIndex][destIndex],true);
+      // before - audioSection[setter](frameOffset + (destIndex*2), audioChunks[sourceIndex][destIndex],true);
+      audioSection[setter](frameOffset + (destIndex*numberOfChannels), audioChunks[sourceIndex][destIndex],true);
     }
     frameOffset = frameOffset + frameSizeInBytes;
-    yield (sourceIndex - properInFrame) / numFrames; // % progress
+    yield (sourceIndex - inPoint) / numFrames; // % progress
   }
+
   // Write header
   let headerSection = new DataView( fileBuffer, 0 );
   //addWAVHeader(headerSection, audioChunks, channels, sampleRate, bitDepth);
@@ -58,13 +62,13 @@ function* pureMakeWAVFileBlobGenerator(
   writeUTFBytes(headerSection, 8, 'WAVE');
   // FMT sub-chunk
   writeUTFBytes(headerSection, 12, 'fmt ');
-  headerSection.setUint32(16, 16, true);  // bitDepth?
+  headerSection.setUint32(16, 16, true);  // subchunk - not bit depth!
   headerSection.setUint16(20, 1, true);
   // stereo (2 channels)
-  headerSection.setUint16(22, audioOptions.channels, true);
+  headerSection.setUint16(22, numberOfChannels, true);
   headerSection.setUint32(24, sampleRate, true);
-  headerSection.setUint32(28, sampleRate * 4, true);
-  headerSection.setUint16(32, 4, true);
+  headerSection.setUint32(28, sampleRate * numberOfChannels * (bytesPerSample), true);
+  headerSection.setUint16(32, numberOfChannels * (bytesPerSample), true);
   headerSection.setUint16(34, audioOptions.bitDepth, true); // bitDepth?
   // data sub-chunk
   writeUTFBytes(headerSection, 36, 'data');

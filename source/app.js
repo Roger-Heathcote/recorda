@@ -1,5 +1,4 @@
-/*jshint esversion: 6 */
-
+"use strict";
 
 function main(){
 
@@ -11,20 +10,24 @@ function main(){
   let audioOptions = require("./audioPresets.js").defaultPreset;
 
   // INIT RECORDER
-  let theWrapper = document.getElementById("wrapper");
+  // let theWrapper = document.getElementById("wrapper");
   let theCanvas = document.getElementById("waveform");
   let theOverlay = false;
 
-  let bufferLength = 120;
-  const loResWaveformParams = { dataPoints: 500 };
-  const overlayResizeListenerFunction = function overlayResizeListener(event) {
+  let bufferLength = 500;
+  const loResWaveformParams = { dataPoints: 1000 };
+  const overlayResizeListenerFunction = function overlayResizeListener() {
     let rect = theCanvas.getBoundingClientRect();
+    let pos = getPosition(theCanvas);
+    theOverlay.style.left = pos.x + "px";
+    theOverlay.style.top = pos.y + "px";
     theOverlay.style.width = rect.right - rect.left + "px";
     theOverlay.style.height = rect.bottom - rect.top + "px";
-  }.bind(this);
+    // }.bind(this);
+  };
 
 
-  recorder = new RecorderApp(
+  let recorder = new RecorderApp(
     window,
     navigator,
     AudioEngine,
@@ -81,7 +84,7 @@ function main(){
   function saveClicked(recordingID) {
     // SAVE BUTTONS HANDLER: recording_id => browser download
     let recording = recorder.getRecordingByUuid(recordingID);
-    anchor = document.createElement("a");
+    let anchor = document.createElement("a");
     anchor.href = recording.url;
     anchor.download = recording.name + ".wav";
     document.body.appendChild(anchor);
@@ -96,24 +99,14 @@ function main(){
   }
   function audioPassthroughClicked(){ recorder.toggleAudioPassthrough(); }
   function optionToggleClicked(name){ recorder.toggleOptionalAudioConstraint(name); }
-  console.log("YEEHAAAAAAAWWWW");
-
 
   // CANVAS RESIZE HANDLER. Make canvas responsive to scale changes
   function resizeCanvas() { theCanvas.width = document.getElementById("wrapper").offsetWidth; }
 
   // VIEW REFRESHERS
-  function refreshvSACtest(){
-    let block = document.getElementById("vSACtest");
-    block.innerHTML = "<span>"+vSAC(1234)+"</span>";
-  }
-
   function refreshOptionsView(){
     let block = document.getElementById("optionsBlock");
     block.innerHTML = views.optionsBlock(recorder.vm_options());
-  }
-  function refreshDataDisplayClicked(){
-    refreshDataDisplay();
   }
   function refreshDataDisplay(){
     let block = document.getElementById("dataDisplayBlock");
@@ -166,7 +159,6 @@ function main(){
   }
 
   function saveModeUpdateCallback(val){
-    //console.log("save mode update callback", val);
     let percentage = val*100;
     let paddedPercentage = ("00" + parseInt(percentage,10)).substr(-2,2);
     theOverlay.innerHTML = "Saving "+paddedPercentage+"%";
@@ -178,7 +170,7 @@ function main(){
     let xPos = 0;
     let yPos = 0;
     while (el) {
-      if (el.tagName == "BODY") {
+      if (el.tagName === "BODY") {
         // deal with browser quirks with body/window/document and page scroll
         let xScroll = el.scrollLeft || document.documentElement.scrollLeft;
         let yScroll = el.scrollTop || document.documentElement.scrollTop;

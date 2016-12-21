@@ -1,9 +1,9 @@
-/*jshint esversion: 6 */
+"use strict";
 
 let binarySearch = require("./pureGeneralFunctions.js").binarySearch;
 
 let WaveformDisplay = function WaveformDisplay(GLOBALS, the_window, canvas, mouse, loResWaveform, loResCodeChannel, clickHandler) {
-  instance = this;
+  let instance = this;
   //this.state = "buffer";
   this.minRefreshTime = 100;
   // this.secondsToDisplay = GLOBALS.secondsToBuffer;
@@ -44,7 +44,7 @@ let WaveformDisplay = function WaveformDisplay(GLOBALS, the_window, canvas, mous
   };
 
   this.waveDrawStates = {
-    buffer: function waveDrawStates_buffer(GLOBALS, mouse, canvas, canvasCtx, codeChan) {
+    buffer: function waveDrawStates_buffer(GLOBALS, mouse, canvas, canvasCtx) {
       let mouseStatus = mouse.status();
       if (mouseStatus.over) {
         canvasCtx.fillStyle = 'rgb(255, 255, 255)';
@@ -75,7 +75,6 @@ let WaveformDisplay = function WaveformDisplay(GLOBALS, the_window, canvas, mous
     },
 
     save: function waveDrawStates_save(GLOBALS, mouse, canvas, canvasCtx, codeChan) {
-      let mouseStatus = mouse.status();
       let inPointX = ratio(codeChan, GLOBALS.loResInPoint, canvas.width);
       let outPointX = ratio(codeChan, GLOBALS.loResOutPoint, canvas.width);
       canvasCtx.fillStyle = 'rgb(255, 255, 255)';

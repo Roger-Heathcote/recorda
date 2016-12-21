@@ -1,4 +1,4 @@
-/*jshint esversion:6 */
+"use strict";
 
 let pureHumanReadableLocalDate = require("./pureGeneralFunctions.js").pureHumanReadableLocalDate;
 let pureUTCToSystemLocalTimestamp = require("./pureGeneralFunctions.js").pureUTCToSystemLocalTimestamp;

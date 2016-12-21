@@ -1,3 +1,5 @@
+"use strict";
+
 var chai = require('chai');
 chai.config.includeStack = true;
 global.expect = chai.expect;
@@ -21,4 +23,4 @@ function array2GenFunc(arr){
   };
   return myFunc;
 }
-global.array2GenFunc = array2GenFunc
+global.array2GenFunc = array2GenFunc;

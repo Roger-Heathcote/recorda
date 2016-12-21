@@ -1,8 +1,6 @@
-/*jshint esversion:6*/
+"use strict";
 
 require("./helpers/all.js");
-
-let expected, actual;
 
 let humaneDate = require("../source/humane_dates").humaneDate;
 describe("Let's test humane dates", function(){
@@ -15,17 +13,16 @@ describe("Let's test humane dates", function(){
   };
 
   it("Should throw when passed nothing", function(){
-    expected = undefined;
     expect(humaneDate).to.throw();
   });
 
   it("Should say '<1m ago' if called with current time", function(){
-    dn = localCurrentDateObject();
+    let dn = localCurrentDateObject();
     expect(humaneDate(dn)).to.equal("<1m ago");
   });
 
   it("Should say '<1m ago' if called with current time - 30 seconds", function(){
-    dn = localCurrentDateObject(30);
+    let dn = localCurrentDateObject(30);
     expect(humaneDate(dn)).to.equal("<1m ago");
   });
 

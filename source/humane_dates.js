@@ -12,9 +12,8 @@
  * Licensed under the MIT license.
  */
 
-/*jshint esversion: 6 */
-/*jshint -W056 */
 
+// jshint ignore: start
 // TODO ditch this, write own or get better module from npm
 // Don't need compare to
 // Don't need plurals
@@ -22,6 +21,7 @@
 // Hate use of tertiary operator
 // Especially over multiple lines
 // Acknowldge that I suffer from "not written here syndrome"
+
 let humaneDate = pureHumaneDate.bind(null, Date);
 
 function pureHumaneDate(DateConstructor, inputDate, inputCompareTo){

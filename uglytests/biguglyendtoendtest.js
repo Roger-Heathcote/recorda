@@ -1,12 +1,12 @@
-/*jshint esversion: 6 */
+"use strict";
 /*jshint -W027 */
 /*jshint -W067 */
 var biguglyendtoendtest = function(){
 
-  let OptionalAudioConstraints = require("../source/OptionalAudioConstraints.js");
+  // let OptionalAudioConstraints = require("../source/OptionalAudioConstraints.js");
   let AudioEngine = require("../source/AudioEngine.js");
   let RecorderApp = require("../source/RecorderApp.js");
-  const audioOptions = require("../source/audioPresets.js").defaultPreset;
+  const audioOptions = require("../source/audioPresets.js").presets["stereo 16bit wav"];
 
   // BIG UGLY AUDIO ENGINE TO RECORDING END TO END TEST
   // BIG UGLY AUDIO ENGINE TO RECORDING END TO END TEST
@@ -41,7 +41,7 @@ var biguglyendtoendtest = function(){
         };
         return fakeGainNode;
       };
-      this.createScriptProcessor = function fakeCreateScriptProcessor(bufferSize,y,z){
+      this.createScriptProcessor = function fakeCreateScriptProcessor(){
         //console.log("fakeCreateScriptProcessor, size =", bufferSize);
         let scriptProcessor = {
           connect: function(){ /*console.log("fakeCreateScriptProcessor connect method.");*/ }
@@ -70,7 +70,7 @@ var biguglyendtoendtest = function(){
   function fakeNavigator(){
     let navigator = {};
     navigator.mediaDevices = {};
-    navigator.mediaDevices.getUserMedia = function fakeGetUserMedia(constraints){
+    navigator.mediaDevices.getUserMedia = function fakeGetUserMedia(){
       return new Promise(
         function(resolve, reject) {
           if ( true ) {
@@ -112,6 +112,7 @@ var biguglyendtoendtest = function(){
     let out = [];
     while(true){
       out = [];
+      let x;
       for(x=0; x<lenf; x++){
         cur = cur + vel;
         out.push(cur);
@@ -125,12 +126,11 @@ var biguglyendtoendtest = function(){
   //wang
   function BigUglyTestHarness(instanceName, bufferLength, numberOfChannels, callsScriptProcessorXTimes, velocity, maxAmp, recorderOptions, callback){
     //importProperties(options, this);
-    let that = this;
     let window = fakeWindow();
     let navigator = fakeNavigator();
     recorderOptions.recordingsListChangedCallback = whenRecordingAdded;
     this.instanceName = instanceName;
-    recorder = new RecorderApp(
+    let recorder = new RecorderApp(
       window,
       navigator,
       AudioEngine,
@@ -140,8 +140,9 @@ var biguglyendtoendtest = function(){
     recorder.init();
     recorder.record();
 
-    let FakeInputStream = function FakeInputStream(blockSize, velocity, maxAmp){
-      testFixtures = [];
+    let FakeInputStream = function FakeInputStream(blockSize){
+      let testFixtures = [];
+      let channel;
       for(channel=0; channel<recorder.audioOptions.channels; channel++){
         testFixtures.push( testFixtureGenerator(blockSize,0.01,0.9) );
       }
@@ -152,15 +153,15 @@ var biguglyendtoendtest = function(){
         }
       };
       this.outputBuffer = {
-        getChannelData: function fakeGetChannelDataForOuputBuffer(index){
-          return 1;
+        getChannelData: function fakeGetChannelDataForOuputBuffer(){
+          return {};
         }
       };
     };
 
-    fakeInputStream = new FakeInputStream(recorder.audEng.scriptProcessorBufferLength, velocity, maxAmp); // why undefined?
+    let fakeInputStream = new FakeInputStream(recorder.audEng.scriptProcessorBufferLength, velocity, maxAmp); // why undefined?
 
-
+    let cnt;
     for(cnt=0; cnt<callsScriptProcessorXTimes; cnt++){
       recorder.audEng.scriptNode.onaudioprocess(fakeInputStream, true);
     }
@@ -174,14 +175,14 @@ var biguglyendtoendtest = function(){
     recorder.save();
 
     function whenRecordingAdded() {
-      blob = recorder.globals.recordings[0].data;
+      let blob = recorder.globals.recordings[0].data;
       blob2arrayBuffer(blob, callback);
     }
   }
 
   // Test 1 - is anything returned at all
 
-  bigUglyTester = function bigUglyTester(){
+  let bigUglyTester = function bigUglyTester(){
     let bufferLength = 30;
     let scriptProcessorBufferLength = 4096;
     let callsScriptProcessorXTimes = 7;
@@ -222,6 +223,7 @@ var biguglyendtoendtest = function(){
           throw new Error("Big Ugly Test 3 - Last byte not what we expected :/");
         }
         console.log("Big Ugly Test 3 - passed");
+        //jshint -W087
         debugger;
         process.exit();
 
@@ -237,7 +239,6 @@ function blob2arrayBuffer(blob, callback){
   if(blob.hasOwnProperty("readme")){
     callback(blob.data);
   } else {
-    let arrayBuffer;
     let fileReader = new FileReader();
     fileReader.onload = function() {
       callback(this.result);
