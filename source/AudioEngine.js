@@ -5,7 +5,7 @@ let importProperties = require("./pureGeneralFunctions.js").importProperties;
 let OptionalAudioConstraints = require("./OptionalAudioConstraints.js");
 let resampleAndInterleave = require("./pureGeneralFunctions.js").resampleAndInterleave;
 
-var AudioEngine = function AudioEngine(GLOBALS, audioOptions, options) { //loResWaveformParams=false
+let AudioEngine = function AudioEngine(GLOBALS, audioOptions, options) { //loResWaveformParams=false
   // ADD/OVERWRITE PROPERTIES FROM OPTIONS OBJECT
   importProperties(options, this);
   this.totalBlocksHandled = 0;
@@ -46,8 +46,8 @@ var AudioEngine = function AudioEngine(GLOBALS, audioOptions, options) { //loRes
           console.log("Applied OK, or so is implied by my being in the .then however..." );
           console.log("The value receivedby my function in .then is", value," wutwut???");
         } )
-        .catch( function(presumably_an_error){ // how test this code path?
-          console.log("Didnae apply itsel", presumably_an_error);
+        .catch( function(presumablyAnError){ // how test this code path?
+          console.log("Didnae apply itsel", presumablyAnError);
         } );
     } else {
       console.log("NoMST");

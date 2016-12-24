@@ -1,6 +1,6 @@
 "use strict";
 
-var vSAC = function verySimpleAudioControl(doc, id, audioElement){
+let vSAC = function verySimpleAudioControl(doc, id, audioElement){
 
   let mainDiv = doc.createElement("div");
   mainDiv.setAttribute("class", "vSAC");
@@ -19,12 +19,12 @@ var vSAC = function verySimpleAudioControl(doc, id, audioElement){
 
     let vsacOuter = doc.createElement("div"); mainDiv.appendChild(vsacOuter);
     vsacOuter.setAttribute("class","vSAC_outer");
-      let vsac_timeline = doc.createElement("div"); vsacOuter.appendChild(vsac_timeline);
-      vsac_timeline.setAttribute("class", "vSAC_timeline");
-      vsac_timeline.addEventListener("click", timelineClicked);
-        let vsac_cursor = doc.createElement("div"); vsac_timeline.appendChild(vsac_cursor);
-        vsac_cursor.setAttribute("class", "vSAC_cursor");
-        vsac_cursor.setAttribute("id", "cursor_" + id);
+      let vsacTimeline = doc.createElement("div"); vsacOuter.appendChild(vsacTimeline);
+      vsacTimeline.setAttribute("class", "vSAC_timeline");
+      vsacTimeline.addEventListener("click", timelineClicked);
+        let vsacCursor = doc.createElement("div"); vsacTimeline.appendChild(vsacCursor);
+        vsacCursor.setAttribute("class", "vSAC_cursor");
+        vsacCursor.setAttribute("id", "cursor_" + id);
 
   return mainDiv;
 
@@ -39,7 +39,7 @@ var vSAC = function verySimpleAudioControl(doc, id, audioElement){
   }
 
   function timelineClicked(mouseEvent){
-    let rect = vsac_timeline.getBoundingClientRect();
+    let rect = vsacTimeline.getBoundingClientRect();
     let ratio = (mouseEvent.clientX - rect.left) / rect.width;
     console.log("ratio:", ratio);
     audioElement.currentTime = audioElement.duration * ratio;

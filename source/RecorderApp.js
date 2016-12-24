@@ -203,13 +203,13 @@ var RecorderApp = function RecorderApp(
     this.state.handleWaveformClick(code);
   }.bind(this);
 
-  this.vm_dataDisplayBlock = function vm_dataDisplayBlock(){
+  this.vmDataDisplayBlock = function vmDataDisplayBlock(){
     let out = {};
     out.memory = this.getMemory();
     return out;
   };
 
-  this.vm_options = function vm_options(){
+  this.vmOptions = function vmOptions(){
     let viewModel = this.vm_OptionalAudioConstraints();
     let output = [];
     Object.keys(viewModel).forEach(
@@ -220,7 +220,7 @@ var RecorderApp = function RecorderApp(
     return output;
   };
 
-  this.vm_recordings = function vm_recordings(){
+  this.vmRecordings = function vmRecordings(){
     let list = [];
     let recordings = GLOBALS.recordings.slice();
     //recordings.reverse();

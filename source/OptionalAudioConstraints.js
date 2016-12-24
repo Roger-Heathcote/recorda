@@ -2,7 +2,7 @@
 
 let immute = require("./pureGeneralFunctions.js").immute;
 
-var OptionalAudioConstraints = function OptionalAudioConstraints(reapplyCallback, echo=true, noise=true, gain=true, high=true){
+let OptionalAudioConstraints = function OptionalAudioConstraints(reapplyCallback, echo=true, noise=true, gain=true, high=true){
 
     this.reapplyCallback = reapplyCallback;
 

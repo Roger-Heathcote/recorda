@@ -78,7 +78,12 @@ function main(){
   }
 
   function reset(){
-    recorder.setBufferLength(10);
+    let newBufferLength = 120;
+    recorder.setBufferLength(newBufferLength);
+    let timelineMax = document.getElementById("timelineMax");
+    console.log("tLM:", timelineMax);
+    // timelineMax.innerHTML = humaneDate(new Date(1), new Date((newBufferLength*1000)+0.1));
+    timelineMax.innerHTML = newBufferLength + "s ago";
   }
 
   function saveClicked(recordingID) {
@@ -106,16 +111,16 @@ function main(){
   // VIEW REFRESHERS
   function refreshOptionsView(){
     let block = document.getElementById("optionsBlock");
-    block.innerHTML = views.optionsBlock(recorder.vm_options());
+    block.innerHTML = views.optionsBlock(recorder.vmOptions());
   }
   function refreshDataDisplay(){
     let block = document.getElementById("dataDisplayBlock");
-    block.innerHTML = views.dataDisplayBlock(recorder.vm_dataDisplayBlock());
+    block.innerHTML = views.dataDisplayBlock(recorder.vmDataDisplayBlock());
   }
   function refreshRecordings(){
     //let block = document.getElementById("recordingsBlock");
     let listElement = document.getElementById("recordingsList");
-    let recordingsList = recorder.vm_recordings();
+    let recordingsList = recorder.vmRecordings();
     views.recordingsBlock( document, listElement, recordingsList );
   }
 

@@ -2,11 +2,9 @@
 <html lang="en-us">
   <head>
   	<meta charset="utf-8">
-  	<meta name="viewport" content="width=device-width">
+  	<meta name="viewport" content="width=device-width, initial-scale=1">
   	<title>recorda :: pre-buffering audio recorder</title>
     <script>
-      // Whilst refactoring to common.js!
-      // module = {};
     </script>
     <style>
 
@@ -66,7 +64,13 @@
       --------------------------------------------------------------
       --------------------------------------------------------------
       */
-
+      *,
+      html {
+        box-sizing: border-box;
+      }
+      *, *:before, *:after {
+        box-sizing: inherit;
+      }
       body{
         padding: 0px;
         margin: 0px;
@@ -203,6 +207,11 @@
 
       .wrapper{ border: 1px solid green; }
       .waveform{ border: 1px solid red; }
+      #timeline{
+        display: flex;
+        background: #F00;
+        justify-content: space-between;
+      }
     </style>
   </head>
   <body>
@@ -218,6 +227,11 @@
 
         <div id="wrapper">
            <canvas id="waveform"></canvas>
+        </div>
+
+        <div id="timeline">
+          <div id="timelineMax"></div>
+          <div>Now</div>
         </div>
 
         <div id="stuff">

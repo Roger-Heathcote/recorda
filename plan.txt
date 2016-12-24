@@ -1,14 +1,22 @@
 Make into an actual page
-  Settings
-  recording length
-  Make it possible to change recording length
-    Can we just reset the AudioEngine?!?!?
-    Waveform would need to go too
-    So yeh... state!
-    Sorted I think, though refactoring needed.
-  URL param + page reload?
+  Control for buffer length
+    drop down or user types input
+
+  Control for audio quality
+    drop down menu
+
+  Control for other settings/options
+
+  under waveform
+  x mins ago ------------------------now
+
+  Before recordings list
+    click on waveform to set the start point
+    click on waveform to set the end point
+
   max recording time limit
-  input selector?
+    make intelligent guess at free RAM based on
+      screen width screen height
 
 
 channels and bit rate
@@ -16,7 +24,9 @@ channels and bit rate
   let's go!
     better resampleAndInterleave - done
     make WAV generator handle all cases
-
+      mono 8
+      mono 16
+      stereo 16
 
 
 Accessibilify!
@@ -60,6 +70,8 @@ Longer term
     Multiple waveform display & multitrack recording?
 
 DONE-------------------------
+
+Made it possible to change recording length without reloading page
 
 Rewrote resample and interleave.
 

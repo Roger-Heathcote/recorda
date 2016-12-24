@@ -7,18 +7,18 @@ function importProperties(sourceObject, destinationScope){
   });
 }
 
-function immute(simple_object){
+function immute(simpleObject){
   // pass by value for simple objects
   // returns a "deep" copy of original Object
-  return JSON.parse(JSON.stringify(simple_object));
+  return JSON.parse(JSON.stringify(simpleObject));
 }
 
 function formatBytes(bytes,decimals) {
    if(bytes === 0){ return '0 Byte'; }
-   var k = 1000; // or 1024 for binary
-   var dm = decimals + 1 || 3;
-   var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-   var i = Math.floor(Math.log(bytes) / Math.log(k));
+   let k = 1000; // or 1024 for binary
+   let dm = decimals + 1 || 3;
+   let sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+   let i = Math.floor(Math.log(bytes) / Math.log(k));
    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 
@@ -49,8 +49,9 @@ function binarySearch(array, key, zeroOrThrow=0) {
 }
 
 function writeUTFBytes(view, offset, string){
-  var lng = string.length;
-  for (var i = 0; i < lng; i++){
+  let lng = string.length;
+  let i;
+  for (i = 0; i < lng; i++){
     view.setUint8(offset + i, string.charCodeAt(i));
   }
 }
@@ -65,7 +66,7 @@ function pureUTCToSystemLocalTimestamp(DateConstructor, dateStamp) {
   let rawDate = new DateConstructor();
   rawDate.setTime(dateStamp);
   let offset = rawDate.getTimezoneOffset();
-  var offsetTime = rawDate.getTime() + offset;
+  let offsetTime = rawDate.getTime() + offset;
   return offsetTime;
 }
 
@@ -93,7 +94,7 @@ function pureRandomUUID(randomFunction, floorFunction, UUIDLength){
 }
 
 function sanitize( dirty ){
-  var ESC_MAP = {
+  let ESC_MAP = {
     '&': '&amp;',
     '<': '&lt;',
     '>': '&gt;',

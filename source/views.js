@@ -37,7 +37,7 @@ let views = {
             name.innerHTML = recording.name;
             innerLi.appendChild(name);
 
-            let audio_span = doc.createElement("div");
+            let audioSpan = doc.createElement("div");
               let audioElement = doc.createElement("audio");
               audioElement.setAttribute("id", "audio_" + recording.id);
                 audioElement.addEventListener("timeupdate", function() {
@@ -48,13 +48,13 @@ let views = {
                   let audioCursor = document.getElementById("cursor_"+recording.id);
                   audioCursor.style.marginLeft = "0%";
                 });
-              audio_span.appendChild(audioElement);
-                let source_tag = doc.createElement("source");
-                source_tag.setAttribute("src", recording.url);
-                source_tag.setAttribute("type", "audio/wav");
-                audioElement.appendChild(source_tag);
+              audioSpan.appendChild(audioElement);
+                let sourceTag = doc.createElement("source");
+                sourceTag.setAttribute("src", recording.url);
+                sourceTag.setAttribute("type", "audio/wav");
+                audioElement.appendChild(sourceTag);
 
-            innerLi.appendChild(audio_span);
+            innerLi.appendChild(audioSpan);
 
             innerLi.appendChild( vSAC(doc, recording.id, audioElement) );
 

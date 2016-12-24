@@ -5,10 +5,10 @@ const MouseStatus = function MouseStatus(element){
   this.x = undefined;
   this.y = undefined;
   this.over = false;
-  this.status = function MouseStatus_status() {
+  this.status = function MouseStatusStatus() {
     return { x:this.x, y:this.y, over:this.over };
   };
-  this.updateXY = function MouseStatus_updateXY(event) {
+  this.updateXY = function MouseStatusUpdateXY(event) {
     let rect = element.getBoundingClientRect();
     this.x = event.clientX - rect.left; //top;
     this.y = event.clientY - rect.top; //left;
