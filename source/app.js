@@ -14,7 +14,7 @@ function main(){
   let theCanvas = document.getElementById("waveform");
   let theOverlay = false;
 
-  let bufferLength = 500;
+  let initialBufferLength = 500;
   const loResWaveformParams = { dataPoints: 1000 };
   const overlayResizeListenerFunction = function overlayResizeListener() {
     let rect = theCanvas.getBoundingClientRect();
@@ -31,7 +31,7 @@ function main(){
     window,
     navigator,
     AudioEngine,
-    bufferLength,
+    initialBufferLength,
     audioOptions,
     {
       canvas: theCanvas,
@@ -53,13 +53,14 @@ function main(){
   resizeCanvas();
   refreshOptionsView();
   refreshDataDisplay();
+  refreshTimeline();
   setInterval( refreshDataDisplay, 5 * 1000 ); // and then every 5 seconds
   setInterval( refreshRecordings, 60 * 1000 ); // and then every 60 seconds
 
   // ADD IN EVENT LISTENERS
   window.addEventListener('resize', resizeCanvas, false);
 
-  // AND DEFINE CLICK HANDLERS
+  // AND DEFINE CLICK HANDLERS - TODO, refactor this, don't need object lookup, just name functions and buttonvals the same
   let stuffBlock = document.getElementById("stuff");
   stuffBlock.addEventListener('click', recordingsBlockClickDelegator, true);
   let handlers = {
@@ -80,10 +81,9 @@ function main(){
   function reset(){
     let newBufferLength = 120;
     recorder.setBufferLength(newBufferLength);
-    let timelineMax = document.getElementById("timelineMax");
-    console.log("tLM:", timelineMax);
+    refreshTimeline(newBufferLength);
+
     // timelineMax.innerHTML = humaneDate(new Date(1), new Date((newBufferLength*1000)+0.1));
-    timelineMax.innerHTML = newBufferLength + "s ago";
   }
 
   function saveClicked(recordingID) {
@@ -122,6 +122,13 @@ function main(){
     let listElement = document.getElementById("recordingsList");
     let recordingsList = recorder.vmRecordings();
     views.recordingsBlock( document, listElement, recordingsList );
+  }
+
+  function refreshTimeline(t){
+    let tMax = t || initialBufferLength;
+    let timelineMax = document.getElementById("timelineMax");
+    console.log("tLM:", timelineMax);
+    timelineMax.innerHTML = tMax + "s ago";
   }
 
   // RECORDER NOTIFICATION CALLBACK HANDLERS
