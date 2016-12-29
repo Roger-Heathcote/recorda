@@ -1,4 +1,5 @@
-var HtmlWebpackPlugin = require('html-webpack-plugin');
+let HtmlWebpackPlugin = require('html-webpack-plugin');
+let WebpackBuildNotifierPlugin = require('webpack-build-notifier');
 
 module.exports = {
   entry: './source/app.js',
@@ -8,9 +9,16 @@ module.exports = {
   },
   devtool: "source-map",
   plugins: [
+
     new HtmlWebpackPlugin({
       template: 'source/index.html',
       inject: 'body'
+    }),
+
+    new WebpackBuildNotifierPlugin({
+      title: "My Project Webpack Build",
+      suppressSuccess: false
     })
+
   ]
 };

@@ -2,19 +2,27 @@
 
 function main(){
 
+  let bufferLengthSelector = document.getElementById("bufferLengthSelector");
+  let initialBufferLength = Number(bufferLengthSelector.value);
+
+  let audioQualitySelector = document.getElementById("audioQualitySelector");
+  // console.log("AQSVAL:", audioQualitySelector.value);
+  let audioPresets = require("./audioPresets.js");
+  let audioOptions = audioPresets[audioQualitySelector.value];
+
   const RecorderApp = require("./RecorderApp.js");
   const AudioEngine = require("./AudioEngine.js");
   const MouseStatus = require("./MouseStatus.js");
   const WaveformDisplay = require("./WaveformDisplay.js");
   const views = require("./views.js");
-  let audioOptions = require("./audioPresets.js").defaultPreset;
+  // let audioOptions = require("./audioPresets.js").defaultPreset;
 
   // INIT RECORDER
   // let theWrapper = document.getElementById("wrapper");
   let theCanvas = document.getElementById("waveform");
   let theOverlay = false;
 
-  let initialBufferLength = 500;
+  // let initialBufferLength = 500;
   const loResWaveformParams = { dataPoints: 1000 };
   const overlayResizeListenerFunction = function overlayResizeListener() {
     let rect = theCanvas.getBoundingClientRect();
@@ -43,11 +51,11 @@ function main(){
       exitingSaveModeCallback: exitingSaveModeCallback,
       saveModeUpdateCallback: saveModeUpdateCallback,
       dataDisplayChangedCallback: dataDisplayChangedCallback,
-      scriptProcessorBufferLength: 4096 //
+      scriptProcessorBufferLength: 4096
     }
   );
 
-  recorder.init();
+  recorder.init(); //
 
   // VIEWS, DRAW YOURSELVES ONCE
   resizeCanvas();
@@ -78,11 +86,19 @@ function main(){
     }
   }
 
+  bufferLengthSelector.addEventListener('change', bufferLengthOrQualityChanged);
+  audioQualitySelector.addEventListener('change', bufferLengthOrQualityChanged);
+
+  function bufferLengthOrQualityChanged(){
+    console.log("bufferLengthOrQualityChanged:", bufferLengthOrQualityChanged);
+    recorder.changeLengthOrQuality(bufferLengthSelector.value, audioPresets[audioQualitySelector.value]);
+    refreshTimeline(bufferLengthSelector.value);
+  }
+
   function reset(){
     let newBufferLength = 120;
-    recorder.setBufferLength(newBufferLength);
+    recorder.changeLengthOrQuality(newBufferLength);
     refreshTimeline(newBufferLength);
-
     // timelineMax.innerHTML = humaneDate(new Date(1), new Date((newBufferLength*1000)+0.1));
   }
 

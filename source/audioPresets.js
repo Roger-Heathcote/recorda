@@ -1,31 +1,31 @@
 "use strict";
 
 let presets = {
-  "mono 8bit wav": {
+  "mono 8bit WAV": {
     channels: 1,
     bitDepth: 8,
     interleave: false,
     conversion: false
   },
-  "mono 16bit wav": {
+  "mono 16bit WAV": {
     channels: 1,
     bitDepth: 16,
     interleave: false,
     conversion: false
   },
-  "stereo 16bit wav": {
+  "stereo 16bit WAV": {
     channels: 2,
     bitDepth: 16,
     interleave: true,
     conversion: false
   },
-  "mono 24bit wav": {
+  "mono 24bit WAV": {
     channels: 1,
     bitDepth: 24,
     interleave: false,
     conversion: false
   },
-  "stereo 24bit wav": {
+  "stereo 24bit WAV": {
     channels: 2,
     bitDepth: 24,
     interleave: true,
@@ -51,10 +51,6 @@ let presets = {
   }
 };
 
-let defaultPreset = presets["mono 8bit wav"];
-// let defaultPreset = presets["stereo 16bit wav"];
+presets.defaultPreset = presets["stereo 16bit WAV"];
 
-module.exports = {
-  presets,
-  defaultPreset
-};
+module.exports = presets;

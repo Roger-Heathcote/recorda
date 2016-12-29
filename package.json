@@ -26,6 +26,7 @@
     "devtool": "^2.3.0",
     "html-webpack-plugin": "^2.24.1",
     "mocha": "^3.2.0",
-    "webpack": "^1.14.0"
+    "webpack": "^1.14.0",
+    "webpack-build-notifier": "^0.1.13"
   }
 }

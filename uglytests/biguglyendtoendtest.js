@@ -6,7 +6,8 @@ var biguglyendtoendtest = function(){
   // let OptionalAudioConstraints = require("../source/OptionalAudioConstraints.js");
   let AudioEngine = require("../source/AudioEngine.js");
   let RecorderApp = require("../source/RecorderApp.js");
-  const audioOptions = require("../source/audioPresets.js").presets["stereo 16bit wav"];
+  let audioPresets = require("../source/audioPresets.js");
+  let audioOptions = audioPresets["stereo 16bit WAV"];
 
   // BIG UGLY AUDIO ENGINE TO RECORDING END TO END TEST
   // BIG UGLY AUDIO ENGINE TO RECORDING END TO END TEST

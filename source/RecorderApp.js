@@ -135,7 +135,7 @@ var RecorderApp = function RecorderApp(
       this.fullResInPoint,
       this.fullResOutPoint,
       this.audEng.sampleRate,
-      audioOptions,
+      this.audioOptions,
       saveCompleteCallback
     );
 
@@ -259,17 +259,19 @@ var RecorderApp = function RecorderApp(
     if(this.recordingsListChangedCallback) {this.recordingsListChangedCallback();}
   }.bind(this);
 
-  this.setBufferLength = function setBufferLength(len){
+  this.changeLengthOrQuality = function changeLengthOrQuality(bufferLength, audioOptions){
+    console.log("Changywangywoowah:", bufferLength, audioOptions);
     if(GLOBALS.state === "save"){
       console.log("Can't change buffer length mid save");
     } else {
-      console.log("Pretending to set buffer length to", len);
+      console.log("Setting buffer length to", bufferLength);
 
       GLOBALS.state = "reset";
       this.audEng.quit(); // = undefined;
       this.waveDisp.quit(); // = undefined;
       this.audEng = undefined;
       this.waveDisp = undefined;
+      this.audioOptions = audioOptions;
       clearInterval(this.saveEngineTimer);
 
       //hmm we're doubling up on click handlers, let's not!
@@ -278,15 +280,15 @@ var RecorderApp = function RecorderApp(
         console.log("GOGOGOOOOOO!");
         this.state = this.states.buffer;
         GLOBALS.state = "buffer";
-        console.log("Set GLOBALS secondsToBuffer to", len);
-        GLOBALS.secondsToBuffer = len;
+        console.log("Set GLOBALS secondsToBuffer to", bufferLength);
+        GLOBALS.secondsToBuffer = bufferLength;
         // this.loResWaveformParams.secondsToDisplay = len;
         console.log("GLOBALS secondsToBuffer is now", GLOBALS.secondsToBuffer);
         GLOBALS.loResInPoint = undefined;
         GLOBALS.loResOutPoint = undefined; //
         this.audEng = new AudioEngine(
           GLOBALS,
-          audioOptions,
+          this.audioOptions,
           {
             loResWaveformParams: this.loResWaveformParams,
             optionalMediaConstraints: this.optionalMediaConstraints,
