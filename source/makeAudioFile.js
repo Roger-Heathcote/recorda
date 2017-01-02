@@ -30,6 +30,10 @@ function* pureMakeWAVFileBlobGenerator(
   callback
 ){
 
+  // debugger;
+
+  console.log("aud 1", audioChunks);
+
   let bytesPerSample = Math.ceil(audioOptions.bitDepth/8);
   let frameSize = audioChunks[audioChunks.length-1].length;
   let frameSizeInBytes = audioChunks[audioChunks.length-1].length * (bytesPerSample);  // was 2, guessing this is bytes per sample

@@ -62,7 +62,7 @@ function pureHumanReadableLocalDate (DateConstructor, dateStamp) {
   return dateObject.toDateString() + " at " + dateObject.toTimeString().substring(0,8);
 }
 
-function pureUTCToSystemLocalTimestamp(DateConstructor, dateStamp) {
+function pureutcToSystemLocalTimestamp(DateConstructor, dateStamp) {
   let rawDate = new DateConstructor();
   rawDate.setTime(dateStamp);
   let offset = rawDate.getTimezoneOffset();
@@ -190,7 +190,7 @@ module.exports = {
   binarySearch,
   writeUTFBytes,
   pureHumanReadableLocalDate,
-  pureUTCToSystemLocalTimestamp,
+  pureutcToSystemLocalTimestamp,
   pureRandomColorCode,
   pureRandomUUID,
   sanitize

@@ -9,18 +9,18 @@ let makeWAVFileBlobGenerator = require("./makeAudioFile.js").makeWAVFileBlobGene
 let humaneDate = require("./humane_dates.js").humaneDate;
 
 let humanReadableLocalDate = require("./impureGeneralFunctions.js").humanReadableLocalDate;
-let UTCToSystemLocalTimestamp = require("./impureGeneralFunctions.js").UTCToSystemLocalTimestamp;
+let utcToSystemLocalTimestamp = require("./impureGeneralFunctions.js").utcToSystemLocalTimestamp;
 let randomColorCode = require("./impureGeneralFunctions.js").randomColorCode;
 let randomUUID = require("./impureGeneralFunctions.js").randomUUID;
 
 var RecorderApp = function RecorderApp(
-    window,
-    navigator,
-    AudioEngine,
-    bufferLength,
-    audioOptions,
-    options=false
-  ){
+  window,
+  navigator,
+  AudioEngine,
+  bufferLength,
+  audioOptions,
+  options=false
+){
   importProperties(options, this);
 
   var stateObject = {
@@ -117,7 +117,7 @@ var RecorderApp = function RecorderApp(
         name: humanReadableLocalDate(dateNow),
         data: WAVFileBlob,
         UCTTimestamp: dateNow,
-        localTimestamp: UTCToSystemLocalTimestamp(dateNow), // need to get adjustment from humanReadableDatetime and refactor / write dateLocal(dateNow)!
+        localTimestamp: utcToSystemLocalTimestamp(dateNow), // need to get adjustment from humanReadableDatetime and refactor / write dateLocal(dateNow)!
         // sampleRate: this.audEng.sampleRate,
         size: WAVFileBlob.size, // 16 bit
         color: randomColorCode(175,250),
@@ -131,7 +131,7 @@ var RecorderApp = function RecorderApp(
 
     this.currentSave = makeWAVFileBlobGenerator(
       this.audEng.audioData,
-      this.audEng.codeChannel, // Erm, why this all zeros?
+      this.audEng.codeChannel,
       this.fullResInPoint,
       this.fullResOutPoint,
       this.audEng.sampleRate,

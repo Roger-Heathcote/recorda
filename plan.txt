@@ -1,3 +1,14 @@
+Mono 16 not right
+
+channels and bit rate
+  Mono/Float recording
+  let's go!
+    better resampleAndInterleave - done
+    make WAV generator handle all cases
+      mono 8
+      mono 16
+      stereo 16
+
 Make into an actual page
   Control for buffer length
     drop down or user types input
@@ -19,14 +30,7 @@ Make into an actual page
       screen width screen height
 
 
-channels and bit rate
-  Mono/Float recording
-  let's go!
-    better resampleAndInterleave - done
-    make WAV generator handle all cases
-      mono 8
-      mono 16
-      stereo 16
+
 
 
 Accessibilify!
@@ -70,6 +74,8 @@ Longer term
     Multiple waveform display & multitrack recording?
 
 DONE-------------------------
+
+Added controls for buffer length and quality
 
 Made it possible to change recording length without reloading page
 
