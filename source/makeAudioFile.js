@@ -31,15 +31,21 @@ function* pureMakeWAVFileBlobGenerator(
 ){
 
   // debugger;
-
-  console.log("aud 1", audioChunks);
+  // console.log("in/out:", inPoint, outPoint);
+  // console.log("aud 1", audioChunks);
 
   let bytesPerSample = Math.ceil(audioOptions.bitDepth/8);
   let frameSize = audioChunks[audioChunks.length-1].length;
-  let frameSizeInBytes = audioChunks[audioChunks.length-1].length * (bytesPerSample);  // was 2, guessing this is bytes per sample
+  let frameOffsetAmmount = audioChunks[audioChunks.length-1].length * (bytesPerSample);  // was 2, guessing this is bytes per sample
   let numFrames = outPoint - inPoint;
 
-  let fileBuffer = new ArrayBuffer( 44 + frameSize * numFrames * (bytesPerSample) ); // again guessing this is bytes/smp
+  // TODO - OFF BY ONE ERROR SOMEWHERE!!!!
+  // console.log("Arraybuffer = 44 +", (frameSize * numFrames * bytesPerSample) );
+  let fileBuffer = new ArrayBuffer( 0 + 44 + frameSize * numFrames * bytesPerSample ); // again guessing this is bytes/smp
+
+  // console.log("filebuffer", fileBuffer);
+  // console.log("filebuffer size is:", 44 + frameSize * numFrames * (bytesPerSample) );
+  // debugger;
 
   // Write audio data
   let audioSection = new DataView( fileBuffer, 44 );
@@ -48,13 +54,19 @@ function* pureMakeWAVFileBlobGenerator(
 
   let setter = { "8":"setInt8", "16":"setInt16" }[audioOptions.bitDepth];
 
-  let sourceIndex, destIndex;
+  let sourceIndex, destIndex; let whereToSet, whatToSet;
   for(sourceIndex = inPoint; sourceIndex < (inPoint + numFrames); sourceIndex++){
     for(destIndex = 0; destIndex < (frameSize); destIndex++){
       // before - audioSection[setter](frameOffset + (destIndex*2), audioChunks[sourceIndex][destIndex],true);
-      audioSection[setter](frameOffset + (destIndex*numberOfChannels), audioChunks[sourceIndex][destIndex],true);
+      // audioSection[setter](frameOffset + (destIndex*numberOfChannels), audioChunks[sourceIndex][destIndex],true);
+      whatToSet = audioChunks[sourceIndex][destIndex];
+      whereToSet = frameOffset + (destIndex*bytesPerSample);
+      // console.log("Where:", whereToSet," What:", whatToSet);
+      audioSection[setter](whereToSet, whatToSet,true);
+      // debugger;
     }
-    frameOffset = frameOffset + frameSizeInBytes;
+    frameOffset = frameOffset + frameOffsetAmmount; // should be just plain old frameSize????
+    // debugger;
     yield (sourceIndex - inPoint) / numFrames; // % progress
   }
 
@@ -77,6 +89,9 @@ function* pureMakeWAVFileBlobGenerator(
   // data sub-chunk
   writeUTFBytes(headerSection, 36, 'data');
   headerSection.setUint32(40, audioSection.byteLength, true);
+
+  // console.log("WAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANG");
+  // debugger;
 
   yield 1; // e.g. 100% progress
   callback( new BlobConstructor([fileBuffer], {type: "audio/wav"}) );
