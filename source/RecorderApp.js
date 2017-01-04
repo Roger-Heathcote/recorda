@@ -131,7 +131,6 @@ var RecorderApp = function RecorderApp(
 
     this.currentSave = makeWAVFileBlobGenerator(
       this.audEng.audioData,
-      this.audEng.codeChannel,
       this.fullResInPoint,
       this.fullResOutPoint,
       this.audEng.sampleRate,

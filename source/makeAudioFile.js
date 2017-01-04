@@ -22,7 +22,6 @@ function* pureMakeWAVFileBlobGenerator(
   BlobConstructor,
   writeUTFBytes,
   audioChunks,
-  code,
   inPoint,
   outPoint,
   sampleRate,

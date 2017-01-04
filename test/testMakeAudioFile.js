@@ -2,7 +2,7 @@
 
 require("./helpers/all.js");
 
-const mkAud = require("../source/makeAudioFile.js").makeWAVFileBlobGenerator;
+const makeWAVFileBlobGenerator = require("../source/makeAudioFile.js").makeWAVFileBlobGenerator;
 const audOpts = require("../source/audioPresets.js");
 
 
@@ -11,7 +11,7 @@ describe("Testing audio file creation", function(){
   it("Should make a valid stereo 16bit WAV blob", function(){
     let expected = false;
     let actual = false;
-    let fG = mkAud(
+    let fG = makeWAVFileBlobGenerator(
       // audioData
       [
         [7500, -7500],
@@ -21,8 +21,6 @@ describe("Testing audio file creation", function(){
         [3500, -3500],
         [2500, -2500],
       ],
-      // code channel
-      [1,2,3,4,5,6],
       // inpoint
       5,
       // outPoint
@@ -46,7 +44,7 @@ describe("Testing audio file creation", function(){
   it("Should also make a valid stereo 16bit WAV blob", function(){
     let expected = false;
     let actual = false;
-    let fG = mkAud(
+    let fG = makeWAVFileBlobGenerator(
       // audioData
       [
         [1, -1],
@@ -55,8 +53,6 @@ describe("Testing audio file creation", function(){
         [4, -4],
         [5, -5],
       ],
-      // code channel
-      [1,2,3,4,5,6],
       // inpoint
       0,
       // outPoint
@@ -81,7 +77,7 @@ describe("Testing audio file creation", function(){
   it("Should make a valid mono 8bit WAV blob", function(){
     let expected = false;
     let actual = false;
-    let fG = mkAud(
+    let fG = makeWAVFileBlobGenerator(
       // audioData
       [
         [75, 175, 32],
@@ -91,8 +87,6 @@ describe("Testing audio file creation", function(){
         [35, 135, 94],
         [25, 125, 178],
       ],
-      // code channel
-      [1,2,3,4,5,6],
       // inpoint
       5,
       // outPoint
@@ -116,18 +110,14 @@ it("Should make a valid mono 16bit WAV blob", function(){
   let expected = false;
   let actual = false;
   let testArr = [];
-  let codeArr = [];
   let testLen = 10;
   let c;
   for(c=0;c<testLen;c++){
     testArr.push([c+1, c+1, c+1, c+1, c+1]);
-    codeArr.push(c);
   }
-  let fG = mkAud(
+  let fG = makeWAVFileBlobGenerator(
     // audioData
     testArr,
-    // code channel
-    codeArr,
     // inpoint
     0,
     // outPoint
