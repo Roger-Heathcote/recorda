@@ -13,7 +13,7 @@ let utcToSystemLocalTimestamp = require("./impureGeneralFunctions.js").utcToSyst
 let randomColorCode = require("./impureGeneralFunctions.js").randomColorCode;
 let randomUUID = require("./impureGeneralFunctions.js").randomUUID;
 
-var RecorderApp = function RecorderApp(
+let RecorderApp = function RecorderApp(
   window,
   navigator,
   AudioEngine,
@@ -23,7 +23,7 @@ var RecorderApp = function RecorderApp(
 ){
   importProperties(options, this);
 
-  var stateObject = {
+  let stateObject = {
     name: "Name not set",
     init: target => this.target = target,
     reset: () => this.target.init(),
@@ -38,9 +38,9 @@ var RecorderApp = function RecorderApp(
     exit: () => null //console.log(this.target.state.name+": exiting.")
   };
 
-  var bufferState = createStateObject(stateObject, "buffer", "buffering");
-  var recordState = createStateObject(stateObject, "record", "recording");
-  var saveState = createStateObject(stateObject, "save", "saving");
+  let bufferState = createStateObject(stateObject, "buffer", "buffering");
+  let recordState = createStateObject(stateObject, "record", "recording");
+  let saveState = createStateObject(stateObject, "save", "saving");
 
   let instance = this;
   let GLOBALS = {
@@ -209,7 +209,7 @@ var RecorderApp = function RecorderApp(
   };
 
   this.vmOptions = function vmOptions(){
-    let viewModel = this.vm_OptionalAudioConstraints();
+    let viewModel = this.vmOptionalAudioConstraints();
     let output = [];
     Object.keys(viewModel).forEach(
       function(name){
@@ -236,7 +236,7 @@ var RecorderApp = function RecorderApp(
     return list;
   }.bind(this);
 
-  this.vm_OptionalAudioConstraints = function vm_OptionalAudioConstraints(){
+  this.vmOptionalAudioConstraints = function vmOptionalAudioConstraints(){
     return this.audEng.currentAudioConstraints();
   };
 
