@@ -1,41 +1,11 @@
-Mono 16 not right
 
-channels and bit rate
-  Mono/Float recording
-  let's go!
-    better resampleAndInterleave - done
-    make WAV generator handle all cases
-      mono 8
-      mono 16
-      stereo 16
-
-Make into an actual page
-  Control for buffer length
-    drop down or user types input
-
-  Control for audio quality
-    drop down menu
-
-  Control for other settings/options
-
-  under waveform
-  x mins ago ------------------------now
-
-  Before recordings list
-    click on waveform to set the start point
-    click on waveform to set the end point
-
-  max recording time limit
-    make intelligent guess at free RAM based on
-      screen width screen height
-
-
-
-
+delint RecorderApp
 
 Accessibilify!
-Add keyboard shortcuts
-Improve aria story
+  Add keyboard shortcuts
+  Try with a screen reader
+
+First time use instructions
 
 increase width of humane date div and add overflow hidden
 
@@ -47,15 +17,12 @@ rewrite pure functions in elm?
 
 saving overlay does not track waveform well when resizing!!!
 
-
-
-  Internationalize?
-
+Internationalize?
 
   Find more accurate language for what is curretly "saving" and "save"
     preparing|download?
 
-
+  Control for other settings/options
 
   Save as mp4?
 
@@ -69,11 +36,15 @@ Longer term
   refactor views into their own files
     combining display code and event handlers into one file.
 
-
+  max recording time limit
+    make intelligent guess at free RAM based on
+      screen width screen height
 
     Multiple waveform display & multitrack recording?
 
 DONE-------------------------
+
+Fixed faulty 16bit mono case and added tests
 
 Added controls for buffer length and quality
 
