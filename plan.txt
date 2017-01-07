@@ -1,30 +1,58 @@
+fix title bar scaling
 
-delint RecorderApp
+dedupe init/reset process
 
 Accessibilify!
   Add keyboard shortcuts
+    record from here (I)
+    record whole buffer (A)
+    record percentage of buffer
+    stop (O)
+    1 thru 9 => x0%
+    ESC cancel selection, revert to buffering
+    (S)ave recording
+    (D)elete recording
+    (P)lay/pause recording
+    (Y)es to delete confirm
+    UP/DOWN to navigate recording list
+
   Try with a screen reader
 
 First time use instructions
 
+Settings
+  autosave
+  warn on delete
+  passthrough
+
+Persist via
+  cookie (needs server? refreser on cookies - client side?)
+  local storage?
+
+Save cancel
+
+Make name an editable input field
+
+Internationalize?
+
 increase width of humane date div and add overflow hidden
 
+benchmarking/perm monitoring
+rewrite muxer in asm.js?
 Add confirm step to "delete" action
 
 Get rid of "new", refactor to module pattern
+Save as mp4?
 
 rewrite pure functions in elm?
 
 saving overlay does not track waveform well when resizing!!!
-
-Internationalize?
 
   Find more accurate language for what is curretly "saving" and "save"
     preparing|download?
 
   Control for other settings/options
 
-  Save as mp4?
 
 
 Longer term

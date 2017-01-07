@@ -68,7 +68,7 @@ function main(){
   // ADD IN EVENT LISTENERS
   window.addEventListener('resize', resizeCanvas, false);
 
-  // AND DEFINE CLICK HANDLERS - TODO, refactor this, don't need object lookup, just name functions and buttonvals the same
+  // CLICK DELEGATOR - TODO, refactor this, don't need object lookup, just name functions and buttonvals the same
   let stuffBlock = document.getElementById("stuff");
   stuffBlock.addEventListener('click', recordingsBlockClickDelegator, true);
   let handlers = {
@@ -76,8 +76,7 @@ function main(){
     "delete": deleteClicked,
     "options": optionsButtonClicked,
     "audioPassthrough": audioPassthroughClicked,
-    "optionToggle": optionToggleClicked,
-    "reset": reset
+    "optionToggle": optionToggleClicked
   };
   function recordingsBlockClickDelegator(event){
     if(!event.target.name){ return; }
@@ -95,12 +94,12 @@ function main(){
     refreshTimeline(bufferLengthSelector.value);
   }
 
-  function reset(){
-    let newBufferLength = 120;
-    recorder.changeLengthOrQuality(newBufferLength);
-    refreshTimeline(newBufferLength);
-    // timelineMax.innerHTML = humaneDate(new Date(1), new Date((newBufferLength*1000)+0.1));
-  }
+  // function reset(){
+  //   let newBufferLength = 120;
+  //   recorder.changeLengthOrQuality(newBufferLength);
+  //   refreshTimeline(newBufferLength);
+  //   // timelineMax.innerHTML = humaneDate(new Date(1), new Date((newBufferLength*1000)+0.1));
+  // }
 
   function saveClicked(recordingID) {
     // SAVE BUTTONS HANDLER: recording_id => browser download
@@ -118,8 +117,8 @@ function main(){
   function optionsButtonClicked() {
     console.log("Options button pressed");
   }
-  function audioPassthroughClicked(){ recorder.toggleAudioPassthrough(); }
-  function optionToggleClicked(name){ recorder.toggleOptionalAudioConstraint(name); }
+  function audioPassthroughClicked(){ console.log("Passthrough toggled"); recorder.toggleAudioPassthrough(); }
+  function optionToggleClicked(name){ console.log("Constraint toggled"); recorder.toggleOptionalAudioConstraint(name); }
 
   // CANVAS RESIZE HANDLER. Make canvas responsive to scale changes
   function resizeCanvas() { theCanvas.width = document.getElementById("wrapper").offsetWidth; }
