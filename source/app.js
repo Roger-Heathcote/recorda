@@ -68,10 +68,39 @@ function main(){
   // ADD IN EVENT LISTENERS
   window.addEventListener('resize', resizeCanvas, false);
 
+
+  // KEYDOWN DELEGATOR
+  window.addEventListener('keydown', keyClickDelegator, true);
+  let keyHandlers = {
+    73: recorder.inPointNow,  // I
+    65: recorder.inPointAll,  // A
+    79: recorder.outPointNow, // O
+    27: escapePressed,        // ESC
+    83: savePressed,          // S
+    68: deletePressed,        // D
+    80: playPausePressed,     // P
+    89: yesPressed,           // Y
+    38: upPressed,            // UP
+    40: downPressed,          // DOWN
+  };
+  function keyClickDelegator(event){
+    let key = event.keyCode;
+    console.log("KEYCODE:" , key);
+    if(keyHandlers.hasOwnProperty(key)){ keyHandlers[key](); }
+  }
+
+  function escapePressed(){ console.log("Not implemented yet"); }
+  function savePressed(){ console.log("Not implemented yet"); }
+  function deletePressed(){ console.log("Not implemented yet"); }
+  function playPausePressed(){ console.log("Not implemented yet"); }
+  function yesPressed(){ console.log("Not implemented yet"); }
+  function upPressed(){ console.log("Not implemented yet"); }
+  function downPressed(){ console.log("Not implemented yet"); }
+
   // CLICK DELEGATOR - TODO, refactor this, don't need object lookup, just name functions and buttonvals the same
   let stuffBlock = document.getElementById("stuff");
   stuffBlock.addEventListener('click', recordingsBlockClickDelegator, true);
-  let handlers = {
+  let clickHandlers = {
     "save": saveClicked,
     "delete": deleteClicked,
     "options": optionsButtonClicked,
@@ -79,10 +108,10 @@ function main(){
     "optionToggle": optionToggleClicked
   };
   function recordingsBlockClickDelegator(event){
-    if(!event.target.name){ return; }
-    if(handlers.hasOwnProperty(event.target.name)){
-      handlers[event.target.name](event.target.value);
-    }
+    let name = event.target.name;
+    let value = event.target.value;
+    if(!name){ return; }
+    if(clickHandlers.hasOwnProperty(name)){ clickHandlers[name](value); }
   }
 
   bufferLengthSelector.addEventListener('change', bufferLengthOrQualityChanged);

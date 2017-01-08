@@ -1,7 +1,3 @@
-fix title bar scaling
-
-dedupe init/reset process
-
 Accessibilify!
   Add keyboard shortcuts
     record from here (I)
@@ -16,9 +12,15 @@ Accessibilify!
     (Y)es to delete confirm
     UP/DOWN to navigate recording list
 
+    TODO
+      Keydown delegator
+
   Try with a screen reader
 
 First time use instructions
+fix title bar scaling
+
+dedupe init/reset process
 
 Settings
   autosave
@@ -45,6 +47,7 @@ Get rid of "new", refactor to module pattern
 Save as mp4?
 
 rewrite pure functions in elm?
+NAh, elm too frontend centric, no good story for
 
 saving overlay does not track waveform well when resizing!!!
 
