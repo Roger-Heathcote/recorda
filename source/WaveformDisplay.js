@@ -59,7 +59,6 @@ let WaveformDisplay = function WaveformDisplay(GLOBALS, theWindow, canvas, mouse
     record: function waveDrawStatesRecord(GLOBALS, mouse, canvas, canvasCtx, codeChan) {
       let mouseStatus = mouse.status();
       let inPointX = ratio(codeChan, GLOBALS.loResInPoint, canvas.width);
-      //console.log(mouseStatus.x, inPointX);
       if (mouseStatus.over && (mouseStatus.x>inPointX)) {
         //console.log("happenin!");
         canvasCtx.fillStyle = 'rgb(255, 255, 255)';
@@ -115,9 +114,17 @@ let WaveformDisplay = function WaveformDisplay(GLOBALS, theWindow, canvas, mouse
 function ratio(array, key, width, dfault=0) {
   if (key <= array[0]) { return 0; }
   if (key >= array[array.length-1]) { return width; }
-  let result = binarySearch(array, key);
-  if (result === -1) { return dfault; }
-  return Math.floor( width * (result/array.length) );
+  let result = binarySearch(array, key, false);  // nearest match ok
+  let toReturn = Math.floor( width * (result/array.length) );
+  return toReturn;
 }
+
+// let logOnce = function wevs(){
+//   let neverCalled = true;
+//   return function logOnce(msg){
+//     if(neverCalled){ console.log("msg:", msg); }
+//   };
+// }();
+
 
 module.exports = WaveformDisplay;

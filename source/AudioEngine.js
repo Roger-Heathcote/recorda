@@ -70,6 +70,23 @@ let AudioEngine = function AudioEngine(GLOBALS, audioOptions, options) { //loRes
     this.dispCount = this.samplesPerDataPoint;
   }
 
+  this.getPointsAt = function getPointsAt(bufferRatio){
+    if(bufferRatio === 0) {
+      let low = this.codeChannel.slice(-1)[0];
+      let high = this.audioData.length-1;
+      return { lo: low, hi:high };
+    }
+    // else we...
+    // need to chase up both arrays! AND
+    // limit length if they are over the buffer length
+    // figure out where maximum start index could be by
+    //   doing math then
+    //   return that if it's non zero
+    //   chase if it is zero then
+    // return the first value that isn't
+    return [this.codeChannel[0], this.audioData.length-1];
+  };
+
   this.quit = function quit(){
     console.log("AudioEngine: Quit signal received!");
     this.audioContext.close();

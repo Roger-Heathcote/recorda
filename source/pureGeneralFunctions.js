@@ -22,8 +22,8 @@ function formatBytes(bytes,decimals) {
    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 
-function binarySearch(array, key, zeroOrThrow=0) {
-  if(!key){ return undefined; }
+function binarySearch(array, key, exactOnly=true) {
+  if(typeof(key)!=="number"){ throw(new Error("Newp! numbers only please!")); }
   let lo = 0,
     hi = array.length - 1,
     mid,
@@ -40,12 +40,11 @@ function binarySearch(array, key, zeroOrThrow=0) {
       return mid;
     }
   }
-  if (zeroOrThrow)
-    {
-      throw( new Error("Not Found!") );
-    } else {
-      return 0;
-    }
+  if (exactOnly) { throw(new Error("Not Found!")); }
+  let loDiff = Math.abs( array[mid-1] - key );
+  let midDiff = Math.abs( array[mid] - key );
+  if(loDiff < midDiff) { return mid-1; }
+  return mid;
 }
 
 function writeUTFBytes(view, offset, string){

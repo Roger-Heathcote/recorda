@@ -53,11 +53,12 @@ let RecorderApp = function RecorderApp(
     setLoResInPoint: function(v){
       this.loResInPoint = v;
       instance.fullResInPoint = binarySearch(instance.audEng.codeChannel, v);
-      //console.log("GLOBALS:", GLOBALS);
+      console.log("lrip:", v, "frip:", instance.fullResInPoint);
     },
     setLoResOutPoint: function(v){
       this.loResOutPoint = v;
       instance.fullResOutPoint = binarySearch(instance.audEng.codeChannel, v);
+      console.log("lrop:", v, "frop:", instance.fullResOutPoint);
     },
     recordings: new Array(0)
   };
@@ -86,7 +87,8 @@ let RecorderApp = function RecorderApp(
   bufferState.handleWaveformClick = function bufferStateHandleWaveformClick(code) {
     console.log("inPoint code we just got is:", code);
     GLOBALS.setLoResInPoint(code);
-    console.log("inPoint set as:", GLOBALS.loResInPoint);
+    console.log("loRes inPoint set as:", GLOBALS.loResInPoint);
+    console.log("hiRes inPoint set as:", this.fullResInPoint);
     GLOBALS.state = "record";
     this.record();
   }.bind(this);
@@ -200,6 +202,22 @@ let RecorderApp = function RecorderApp(
 
   this.waveformClicked = function waveformClicked(code) {
     this.state.handleWaveformClick(code);
+  }.bind(this);
+
+  this.setInPointAt = function setInPointAt(bufferRatio) {
+    if(this.state.name !== "buffer"){ console.log("fuck off"); return; }
+    console.log("Yeah, going to set an inpoint at", bufferRatio);
+    let point = this.audEng.getPointsAt(bufferRatio);
+    console.log("LO/HI:", point.lo, point.hi);
+    console.log("Computer hi:", binarySearch(this.audEng.codeChannel, point.lo));
+    GLOBALS.setLoResInPoint(point.lo);
+
+    console.log("this.fullResInPoint is:", this.fullResInPoint);
+    console.log("instance.fullResInPoint is:", instance.fullResInPoint);
+
+    this.fullResInPoint = point.hi;
+    GLOBALS.state = "record";
+    this.record();
   }.bind(this);
 
   this.vmDataDisplayBlock = function vmDataDisplayBlock(){

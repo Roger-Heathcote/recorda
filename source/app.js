@@ -72,8 +72,17 @@ function main(){
   // KEYDOWN DELEGATOR
   window.addEventListener('keydown', keyClickDelegator, true);
   let keyHandlers = {
-    73: recorder.inPointNow,  // I
-    65: recorder.inPointAll,  // A
+    73: recorder.setInPointAt.bind(null, 0),  // I
+    49: recorder.setInPointAt.bind(null, 0.1), // 1
+    50: recorder.setInPointAt.bind(null, 0.2), // 2
+    51: recorder.setInPointAt.bind(null, 0.3), // 3
+    52: recorder.setInPointAt.bind(null, 0.4), // 4
+    53: recorder.setInPointAt.bind(null, 0.5), // 5
+    54: recorder.setInPointAt.bind(null, 0.6), // 6
+    55: recorder.setInPointAt.bind(null, 0.7), // 7
+    56: recorder.setInPointAt.bind(null, 0.8), // 8
+    57: recorder.setInPointAt.bind(null, 0.9), // 9
+    65: recorder.setInPointAt.bind(null, 1),  // A
     79: recorder.outPointNow, // O
     27: escapePressed,        // ESC
     83: savePressed,          // S
