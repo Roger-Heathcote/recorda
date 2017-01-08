@@ -51,13 +51,14 @@ let RecorderApp = function RecorderApp(
     loResInPoint: undefined,
     loResOutPoint: undefined,
     setLoResInPoint: function(v){
+      console.log("v is", v, "which is an", typeof(v), "so there" );
       this.loResInPoint = v;
-      instance.fullResInPoint = binarySearch(instance.audEng.codeChannel, v);
+      instance.fullResInPoint = v ? binarySearch(instance.audEng.codeChannel, v) : undefined;
       console.log("lrip:", v, "frip:", instance.fullResInPoint);
     },
     setLoResOutPoint: function(v){
       this.loResOutPoint = v;
-      instance.fullResOutPoint = binarySearch(instance.audEng.codeChannel, v);
+      instance.fullResOutPoint = v ? binarySearch(instance.audEng.codeChannel, v) : undefined;
       console.log("lrop:", v, "frop:", instance.fullResOutPoint);
     },
     recordings: new Array(0)
@@ -85,7 +86,7 @@ let RecorderApp = function RecorderApp(
   }.bind(this);
 
   bufferState.handleWaveformClick = function bufferStateHandleWaveformClick(code) {
-    console.log("inPoint code we just got is:", code);
+    console.log("inPoint code we just got is:", code, typeof code);
     GLOBALS.setLoResInPoint(code);
     console.log("loRes inPoint set as:", GLOBALS.loResInPoint);
     console.log("hiRes inPoint set as:", this.fullResInPoint);
@@ -94,7 +95,7 @@ let RecorderApp = function RecorderApp(
   }.bind(this);
 
   recordState.handleWaveformClick = function recordStateHandleWaveformClick(code) {
-    console.log("outPoint code we just got is:", code);
+    console.log("outPoint code we just got is:", code, typeof code);
     if(code >= GLOBALS.loResInPoint) // outpoint must be after in point!
       {
         GLOBALS.setLoResOutPoint(code);

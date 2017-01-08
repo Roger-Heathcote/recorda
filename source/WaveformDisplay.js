@@ -27,7 +27,7 @@ let WaveformDisplay = function WaveformDisplay(GLOBALS, theWindow, canvas, mouse
     let rect = this.canvas.getBoundingClientRect();
     let ratio = (event.clientX - rect.left) / rect.width;
     let index = Math.floor(this.codeChan.length * ratio);
-    while (this.codeChan[index] === 0) {index++;}
+    while (this.codeChan[index] === 0) {index++;} // chase to first actual data point
     if (this.codeChan[index]) { clickHandler(this.codeChan[index]); }
   }.bind(this);
   canvas.addEventListener('mouseup', this.waveformClicked, false);
@@ -112,6 +112,7 @@ let WaveformDisplay = function WaveformDisplay(GLOBALS, theWindow, canvas, mouse
 };
 
 function ratio(array, key, width, dfault=0) {
+  if((typeof key !== "number")||(typeof width !== "number")){ throw new Error("Numbers only bro!"); }
   if (key <= array[0]) { return 0; }
   if (key >= array[array.length-1]) { return width; }
   let result = binarySearch(array, key, false);  // nearest match ok
