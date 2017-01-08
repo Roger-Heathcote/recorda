@@ -93,6 +93,14 @@ let RecorderApp = function RecorderApp(
     GLOBALS.state = "record";
     this.record();
   }.bind(this);
+  bufferState.setPointAt = function setInPointAt(bufferRatio) {
+    let point = this.audEng.getPointsAt(bufferRatio);
+    GLOBALS.setLoResInPoint(point.lo);
+    this.fullResInPoint = point.hi;
+    GLOBALS.state = "record";
+    this.record();
+  }.bind(this);
+
 
   recordState.handleWaveformClick = function recordStateHandleWaveformClick(code) {
     console.log("outPoint code we just got is:", code, typeof code);
@@ -106,6 +114,13 @@ let RecorderApp = function RecorderApp(
         console.log("Outpoint must be after in point doofus!");
       }
   };
+  recordState.setPointAt = function setOutPointAt(bufferRatio) {
+    let point = this.audEng.getPointsAt(bufferRatio);
+    GLOBALS.setLoResOutPoint(point.lo);
+    this.fullResOutPoint = point.hi;
+    GLOBALS.state = "save"; // TODO shouldn't the state transition handle this change?!
+    this.save();
+  }.bind(this);
 
   saveState.handleWaveformClick = function saveStateHandleWaveformClick() {
   };
@@ -189,6 +204,8 @@ let RecorderApp = function RecorderApp(
     this.state.execute();
   };
 
+
+  // TODO - I think all this is redundant - refactor priority 1
   this.buffer = function buffer() { this.state.buffer(); };
   this.record =  function record() { this.state.record(); };
   this.save =  function save() { this.state.save(); };
@@ -205,20 +222,8 @@ let RecorderApp = function RecorderApp(
     this.state.handleWaveformClick(code);
   }.bind(this);
 
-  this.setInPointAt = function setInPointAt(bufferRatio) {
-    if(this.state.name !== "buffer"){ console.log("fuck off"); return; }
-    console.log("Yeah, going to set an inpoint at", bufferRatio);
-    let point = this.audEng.getPointsAt(bufferRatio);
-    console.log("LO/HI:", point.lo, point.hi);
-    console.log("Computer hi:", binarySearch(this.audEng.codeChannel, point.lo));
-    GLOBALS.setLoResInPoint(point.lo);
-
-    console.log("this.fullResInPoint is:", this.fullResInPoint);
-    console.log("instance.fullResInPoint is:", instance.fullResInPoint);
-
-    this.fullResInPoint = point.hi;
-    GLOBALS.state = "record";
-    this.record();
+  this.setPointAt = function setPointAt(point) {
+    this.state.setPointAt(point);
   }.bind(this);
 
   this.vmDataDisplayBlock = function vmDataDisplayBlock(){
