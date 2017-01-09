@@ -83,10 +83,8 @@ describe("Let's write a more flexible downsampler & interleaver! ", function(){
     let chans = [channel0];
     let expected = Uint8Array.from([ 255, 191, 128, 64 ]);
     let expectedType = Object.prototype.toString.call(expected);
-    console.log("Typeof expectedType", typeof(expectedType));
     let actual = resampleAndInterleave(8, false, chans);
     let actualType = Object.prototype.toString.call(actual);
-    console.log("THEactualType:", actualType,"THEexpectedType:", expectedType);
     expect(actual).to.deep.equal( expected );
     expect(actualType).to.equal(expectedType);
   });
@@ -97,23 +95,43 @@ describe("Binary search", function(){
 
   const binarySearch = require("../source/pureGeneralFunctions").binarySearch;
 
-  let testArray = [1,4,7,10,13];
+  let testArray1 = [1,4,7,10,13];
 
   it("Should return the correct index when the search term exists in the array", function(){
-    expect(binarySearch(testArray, 7)).to.equal(2);
+    expect(binarySearch(testArray1, 7)).to.equal(2);
   });
 
   it("Should throw if exact match isn't found and exactOnly flag is true (default)", function(){
-    expect( () => binarySearch(testArray, 9) ).to.throw();
-    expect( () => binarySearch(testArray, [] ) ).to.throw();
-    expect( () => binarySearch(testArray, "squelf") ).to.throw();
+    expect( () => binarySearch(testArray1, 9) ).to.throw();
+    expect( () => binarySearch(testArray1, [] ) ).to.throw();
+    expect( () => binarySearch(testArray1, "squelf") ).to.throw();
   });
 
   it("Should return the index of the closest match if the search term isn't found and the exactOnly flag is false", function(){
-    expect( binarySearch(testArray, 9, false) ).to.equal(3);
-    expect( binarySearch(testArray, 99, false) ).to.equal(4);
-    expect( binarySearch(testArray, -10, false) ).to.equal(0);
-    expect( binarySearch(testArray, 8, false) ).to.equal(2);
+    expect( binarySearch(testArray1, 9, false) ).to.equal(3);
+    expect( binarySearch(testArray1, 99, false) ).to.equal(4);
+    expect( binarySearch(testArray1, -10, false) ).to.equal(0);
+    expect( binarySearch(testArray1, 8, false) ).to.equal(2);
+  });
+
+  let testArray2 = [null, null, null, null, null, 2, 8, 22];
+
+  it("Should return the correct index when the search term exists in the array despite leading nulls", function(){
+    expect(binarySearch(testArray2, 8)).to.equal(6);
+  });
+
+  it("Should throw if exact match isn't found and exactOnly flag is true (default) despite leading nulls", function(){
+    expect( () => binarySearch(testArray2, 9) ).to.throw();
+    expect( () => binarySearch(testArray2, [] ) ).to.throw();
+    expect( () => binarySearch(testArray2, "squelf") ).to.throw();
+  });
+
+  it("Should return the index of the closest match if the search term isn't found and the exactOnly flag is false even if the array starts with nulls", function(){
+    expect( binarySearch(testArray2, 9, false) ).to.equal(6);
+    expect( binarySearch(testArray2, 99, false) ).to.equal(7);
+    expect( binarySearch(testArray2, -10, false) ).to.equal(5);
+    expect( binarySearch(testArray2, 1, false) ).to.equal(5);
+    expect( binarySearch(testArray2, 0, false) ).to.equal(5);
   });
 
 });

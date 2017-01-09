@@ -29,7 +29,7 @@ let AudioEngine = function AudioEngine(GLOBALS, audioOptions, options) { //loRes
     audioOptions.channels
   );
   this.recBufArrayLength = Math.ceil((GLOBALS.secondsToBuffer * this.sampleRate) / this.scriptProcessorBufferLength);
-  this.codeChannel = new Array(this.recBufArrayLength).fill(0);
+  this.codeChannel = new Array(this.recBufArrayLength).fill(null);
   this.audioData = new Array(this.recBufArrayLength).fill(0);
   this.codeNumber = 0;
   this.maxAmplitude = 0;
@@ -62,8 +62,8 @@ let AudioEngine = function AudioEngine(GLOBALS, audioOptions, options) { //loRes
   if(this.loResWaveformParams){
     this.loResWaveformDataPoints = this.loResWaveformParams.dataPoints;
     // this.loResWaveformSecondsToDisplay = this.loResWaveformParams.secondsToDisplay;
-    this.loResWaveform = new Array(this.loResWaveformDataPoints).fill(0);
-    this.loResCodeChannel = new Array(this.loResWaveformDataPoints).fill(0);
+    this.loResWaveform = new Array(this.loResWaveformDataPoints).fill(null);
+    this.loResCodeChannel = new Array(this.loResWaveformDataPoints).fill(null);
     this.samplesPerDataPoint = (
       this.sampleRate *
       GLOBALS.secondsToBuffer) /
@@ -72,23 +72,35 @@ let AudioEngine = function AudioEngine(GLOBALS, audioOptions, options) { //loRes
   }
 
   this.getPointsAt = function getPointsAt(bufferRatio){
-    let loResCode = false, hiResCode = false;
+    let loResCode = false, fullResCode = false, fullResInPoint = false;
     if(bufferRatio === 0) {
-      hiResCode = this.codeChannel.slice(-1)[0];
-      let a = this.audioData;
-      // debugger; fuck off bash!
+      fullResCode = this.codeChannel[ this.codeChannel.length - 1 ];
+      fullResInPoint = this.codeChannel.length - 1;
     } else {
-      let unadjustedIndex = Math.round( (this.recBufArrayLength - 1) * bufferRatio );
-      let index = this.codeChannel.length - unadjustedIndex;
-      while (this.codeChannel[index] === 0) {index++;} // chase to first actual data point
-      hiResCode = this.codeChannel[index];
+
+
+
+      let indexUpperBound = Math.round( (this.recBufArrayLength - 1) * bufferRatio );
+      let index = this.codeChannel.length - indexUpperBound;
+      while (this.codeChannel[index] === null) {index++;} // chase to first actual data point
+      fullResCode = this.codeChannel[index];
+      fullResInPoint = index
+
+
     }
-    if(hiResCode && this.hasOwnProperty("loResCodeChannel")){
-      loResCode = binarySearch( this.codeChannel, hiResCode, false )
+
+    if(fullResCode && this.hasOwnProperty("loResCodeChannel")){
+      // Get the nearest loRes code to the fullRes code (for waveform gen)
+      let lRCidx = binarySearch( this.loResCodeChannel, fullResCode, false )
+      console.log("Mwoy indcks iz:", lRCidx);
+      loResCode = this.loResCodeChannel[ lRCidx ];
+      if(loResCode===null) { debugger; }
     }
+    let output = { lo: loResCode, hi: fullResInPoint };
     // debugger;
-    // return { lo: loResCode, hi: hiResCode };
-    return { hi: loResCode, lo: hiResCode };
+    return output; // waveform has a problem with zero index
+    // can we do anything about that?
+    // can we pad the arrays with nulls?
   };
 
   this.quit = function quit(){

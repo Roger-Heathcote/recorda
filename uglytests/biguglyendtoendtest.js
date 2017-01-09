@@ -170,7 +170,7 @@ var biguglyendtoendtest = function(){
     // TODO - ASK DONT TELL! - Add a select all method to recorder
     // TODO Also while were are it add a setInNow() and setOutNow()
     let myindex = 0;
-    while (recorder.audEng.codeChannel[myindex] === 0) {myindex++;}
+    while (recorder.audEng.codeChannel[myindex] === null) {myindex++;}
     recorder.fullResInPoint=myindex;
     recorder.fullResOutPoint=recorder.fullResInPoint + recorder.audEng.codeNumber;
     recorder.save();

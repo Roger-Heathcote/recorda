@@ -53,12 +53,12 @@ let RecorderApp = function RecorderApp(
     setLoResInPoint: function(v){
       console.log("v is", v, "which is an", typeof(v), "so there" );
       this.loResInPoint = v;
-      instance.fullResInPoint = v ? binarySearch(instance.audEng.codeChannel, v) : undefined;
+      instance.fullResInPoint = (typeof v === "number") ? binarySearch(instance.audEng.codeChannel, v) : undefined;
       console.log("lrip:", v, "frip:", instance.fullResInPoint);
     },
     setLoResOutPoint: function(v){
       this.loResOutPoint = v;
-      instance.fullResOutPoint = v ? binarySearch(instance.audEng.codeChannel, v) : undefined;
+      instance.fullResOutPoint = (typeof v === "number") ? binarySearch(instance.audEng.codeChannel, v) : undefined;
       console.log("lrop:", v, "frop:", instance.fullResOutPoint);
     },
     recordings: new Array(0)
@@ -98,7 +98,7 @@ let RecorderApp = function RecorderApp(
     let point = this.audEng.getPointsAt(bufferRatio);
     console.log("THE POINT WE GOT WAS:", point);
     GLOBALS.setLoResInPoint(point.lo);
-    this.fullResInPoint = point.hi;
+    // this.fullResInPoint = point.hi;
     GLOBALS.state = "record";
     this.record();
   }.bind(this);
@@ -120,7 +120,7 @@ let RecorderApp = function RecorderApp(
   recordState.setPointAt = function setOutPointAt(bufferRatio) {
     let point = this.audEng.getPointsAt(bufferRatio);
     GLOBALS.setLoResOutPoint(point.lo);
-    this.fullResOutPoint = point.hi;
+    // this.fullResOutPoint = point.hi;
     GLOBALS.state = "save"; // TODO shouldn't the state transition handle this change?!
     this.save();
   }.bind(this);

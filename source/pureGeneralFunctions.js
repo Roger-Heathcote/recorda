@@ -31,7 +31,7 @@ function binarySearch(array, key, exactOnly=true) {
   while (lo <= hi) {
     //jshint -W016
     mid = ((lo + hi) >> 1); //TODO bitshifts unperformant in javascript, refactor out
-    element = array[mid];
+    element = typeof(array[mid])==="number" ? array[mid] : Number.NEGATIVE_INFINITY;
     if (element < key) {
       lo = mid + 1;
     } else if (element > key) {
@@ -41,10 +41,14 @@ function binarySearch(array, key, exactOnly=true) {
     }
   }
   if (exactOnly) { throw(new Error("Not Found!")); }
-  let loDiff = Math.abs( array[mid-1] - key );
-  let midDiff = Math.abs( array[mid] - key );
-  if(loDiff < midDiff) { return mid-1; }
-  return mid;
+  let loVal = array[lo]===null ? Number.NEGATIVE_INFINITY : array[lo];
+  let hiVal = array[hi]===null ? Number.NEGATIVE_INFINITY : array[hi];
+  let loDiff = Math.abs( loVal - key );
+  let hiDiff = Math.abs( hiVal - key );
+  if((typeof hiVal==="undefined") ||(loDiff < hiDiff)) {
+    return lo;
+  }
+  return hi;
 }
 
 function writeUTFBytes(view, offset, string){
