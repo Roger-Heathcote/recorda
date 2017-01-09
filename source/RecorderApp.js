@@ -93,8 +93,10 @@ let RecorderApp = function RecorderApp(
     GLOBALS.state = "record";
     this.record();
   }.bind(this);
+
   bufferState.setPointAt = function setInPointAt(bufferRatio) {
     let point = this.audEng.getPointsAt(bufferRatio);
+    console.log("THE POINT WE GOT WAS:", point);
     GLOBALS.setLoResInPoint(point.lo);
     this.fullResInPoint = point.hi;
     GLOBALS.state = "record";
@@ -114,6 +116,7 @@ let RecorderApp = function RecorderApp(
         console.log("Outpoint must be after in point doofus!");
       }
   };
+
   recordState.setPointAt = function setOutPointAt(bufferRatio) {
     let point = this.audEng.getPointsAt(bufferRatio);
     GLOBALS.setLoResOutPoint(point.lo);

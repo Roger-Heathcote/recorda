@@ -4,6 +4,7 @@
 let importProperties = require("./pureGeneralFunctions.js").importProperties;
 let OptionalAudioConstraints = require("./OptionalAudioConstraints.js");
 let resampleAndInterleave = require("./pureGeneralFunctions.js").resampleAndInterleave;
+let binarySearch = require("./pureGeneralFunctions.js").binarySearch;
 
 let AudioEngine = function AudioEngine(GLOBALS, audioOptions, options) { //loResWaveformParams=false
   // ADD/OVERWRITE PROPERTIES FROM OPTIONS OBJECT
@@ -71,20 +72,23 @@ let AudioEngine = function AudioEngine(GLOBALS, audioOptions, options) { //loRes
   }
 
   this.getPointsAt = function getPointsAt(bufferRatio){
+    let loResCode = false, hiResCode = false;
     if(bufferRatio === 0) {
-      let low = this.codeChannel.slice(-1)[0];
-      let high = this.audioData.length-1;
-      return { lo: low, hi:high };
+      hiResCode = this.codeChannel.slice(-1)[0];
+      let a = this.audioData;
+      // debugger;
+    } else {
+      let unadjustedIndex = Math.round( (this.recBufArrayLength - 1) * bufferRatio );
+      let index = this.codeChannel.length - unadjustedIndex;
+      while (this.codeChannel[index] === 0) {index++;} // chase to first actual data point
+      hiResCode = this.codeChannel[index];
     }
-    // else we...
-    // need to chase up both arrays! AND
-    // limit length if they are over the buffer length
-    // figure out where maximum start index could be by
-    //   doing math then
-    //   return that if it's non zero
-    //   chase if it is zero then
-    // return the first value that isn't
-    return [this.codeChannel[0], this.audioData.length-1];
+    if(hiResCode && this.hasOwnProperty("loResCodeChannel")){
+      loResCode = binarySearch( this.codeChannel, hiResCode, false )
+    }
+    // debugger;
+    // return { lo: loResCode, hi: hiResCode };
+    return { hi: loResCode, lo: hiResCode };
   };
 
   this.quit = function quit(){

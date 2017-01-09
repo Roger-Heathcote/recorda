@@ -28,7 +28,7 @@ let WaveformDisplay = function WaveformDisplay(GLOBALS, theWindow, canvas, mouse
     let ratio = (event.clientX - rect.left) / rect.width;
     let index = Math.floor(this.codeChan.length * ratio);
     while (this.codeChan[index] === 0) {index++;} // chase to first actual data point
-    if (this.codeChan[index]) { clickHandler(this.codeChan[index]); }
+    if (this.codeChan[index]) { clickHandler(this.codeChan[index]); } // TODO refactor so chasing happens elsewhere
   }.bind(this);
   canvas.addEventListener('mouseup', this.waveformClicked, false);
 
