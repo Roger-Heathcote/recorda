@@ -76,7 +76,7 @@ let AudioEngine = function AudioEngine(GLOBALS, audioOptions, options) { //loRes
     if(bufferRatio === 0) {
       hiResCode = this.codeChannel.slice(-1)[0];
       let a = this.audioData;
-      // debugger;
+      // debugger; fuck off bash!
     } else {
       let unadjustedIndex = Math.round( (this.recBufArrayLength - 1) * bufferRatio );
       let index = this.codeChannel.length - unadjustedIndex;
