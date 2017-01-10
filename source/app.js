@@ -84,7 +84,7 @@ function main(){
     57: recorder.setPointAt.bind(null, 0.9), // 9
     65: recorder.setPointAt.bind(null, 1),   // A
     79: recorder.setPointAt.bind(null, 0),   // O
-    27: escapePressed,        // ESC
+    27: recorder.cancel,                     // ESC
     83: savePressed,          // S
     68: deletePressed,        // D
     80: playPausePressed,     // P
@@ -127,7 +127,6 @@ function main(){
   audioQualitySelector.addEventListener('change', bufferLengthOrQualityChanged);
 
   function bufferLengthOrQualityChanged(){
-    console.log("bufferLengthOrQualityChanged:", bufferLengthOrQualityChanged);
     recorder.changeLengthOrQuality(bufferLengthSelector.value, audioPresets[audioQualitySelector.value]);
     refreshTimeline(bufferLengthSelector.value);
   }
@@ -180,7 +179,6 @@ function main(){
   function refreshTimeline(t){
     let tMax = t || initialBufferLength;
     let timelineMax = document.getElementById("timelineMax");
-    console.log("tLM:", timelineMax);
     timelineMax.innerHTML = tMax + "s ago";
   }
 
@@ -206,18 +204,12 @@ function main(){
     theOverlay.style.height = rect.bottom - rect.top + "px";
     theOverlay.style.fontSize = (rect.bottom - rect.top)/6 + "px";
     theOverlay.style.lineHeight = rect.bottom - rect.top + "px";
-    // TODO!!!
-    // Why is this firing AFTER save mode has been exited?
-    // Just not GC'd yet?
-    // Manually detactch this listener?
-    console.log("Overlay present so adding this listener", overlayResizeListenerFunction);
     window.addEventListener("resize", overlayResizeListenerFunction);
     document.body.appendChild(theOverlay);
   }
 
   function exitingSaveModeCallback(){
     window.removeEventListener("resize", overlayResizeListenerFunction);
-    console.log("Getting rid of overlay resize listener");
     document.body.removeChild(theOverlay);
     theCanvas.setAttribute("aria-disabled", "false");
     theOverlay = undefined;

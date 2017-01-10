@@ -17,7 +17,7 @@ let AudioEngine = function AudioEngine(GLOBALS, audioOptions, options) { //loRes
      }
   };
 
-  console.log("Need to apply audioOptions in Audio Engine now", audioOptions);
+  // console.log("Need to apply audioOptions in Audio Engine now", audioOptions);
 
   this.scriptProcessorBufferLength = this.scriptProcessorBufferLength || 16384 / 4; // In units NOT bytes!
   this.audioContext = new (GLOBALS.win.AudioContext || GLOBALS.win.webkitAudioContext)();
@@ -77,36 +77,23 @@ let AudioEngine = function AudioEngine(GLOBALS, audioOptions, options) { //loRes
       fullResCode = this.codeChannel[ this.codeChannel.length - 1 ];
       fullResInPoint = this.codeChannel.length - 1;
     } else {
-
-
-
       let indexUpperBound = Math.round( (this.recBufArrayLength - 1) * bufferRatio );
       let index = this.codeChannel.length - indexUpperBound;
       while (this.codeChannel[index] === null) {index++;} // chase to first actual data point
       fullResCode = this.codeChannel[index];
-      fullResInPoint = index
-
-
+      fullResInPoint = index;
     }
-
     if(fullResCode && this.hasOwnProperty("loResCodeChannel")){
       // Get the nearest loRes code to the fullRes code (for waveform gen)
-      let lRCidx = binarySearch( this.loResCodeChannel, fullResCode, false )
-      console.log("Mwoy indcks iz:", lRCidx);
+      let lRCidx = binarySearch( this.loResCodeChannel, fullResCode, false );
       loResCode = this.loResCodeChannel[ lRCidx ];
-      if(loResCode===null) { debugger; }
     }
     let output = { lo: loResCode, hi: fullResInPoint };
-    // debugger;
-    return output; // waveform has a problem with zero index
-    // can we do anything about that?
-    // can we pad the arrays with nulls?
+    return output;
   };
 
   this.quit = function quit(){
-    console.log("AudioEngine: Quit signal received!");
     this.audioContext.close();
-    // this = undefined;
   };
 
   // WIRE UP THE INPUT TO OUR SCRIPTPROCESSOR NODE
@@ -180,7 +167,6 @@ let AudioEngine = function AudioEngine(GLOBALS, audioOptions, options) { //loRes
     // Trim element from the fron of the audio array
     while ((GLOBALS.state === "buffer") && (this.audioData.length > this.recBufArrayLength)) {
       let trimLength = this.audioData.length - this.recBufArrayLength;
-      if(trimLength>1) { console.log("trimLength =", trimLength); }
       this.audioData.splice(0, trimLength);
       this.codeChannel.splice(0, trimLength);
     }

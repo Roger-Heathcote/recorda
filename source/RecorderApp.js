@@ -51,15 +51,12 @@ let RecorderApp = function RecorderApp(
     loResInPoint: undefined,
     loResOutPoint: undefined,
     setLoResInPoint: function(v){
-      console.log("v is", v, "which is an", typeof(v), "so there" );
       this.loResInPoint = v;
       instance.fullResInPoint = (typeof v === "number") ? binarySearch(instance.audEng.codeChannel, v) : undefined;
-      console.log("lrip:", v, "frip:", instance.fullResInPoint);
     },
     setLoResOutPoint: function(v){
       this.loResOutPoint = v;
       instance.fullResOutPoint = (typeof v === "number") ? binarySearch(instance.audEng.codeChannel, v) : undefined;
-      console.log("lrop:", v, "frop:", instance.fullResOutPoint);
     },
     recordings: new Array(0)
   };
@@ -86,30 +83,24 @@ let RecorderApp = function RecorderApp(
   }.bind(this);
 
   bufferState.handleWaveformClick = function bufferStateHandleWaveformClick(code) {
-    console.log("inPoint code we just got is:", code, typeof code);
     GLOBALS.setLoResInPoint(code);
-    console.log("loRes inPoint set as:", GLOBALS.loResInPoint);
-    console.log("hiRes inPoint set as:", this.fullResInPoint);
     GLOBALS.state = "record";
     this.record();
   }.bind(this);
 
   bufferState.setPointAt = function setInPointAt(bufferRatio) {
     let point = this.audEng.getPointsAt(bufferRatio);
-    console.log("THE POINT WE GOT WAS:", point);
     GLOBALS.setLoResInPoint(point.lo);
-    // this.fullResInPoint = point.hi;
+    this.fullResInPoint = point.hi;
     GLOBALS.state = "record";
     this.record();
   }.bind(this);
 
 
   recordState.handleWaveformClick = function recordStateHandleWaveformClick(code) {
-    console.log("outPoint code we just got is:", code, typeof code);
     if(code >= GLOBALS.loResInPoint) // outpoint must be after in point!
       {
         GLOBALS.setLoResOutPoint(code);
-        console.log("outPoint set as:", GLOBALS.loResOutPoint);
         GLOBALS.state = "save";
         this.save();
       } else {
@@ -120,9 +111,14 @@ let RecorderApp = function RecorderApp(
   recordState.setPointAt = function setOutPointAt(bufferRatio) {
     let point = this.audEng.getPointsAt(bufferRatio);
     GLOBALS.setLoResOutPoint(point.lo);
-    // this.fullResOutPoint = point.hi;
+    this.fullResOutPoint = point.hi;
     GLOBALS.state = "save"; // TODO shouldn't the state transition handle this change?!
     this.save();
+  }.bind(this);
+
+  recordState.cancel = function cancelInPoint(){
+    GLOBALS.setLoResOutPoint(undefined);
+    this.changeState(this.states.buffer);
   }.bind(this);
 
   saveState.handleWaveformClick = function saveStateHandleWaveformClick() {
@@ -167,6 +163,12 @@ let RecorderApp = function RecorderApp(
     if(this.enteringSaveModeCallback){this.enteringSaveModeCallback();}
   }.bind(this);
 
+  saveState.cancel = function cancelSave(){
+    this.currentSave = false;
+    GLOBALS.setLoResOutPoint(undefined);
+    this.changeState(this.states.buffer);
+  }.bind(this);
+
   saveState.exit = function saveStateExit(){
     GLOBALS.setLoResInPoint(undefined);
     GLOBALS.setLoResOutPoint(undefined);
@@ -180,7 +182,7 @@ let RecorderApp = function RecorderApp(
   this.init = function RecorderAppInit() {
     this.states.buffer.init(this);
     this.states.record.init(this);
-    this.states.save.init(this);
+    this.states.save.init(this); // which of these are actually used??? TODO
     this.state = this.states.buffer;
     this.audEng = new AudioEngine(
       GLOBALS,
@@ -207,11 +209,18 @@ let RecorderApp = function RecorderApp(
     this.state.execute();
   };
 
+  // LINK METHODS TO THEIR STATE VARIANTS
+  // The state versions of each method are swapped in dynamically (and aren't
+  // even defined yet so we need to wrap them in a func to defer execution
 
-  // TODO - I think all this is redundant - refactor priority 1
-  this.buffer = function buffer() { this.state.buffer(); };
-  this.record =  function record() { this.state.record(); };
-  this.save =  function save() { this.state.save(); };
+  this.buffer = () => this.state.buffer();
+  this.record = () => this.state.record();
+  this.save =  () => this.state.save();
+
+  this.waveformClicked = (code) => this.state.handleWaveformClick(code);
+  this.setPointAt = (point) => this.state.setPointAt(point);
+  this.cancel = () => this.state.cancel();
+
   this.changeState = function changeState(state) {
     if (this.state !== state) {
       this.state.exit();
@@ -220,14 +229,6 @@ let RecorderApp = function RecorderApp(
       this.state.execute();
     }
   };
-
-  this.waveformClicked = function waveformClicked(code) {
-    this.state.handleWaveformClick(code);
-  }.bind(this);
-
-  this.setPointAt = function setPointAt(point) {
-    this.state.setPointAt(point);
-  }.bind(this);
 
   this.vmDataDisplayBlock = function vmDataDisplayBlock(){
     let out = {};
@@ -286,12 +287,9 @@ let RecorderApp = function RecorderApp(
   }.bind(this);
 
   this.changeLengthOrQuality = function changeLengthOrQuality(bufferLength, audioOptions){
-    console.log("Changywangywoowah:", bufferLength, audioOptions);
     if(GLOBALS.state === "save"){
       console.log("Can't change buffer length mid save");
     } else {
-      console.log("Setting buffer length to", bufferLength);
-
       GLOBALS.state = "reset";
       this.audEng.quit(); // = undefined;
       this.waveDisp.quit(); // = undefined;
@@ -303,13 +301,12 @@ let RecorderApp = function RecorderApp(
       //hmm we're doubling up on click handlers, let's not!
 
       setTimeout(function resettingBufferLength(){
-        console.log("GOGOGOOOOOO!");
-        this.state = this.states.buffer;
+
+        // this.state = this.states.buffer;
+        this.changeState(this.states.buffer);
+
         GLOBALS.state = "buffer";
-        console.log("Set GLOBALS secondsToBuffer to", bufferLength);
         GLOBALS.secondsToBuffer = bufferLength;
-        // this.loResWaveformParams.secondsToDisplay = len;
-        console.log("GLOBALS secondsToBuffer is now", GLOBALS.secondsToBuffer);
         GLOBALS.loResInPoint = undefined;
         GLOBALS.loResOutPoint = undefined; //
         this.audEng = new AudioEngine(
@@ -334,8 +331,6 @@ let RecorderApp = function RecorderApp(
         this.saveEngineTimer = setInterval(this.saveEngine, this.saveEngineFiresEveryXMs);
         this.state.enter();
         this.state.execute();
-
-        console.log("So yeah, did that.");
 
       }.bind(this), 0);
     }
