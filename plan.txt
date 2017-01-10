@@ -1,19 +1,13 @@
+bug: Setting outpoint with shortcut keys allows zero length saves
+
 Accessibilify!
   Add keyboard shortcuts
-    record from here (I)
-    record whole buffer (A)
-    record percentage of buffer
-    stop (O)
-    1 thru 9 => x0%
     ESC cancel selection, revert to buffering
     (S)ave recording
     (D)elete recording
     (P)lay/pause recording
     (Y)es to delete confirm
     UP/DOWN to navigate recording list
-
-    TODO
-      Keydown delegator
 
   Try with a screen reader
 
@@ -74,6 +68,14 @@ Longer term
     Multiple waveform display & multitrack recording?
 
 DONE-------------------------
+
+Add keyboard shortcuts
+  record from here (I)
+  record whole buffer (A)
+  record percentage of buffer
+    1 thru 9 => x0%
+  stop (O)
+
 
 Fixed faulty 16bit mono case and added tests
 

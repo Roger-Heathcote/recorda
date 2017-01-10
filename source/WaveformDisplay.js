@@ -18,7 +18,6 @@ let WaveformDisplay = function WaveformDisplay(GLOBALS, theWindow, canvas, mouse
 
   this.quit = function quit(){
     canvas.removeEventListener('mouseup', this.waveformClicked);
-    console.log("Setting quit bit in waveform engine");
     this.dontquit = false;
     this.blankDisplay();
   }.bind(this);

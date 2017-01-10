@@ -13,7 +13,6 @@ if(typeof(window) === "undefined"){
   };
 } else {
   BlobConstructor = Blob;
-  console.log("Found a window object, using Blob from that", BlobConstructor);
 }
 
 let makeWAVFileBlobGenerator = pureMakeWAVFileBlobGenerator.bind(null, BlobConstructor, writeUTFBytes);
