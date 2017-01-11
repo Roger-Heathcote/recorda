@@ -1,8 +1,9 @@
 bug: Setting outpoint with shortcut keys allows zero length saves
+  enforce minimum length of one frame/block i.e. outpoint must be higher than in point
 
 Accessibilify!
   Add keyboard shortcuts
-    ESC cancel selection, revert to buffering
+
     (S)ave recording
     (D)elete recording
     (P)lay/pause recording
@@ -24,8 +25,6 @@ Settings
 Persist via
   cookie (needs server? refreser on cookies - client side?)
   local storage?
-
-Save cancel
 
 Make name an editable input field
 
@@ -75,7 +74,7 @@ Add keyboard shortcuts
   record percentage of buffer
     1 thru 9 => x0%
   stop (O)
-
+  ESC cancel selection, revert to buffering
 
 Fixed faulty 16bit mono case and added tests
 
