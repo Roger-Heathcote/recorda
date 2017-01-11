@@ -2,27 +2,20 @@
 
 function main(){
 
-  let bufferLengthSelector = document.getElementById("bufferLengthSelector");
-  let initialBufferLength = Number(bufferLengthSelector.value);
-
-  let audioQualitySelector = document.getElementById("audioQualitySelector");
-  // console.log("AQSVAL:", audioQualitySelector.value);
-  let audioPresets = require("./audioPresets.js");
-  let audioOptions = audioPresets[audioQualitySelector.value];
-
   const RecorderApp = require("./RecorderApp.js");
   const AudioEngine = require("./AudioEngine.js");
   const MouseStatus = require("./MouseStatus.js");
   const WaveformDisplay = require("./WaveformDisplay.js");
   const views = require("./views.js");
-  // let audioOptions = require("./audioPresets.js").defaultPreset;
+  const audioPresets = require("./audioPresets.js");
 
-  // INIT RECORDER
-  // let theWrapper = document.getElementById("wrapper");
+  let bufferLengthSelector = document.getElementById("bufferLengthSelector");
+  let initialBufferLength = Number(bufferLengthSelector.value);
+  let audioQualitySelector = document.getElementById("audioQualitySelector");
+  let audioOptions = audioPresets[audioQualitySelector.value];
   let theCanvas = document.getElementById("waveform");
   let theOverlay = false;
 
-  // let initialBufferLength = 500;
   const loResWaveformParams = { dataPoints: 1000 };
   const overlayResizeListenerFunction = function overlayResizeListener() {
     let rect = theCanvas.getBoundingClientRect();
@@ -31,10 +24,9 @@ function main(){
     theOverlay.style.top = pos.y + "px";
     theOverlay.style.width = rect.right - rect.left + "px";
     theOverlay.style.height = rect.bottom - rect.top + "px";
-    // }.bind(this);
   };
 
-
+  // INIT RECORDER
   let recorder = new RecorderApp(
     window,
     navigator,
@@ -68,7 +60,6 @@ function main(){
   // ADD IN EVENT LISTENERS
   window.addEventListener('resize', resizeCanvas, false);
 
-
   // KEYDOWN DELEGATOR
   window.addEventListener('keydown', keyClickDelegator, true);
   let keyHandlers = {
@@ -98,7 +89,6 @@ function main(){
     if(keyHandlers.hasOwnProperty(key)){ keyHandlers[key](); }
   }
 
-  function escapePressed(){ console.log("Not implemented yet"); }
   function savePressed(){ console.log("Not implemented yet"); }
   function deletePressed(){ console.log("Not implemented yet"); }
   function playPausePressed(){ console.log("Not implemented yet"); }
@@ -131,15 +121,7 @@ function main(){
     refreshTimeline(bufferLengthSelector.value);
   }
 
-  // function reset(){
-  //   let newBufferLength = 120;
-  //   recorder.changeLengthOrQuality(newBufferLength);
-  //   refreshTimeline(newBufferLength);
-  //   // timelineMax.innerHTML = humaneDate(new Date(1), new Date((newBufferLength*1000)+0.1));
-  // }
-
   function saveClicked(recordingID) {
-    // SAVE BUTTONS HANDLER: recording_id => browser download
     let recording = recorder.getRecordingByUuid(recordingID);
     let anchor = document.createElement("a");
     anchor.href = recording.url;
@@ -148,7 +130,6 @@ function main(){
     anchor.click();
   }
   function deleteClicked(recordingID) {
-    // DELETE BUTTONS HANDLER: recording_id => recording deleted
     recorder.deleteRecordingByUuid(recordingID);
   }
   function optionsButtonClicked() {

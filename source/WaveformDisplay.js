@@ -4,9 +4,7 @@ let binarySearch = require("./pureGeneralFunctions.js").binarySearch;
 
 let WaveformDisplay = function WaveformDisplay(GLOBALS, theWindow, canvas, mouse, loResWaveform, loResCodeChannel, clickHandler) {
   let instance = this;
-  //this.state = "buffer";
   this.minRefreshTime = 100;
-  // this.secondsToDisplay = GLOBALS.secondsToBuffer;
   this.window = theWindow;
   this.canvas = canvas;
   this.waveform = loResWaveform;

@@ -28,14 +28,14 @@ let RecorderApp = function RecorderApp(
     init: target => this.target = target,
     reset: () => this.target.init(),
     enter: () => {
-      //console.log("Setting global state to", this.target.state.name);
       this.target.globals.state = this.target.state.name;
     },
     execute: () => null, //console.log(this.target.state.name+": executing."),
     buffer: () => this.target.changeState(this.target.states.buffer),
     record: () => this.target.changeState(this.target.states.record),
     save: () => this.target.changeState(this.target.states.save),
-    exit: () => null //console.log(this.target.state.name+": exiting.")
+    exit: () => null, //console.log(this.target.state.name+": exiting.")
+    cancel: () => null
   };
 
   let bufferState = createStateObject(stateObject, "buffer", "buffering");
@@ -75,7 +75,6 @@ let RecorderApp = function RecorderApp(
         let progress = this.currentSave.next();
         if(!progress.done){
           if(this.saveModeUpdateCallback){ this.saveModeUpdateCallback(progress.value);}
-          // console.log("this.saveModeUpdateCallback:", this.saveModeUpdateCallback);
         }
       }
       while ( this.currentSave && Date.now() < timeOut );
@@ -84,16 +83,14 @@ let RecorderApp = function RecorderApp(
 
   bufferState.handleWaveformClick = function bufferStateHandleWaveformClick(code) {
     GLOBALS.setLoResInPoint(code);
-    GLOBALS.state = "record";
-    this.record();
+    this.record(); // State change
   }.bind(this);
 
   bufferState.setPointAt = function setInPointAt(bufferRatio) {
     let point = this.audEng.getPointsAt(bufferRatio);
     GLOBALS.setLoResInPoint(point.lo);
     this.fullResInPoint = point.hi;
-    GLOBALS.state = "record";
-    this.record();
+    this.record(); // State change
   }.bind(this);
 
 
@@ -101,8 +98,7 @@ let RecorderApp = function RecorderApp(
     if(code >= GLOBALS.loResInPoint) // outpoint must be after in point!
       {
         GLOBALS.setLoResOutPoint(code);
-        GLOBALS.state = "save";
-        this.save();
+        this.save(); // State change
       } else {
         console.log("Outpoint must be after in point doofus!");
       }
@@ -112,13 +108,13 @@ let RecorderApp = function RecorderApp(
     let point = this.audEng.getPointsAt(bufferRatio);
     GLOBALS.setLoResOutPoint(point.lo);
     this.fullResOutPoint = point.hi;
-    GLOBALS.state = "save"; // TODO shouldn't the state transition handle this change?!
-    this.save();
+    // GLOBALS.state = "save"; // TODO shouldn't the state transition handle this change?!
+    this.save(); // State change
   }.bind(this);
 
   recordState.cancel = function cancelInPoint(){
     GLOBALS.setLoResOutPoint(undefined);
-    this.changeState(this.states.buffer);
+    this.buffer(); // State change
   }.bind(this);
 
   saveState.handleWaveformClick = function saveStateHandleWaveformClick() {
@@ -143,7 +139,7 @@ let RecorderApp = function RecorderApp(
       });
       if(this.recordingsListChangedCallback){this.recordingsListChangedCallback();}
       this.currentSave = undefined;
-      this.buffer();
+      this.buffer(); // State change
     }.bind(this);
 
     this.currentSave = makeWAVFileBlobGenerator(
@@ -165,8 +161,12 @@ let RecorderApp = function RecorderApp(
 
   saveState.cancel = function cancelSave(){
     this.currentSave = false;
+    let loResInPoint = GLOBALS.loResInPoint;
+    let fullResInPoint = this.fullResInPoint;
     GLOBALS.setLoResOutPoint(undefined);
-    this.changeState(this.states.buffer);
+    this.record(); // State change
+    GLOBALS.setLoResInPoint( loResInPoint );
+    this.fullResInPoint = fullResInPoint;
   }.bind(this);
 
   saveState.exit = function saveStateExit(){
@@ -290,57 +290,43 @@ let RecorderApp = function RecorderApp(
     if(GLOBALS.state === "save"){
       console.log("Can't change buffer length mid save");
     } else {
-      GLOBALS.state = "reset";
-      this.audEng.quit(); // = undefined;
-      this.waveDisp.quit(); // = undefined;
+      this.audEng.quit();
+      this.waveDisp.quit();
       this.audEng = undefined;
       this.waveDisp = undefined;
       this.audioOptions = audioOptions;
+      this.currentSave = false;
       clearInterval(this.saveEngineTimer);
-
-      //hmm we're doubling up on click handlers, let's not!
-
-      setTimeout(function resettingBufferLength(){
-
-        // this.state = this.states.buffer;
-        this.changeState(this.states.buffer);
-
-        GLOBALS.state = "buffer";
-        GLOBALS.secondsToBuffer = bufferLength;
-        GLOBALS.loResInPoint = undefined;
-        GLOBALS.loResOutPoint = undefined; //
-        this.audEng = new AudioEngine(
-          GLOBALS,
-          this.audioOptions,
-          {
-            loResWaveformParams: this.loResWaveformParams,
-            optionalMediaConstraints: this.optionalMediaConstraints,
-            scriptProcessorBufferLength: this.scriptProcessorBufferLength
-          }
-        );
-        if(this.WaveformDisplay){
-          this.waveDisp = new this.WaveformDisplay(
-            GLOBALS,
-            window,
-            this.canvas,
-            this.mouse,
-            this.audEng.loResWaveform,
-            this.audEng.loResCodeChannel,
-            this.waveformClicked);
+      this.buffer();
+      GLOBALS.secondsToBuffer = bufferLength;
+      this.audEng = new AudioEngine(
+        GLOBALS,
+        this.audioOptions,
+        {
+          loResWaveformParams: this.loResWaveformParams,
+          optionalMediaConstraints: this.optionalMediaConstraints,
+          scriptProcessorBufferLength: this.scriptProcessorBufferLength
         }
-        this.saveEngineTimer = setInterval(this.saveEngine, this.saveEngineFiresEveryXMs);
-        this.state.enter();
-        this.state.execute();
-
-      }.bind(this), 0);
+      );
+      if(this.WaveformDisplay){
+        this.waveDisp = new this.WaveformDisplay(
+          GLOBALS,
+          window,
+          this.canvas,
+          this.mouse,
+          this.audEng.loResWaveform,
+          this.audEng.loResCodeChannel,
+          this.waveformClicked);
+      }
+      this.saveEngineTimer = setInterval(this.saveEngine, this.saveEngineFiresEveryXMs);
     }
-
   }.bind(this);
 
   function createStateObject(stateObject, stateName, stateIng) {
     let newObject = Object.create(stateObject);
     newObject.name = stateName;
-    newObject[stateName] = () => console.log(this.target.state.name+": already "+stateIng+".");
+    newObject[stateName] = () => console.log("Already "+stateIng+".");
+    newObject[stateName] = () => null;
     return newObject;
   }
 
