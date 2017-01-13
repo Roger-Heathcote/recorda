@@ -91,6 +91,32 @@ describe("Let's write a more flexible downsampler & interleaver! ", function(){
 
 });
 
+describe("cloneArrayOfFloat32Arrays", function(){
+
+  let cloneArrayOfFloat32Arrays = require("../source/pureGeneralFunctions").cloneArrayOfFloat32Arrays;
+
+  it("Should do a deep copy a single channel", function(){
+    let chans = [ Float32Array.from([1,0.5,0,-0.5]) ];
+    let cloned = cloneArrayOfFloat32Arrays(chans);
+    expect( cloned ).to.deep.equal( chans ); // test copy
+    let expected = [ Float32Array.from([1,0.5,0,-0.5]) ];
+    cloned[0] = 999;
+    expect( chans ).to.deep.equal( expected ); // test depth
+  });
+
+
+  it("Should copy multiple channels", function(){
+    let c0 = Float32Array.from([1,0.5,0,-0.5]);
+    let c1 = Float32Array.from([1,0.5,0,-0.5]);
+    let chans = [ c0, c1 ];
+    let cloned = cloneArrayOfFloat32Arrays(chans);
+    expect( cloned ).to.deep.equal( chans ); // test copy
+  });
+
+});
+
+
+
 describe("Binary search", function(){
 
   const binarySearch = require("../source/pureGeneralFunctions").binarySearch;

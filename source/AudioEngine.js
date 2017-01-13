@@ -4,9 +4,10 @@
 let importProperties = require("./pureGeneralFunctions.js").importProperties;
 let OptionalAudioConstraints = require("./OptionalAudioConstraints.js");
 let resampleAndInterleave = require("./pureGeneralFunctions.js").resampleAndInterleave;
+let bypass = require("./pureGeneralFunctions.js").cloneArrayOfFloat32Arrays;
 let binarySearch = require("./pureGeneralFunctions.js").binarySearch;
 
-let AudioEngine = function AudioEngine(GLOBALS, audioOptions, options) { //loResWaveformParams=false
+let AudioEngine = function AudioEngine(GLOBALS, aOpt, options) { //loResWaveformParams=false
   // ADD/OVERWRITE PROPERTIES FROM OPTIONS OBJECT
   importProperties(options, this);
   this.totalBlocksHandled = 0;
@@ -17,7 +18,7 @@ let AudioEngine = function AudioEngine(GLOBALS, audioOptions, options) { //loRes
      }
   };
 
-  // console.log("Need to apply audioOptions in Audio Engine now", audioOptions);
+  // console.log("Need to apply aOpt in Audio Engine now", aOpt);
 
   this.scriptProcessorBufferLength = this.scriptProcessorBufferLength || 16384 / 4; // In units NOT bytes!
   this.audioContext = new (GLOBALS.win.AudioContext || GLOBALS.win.webkitAudioContext)();
@@ -25,8 +26,8 @@ let AudioEngine = function AudioEngine(GLOBALS, audioOptions, options) { //loRes
   this.gainNode = this.audioContext.createGain(); // Master volume, just in case we need it!
   this.scriptNode = this.audioContext.createScriptProcessor(
     this.scriptProcessorBufferLength,
-    audioOptions.channels,
-    audioOptions.channels
+    aOpt.channels,
+    aOpt.channels
   );
   this.recBufArrayLength = Math.ceil((GLOBALS.secondsToBuffer * this.sampleRate) / this.scriptProcessorBufferLength);
   this.codeChannel = new Array(this.recBufArrayLength).fill(null);
@@ -70,6 +71,9 @@ let AudioEngine = function AudioEngine(GLOBALS, audioOptions, options) { //loRes
       this.loResWaveformParams.dataPoints;
     this.dispCount = this.samplesPerDataPoint;
   }
+  let processor = resampleAndInterleave.bind(null, aOpt.bitDepth, aOpt.interleave);
+  if(aOpt.hasOwnProperty("raw")){ processor = bypass; }
+  console.log("PROCESSOR IS", processor);
 
   this.getPointsAt = function getPointsAt(bufferRatio){
     let loResCode = false, fullResCode = false, fullResInPoint = false;
@@ -117,25 +121,20 @@ let AudioEngine = function AudioEngine(GLOBALS, audioOptions, options) { //loRes
     this.codeNumber++;
     this.codeChannel.push (this.codeNumber);
 
-    let channels = getChannels(audioOptions.channels, audioProcessingEvent);
+    let channels = getChannels(aOpt.channels, audioProcessingEvent);
     let array2Push = [];
     let channelIndex;
-    for(channelIndex=0; channelIndex < audioOptions.channels; channelIndex++) {
+    for(channelIndex=0; channelIndex < aOpt.channels; channelIndex++) {
       array2Push.push( channels[channelIndex].in );
     }
 
-    // this.audioData.push ( stereoFloat32ToInterleavedInt16(channels[0].in, channels[1].in) );
-    this.audioData.push ( resampleAndInterleave(
-      audioOptions.bitDepth,
-      audioOptions.interleave,
-      array2Push
-    ) );
+    this.audioData.push( processor(array2Push) );
 
     let sample;
     for (sample = 0; sample < this.scriptProcessorBufferLength; sample++) {
 
       // enable pass through option
-      for(channelIndex=0; channelIndex<audioOptions.channels; channelIndex++){
+      for(channelIndex=0; channelIndex<aOpt.channels; channelIndex++){
         if(this.passthrough) {
           channels[channelIndex].out[sample] = channels[channelIndex].in[sample];
         } else {

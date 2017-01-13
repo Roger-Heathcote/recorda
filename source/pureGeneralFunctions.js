@@ -145,6 +145,14 @@ function allMembersAreOfEqualLength(array){
   });
 }
 
+function cloneArrayOfFloat32Arrays(channels){
+  let output = [];
+  channels.forEach(function(each){
+    output.push( Float32Array.from(each) );
+  });
+  return output;
+}
+
 function resampleAndInterleave(bitDepth,interleave,channels){
 
   if(!Array.isArray(channels)){ throw new Error("I only take arrays!"); }
@@ -188,6 +196,7 @@ function resampleAndInterleave(bitDepth,interleave,channels){
 module.exports = {
   importProperties,
   resampleAndInterleave,
+  cloneArrayOfFloat32Arrays,
   immute,
   formatBytes,
   binarySearch,
