@@ -4,10 +4,8 @@ let importProperties = require("./pureGeneralFunctions.js").importProperties;
 let formatBytes = require("./pureGeneralFunctions.js").formatBytes;
 let binarySearch = require("./pureGeneralFunctions.js").binarySearch;
 let sanitize = require("./pureGeneralFunctions.js").sanitize;
-
 let makeWAVFileBlobGenerator = require("./makeAudioFile.js").makeWAVFileBlobGenerator;
 let humaneDate = require("./humane_dates.js").humaneDate;
-
 let humanReadableLocalDate = require("./impureGeneralFunctions.js").humanReadableLocalDate;
 let utcToSystemLocalTimestamp = require("./impureGeneralFunctions.js").utcToSystemLocalTimestamp;
 let randomColorCode = require("./impureGeneralFunctions.js").randomColorCode;

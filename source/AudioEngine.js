@@ -118,6 +118,8 @@ let AudioEngine = function AudioEngine(GLOBALS, aOpt, options) { //loResWaveform
   // let scriptProcessor = function scriptProcessor(audioProcessingEvent) {
   let scriptProcessor = function scriptProcessor(audioProcessingEvent) {
 
+    // console.time("script processor");
+
     this.codeNumber++;
     this.codeChannel.push (this.codeNumber);
 
@@ -171,6 +173,9 @@ let AudioEngine = function AudioEngine(GLOBALS, aOpt, options) { //loResWaveform
     }
 
     this.updateBlockTotal();
+
+    // console.timeEnd("script processor");
+
 
   }.bind(this);
 

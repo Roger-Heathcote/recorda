@@ -43,7 +43,9 @@ function main(){
       exitingSaveModeCallback: exitingSaveModeCallback,
       saveModeUpdateCallback: saveModeUpdateCallback,
       dataDisplayChangedCallback: dataDisplayChangedCallback,
-      scriptProcessorBufferLength: 4096
+      scriptProcessorBufferLength: 4096,
+      saveEngineFiresEveryXMs: 15,
+      saveEngineRunsForAboutXMs: 8
     }
   );
 

@@ -1,5 +1,16 @@
+Service Worker?
+
+
+
 bug: Setting outpoint with shortcut keys allows zero length saves
   enforce minimum length of one frame/block i.e. outpoint must be higher than in point
+
+bug: hammering A then O repeatedly crashes the applyncaught TypeError: this.state.setPointAt is not a function
+    at RecorderApp.setPointAt (RecorderApp.js:219)
+    at keyClickDelegator (app.js:91)
+
+add hook so save engine can be run by waveform wehn it gets an animation frame
+
 
 Accessibilify!
   Add keyboard shortcuts

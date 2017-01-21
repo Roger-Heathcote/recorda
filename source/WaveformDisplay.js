@@ -33,8 +33,10 @@ let WaveformDisplay = function WaveformDisplay(GLOBALS, theWindow, canvas, mouse
     if(instance.dontquit){
       requestAnimationFrame(instance.updateDisplay);
       if (Date.now() > (instance.lastRedraw + instance.minRefreshTime)) {
+        // console.time("drawWave");
         instance.drawWave();
         instance.lastRedraw = Date.now();
+        // console.timeEnd("drawWave");
         // stopped here for some reason
       }
     }
