@@ -64,8 +64,8 @@ let RecorderApp = function RecorderApp(
   this.toggleAudioPassthrough = function toggleAudioPassthrough(){
     this.audEng.toggleAudioPassthrough();
   };
-  this.saveEngineFiresEveryXMs = this.saveEngineFiresEveryXMs || 100;
-  this.saveEngineRunsForAboutXMs = this.saveEngineRunsForAboutXMs || 33;
+  this.saveEngineFiresEveryXMs = this.saveEngineFiresEveryXMs || 15;
+  this.saveEngineRunsForAboutXMs = this.saveEngineRunsForAboutXMs || 8;
   this.saveEngine = function(){
     if(this.currentSave){
       let timeOut = Date.now() + this.saveEngineRunsForAboutXMs;
