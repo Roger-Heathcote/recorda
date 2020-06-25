@@ -1,3 +1,5 @@
+Push to github!
+
 Make first click start recording and change to awaitingOutpoint
   just replace existing global "recording" in scriptNode.onaudioprocess
   remove old global
