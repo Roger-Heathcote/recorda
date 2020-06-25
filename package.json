@@ -1,32 +1,32 @@
 {
-  "name": "recorda",
-  "version": "0.1.0",
-  "description": "buffering audio recorder",
-  "main": "scripts/app.js",
-  "scripts": {
-    "test": "./node_modules/.bin/mocha --reporter spec",
-    "build": "webpack --config webpack.config.js",
-    "dev": "webpack --config webpack.config.js --watch"
-  },
-  "repository": {
-    "type": "git",
-    "url": "."
-  },
-  "keywords": [
-    "pre-record",
-    "audio",
-    "wave",
-    "recorder"
-  ],
-  "author": "Roger Heathcote",
-  "license": "UNLICENSED",
-  "devDependencies": {
-    "blob": "0.0.4",
-    "chai": "^3.5.0",
-    "devtool": "^2.3.0",
-    "html-webpack-plugin": "^2.24.1",
-    "mocha": "^3.2.0",
-    "webpack": "^1.14.0",
-    "webpack-build-notifier": "^0.1.13"
-  }
+    "name": "recorda",
+    "version": "0.1.0",
+    "description": "buffering audio recorder",
+    "main": "scripts/app.js",
+    "scripts": {
+        "test": "./node_modules/.bin/mocha --reporter spec",
+        "build": "webpack --config webpack.config.js",
+        "dev": "webpack --config webpack.config.js --watch"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Roger-Heathcote/recorda.git"
+    },
+    "keywords": [
+        "pre-record",
+        "audio",
+        "wave",
+        "recorder"
+    ],
+    "author": "Roger Heathcote",
+    "license": "GPL3",
+    "devDependencies": {
+        "blob": "0.0.4",
+        "chai": "^3.5.0",
+        "devtool": "^2.3.0",
+        "html-webpack-plugin": "^2.24.1",
+        "mocha": "^3.2.0",
+        "webpack": "^1.14.0",
+        "webpack-build-notifier": "^0.1.13"
+    }
 }
