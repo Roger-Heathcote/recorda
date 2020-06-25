@@ -1,0 +1,283 @@
+Service Worker?
+
+
+
+bug: Setting outpoint with shortcut keys allows zero length saves
+  enforce minimum length of one frame/block i.e. outpoint must be higher than in point
+
+bug: hammering A then O repeatedly crashes the applyncaught TypeError: this.state.setPointAt is not a function
+    at RecorderApp.setPointAt (RecorderApp.js:219)
+    at keyClickDelegator (app.js:91)
+
+add hook so save engine can be run by waveform wehn it gets an animation frame
+
+
+Accessibilify!
+  Add keyboard shortcuts
+
+    (S)ave recording
+    (D)elete recording
+    (P)lay/pause recording
+    (Y)es to delete confirm
+    UP/DOWN to navigate recording list
+
+  Try with a screen reader
+
+First time use instructions
+fix title bar scaling
+
+dedupe init/reset process
+
+Settings
+  autosave
+  warn on delete
+  passthrough
+
+Persist via
+  cookie (needs server? refreser on cookies - client side?)
+  local storage?
+
+Make name an editable input field
+
+Internationalize?
+
+increase width of humane date div and add overflow hidden
+
+benchmarking/perm monitoring
+rewrite muxer in asm.js?
+Add confirm step to "delete" action
+
+Get rid of "new", refactor to module pattern
+Save as mp4?
+
+rewrite pure functions in elm?
+NAh, elm too frontend centric, no good story for
+
+saving overlay does not track waveform well when resizing!!!
+
+  Find more accurate language for what is curretly "saving" and "save"
+    preparing|download?
+
+  Control for other settings/options
+
+
+
+Longer term
+
+  fix this.overlay is not defined / cannot read property "style" of undefined error
+
+  Invent way to detect glitches due to thread blocking CPU starvation
+
+  refactor views into their own files
+    combining display code and event handlers into one file.
+
+  max recording time limit
+    make intelligent guess at free RAM based on
+      screen width screen height
+
+    Multiple waveform display & multitrack recording?
+
+DONE-------------------------
+
+Add keyboard shortcuts
+  record from here (I)
+  record whole buffer (A)
+  record percentage of buffer
+    1 thru 9 => x0%
+  stop (O)
+  ESC cancel selection, revert to buffering
+
+Fixed faulty 16bit mono case and added tests
+
+Added controls for buffer length and quality
+
+Made it possible to change recording length without reloading page
+
+Rewrote resample and interleave.
+
+Replaced individual click handers with delegation
+
+get big ugly test working again
+  raw node doesn't have Blob constructor so big ugly test works in devtool but not raw node.
+  refactored so blob constructor is now passed in
+  node doesn't support Blob yet (though it is in the pipeline) so
+    I have mocked it in makeAudioFile
+      which is really ugly - boo!
+      TODO: find a better way
+
+Refactor to common js and move to webpack!
+
+HTML5inate (use more semantic tags)
+
+Made design more responsive - good down to 240px now.
+
+Fixed https server - it now generates it's own key&cert on the fly based on the
+current ip address and displays the URL where it may be accessed.
+
+Added saving status display with percentage progress
+
+We have tests for the audio engine through creation of wav file.
+They are ugly, they are few and they only test a single case (a single 16 bit
+interleaved stereo wav) but that should help us refactor the audio engine and
+recorder to support multiple record and save formats.
+
+Made audio engine and recorder class use an options object for optional args
+MAde save generator output progress
+Did some more work on the test harness
+
+make makeWAVFileBlobGenerator work on actual full rescode channel
+  loRes code channel only useful to waveform display so now inpoints and outpoints
+    are set with a setter* and translated to the full res version automatically
+    considered trying es6 proxies but explicit is better than impicit
+
+Long saves blocked script processor and caused glitches
+  Made saving process into a generator
+    large array copy yields on each click of the outer loop
+    next is called on it's own separate timer
+    callback adds recording once completed
+
+Added custom audio element and redesigned both
+  recordings view and audio elements to render straight to dom
+  only changing what is necessary each time.
+
+
+Fixed chrome pasthorugh issue
+
+Allow recording deletion
+
+Come up with better uuid ssytem than just using timestamps!
+  uuids are now random alpha strings
+
+Get dataDisplay actually working
+
+put all views in a views file
+where to put all the click handlers? Left in app.js for now
+
+Move views out of recorder, leaving only viewModels inside
+
+Redesign constraint handling
+  constraints = new OptionalAudioConstraintsClass();
+  present simpler api with our own group names
+     group name maps to list of canonical and prefixed versions of the same thing
+     e.g. NoiseSuppression => mozNoiseSuppression, googNoiseSuppression, etc
+
+Added rudimentary clip detection.
+Investigate way of getting HQ line in!
+Prepend a nice human readable date to the file name
+Split recording list renderer into views - SORT OF!
+Add playback to each recording list entry
+Add save functionality
+Refactor to eliminate anon functions, they can make profiling and debugging awkward
+  All functions should have names!
+
+
+
+LONG TERM--------------------------------------------------------------
+
+  supporting an arbitrary number of channels may be tough, esp as I only have stereo soundcard right now
+  but it would be v.cool!
+  combo explosion suggests splitting into smaller composable options
+    but interleaving an mixing don't map easily to >2 channels
+    so maybe presets are the way to go
+    left and right channels to sepa`rate arrays
+    l & r mixed to mono
+    l only
+    r only
+
+  channels
+  stereo interleave
+  sample conversion
+
+
+
+  Looping?
+    As separate app?
+    As extension of current app?
+      Make recorder handle looping?
+      Make recorder handle multiple formats?
+      Make audio engine handle multiple formats.
+      Make separate app for looping and only resuse audio engine?
+      current app auto downsamples to 16 bit interleaved stereo
+      and for looping we may prefer to record to 32bit float
+      but it would also be useful to be able to record to mono for memory reasons
+      so maybe we could make the audio engine format pluggable?
+        stuff in recorder app relys on audio format
+          list which stuff
+        so it should specify format at construction time?
+          between a choice of formats that audio engine offers?
+            which formats.
+    Looper
+      wants to be low latency
+      high precision
+        does precision need to be higher than the processing block size?
+      do we need to timestamp the recorded chunks?
+        with the audio clock's timestamp
+        if we do this as standard is there much overhead?
+      this would allow us to retain variable size chunk recording while
+        adding millisecond accuracy
+      so yeah, if we want to make this code more general rather than write a seperate audio engine
+        we should do that.
+
+
+
+
+  Investigate effect of individual audio constraints on voice and music
+    Until API is better implemented in the browsers this would be unproductively slow
+    Disabling all by default gives best quality on my music PC so I guess I'll just
+    await the day the toggles seem to do something
+
+  Re-applying constraints live
+    Firefox "seems" to permit constraints to be applied after the fact
+      Though I've yet to find one that seems to have any effect
+    Chrome 35 has to have them specified up front
+      but they do seem to have an effect
+    Look into constraints in webkit browsers, safari etc
+
+  Use webworker for WAV file creation
+    Not at all straightforward!
+    Main array is an array of arraybuffers
+      but if we "transfer" them we lose access to them which we can't have
+      AND
+      if we copy them in one block then for big selections
+        we will block the event loop for too long which is exactly what we are trying to avoid
+        even without the display portion active this may still block the scriopt processor and cause glitches
+    Possible solution
+      when an outpoint is set
+        dimension a new fixed width array and write the wav header
+          then copy the data over a bit at a time til it's done.
+        BUT
+          As it stands we would only be able to save a single recording at a time
+            as if we returned from saved to buffering state we might trim needed elements
+        ALSO
+          Can we run without get animation frame?
+
+
+    Also save all/selected recordings to zip
+
+  Separation of audio from dom:
+      need to mock window.URL.createObjectURL(WAVFileBlob or whatever)
+      Alternatively
+        make sure it isn't called
+          by adding additional logic to function saveStateExecute(arg)?
+      Or deal with the consequence of undefined down the line?
+      Or make it a fancy undefined?
+        http://window.URL.not.present.so.no.URL.for.you.buddy
+      We only need it in the views no?
+        And the views don't need actual data to test
+          so if we even bother testing them we can mock the input there
+        We might need to test the view builder though
+        But is that a problem if it just doesn't have a url property
+
+  make custom audio tag controller/display as stock one cannot be meaningfully styled and looks ugly as owt.
+    http://codepen.io/katzkode/pen/ZbxYYG
+
+  Make a chrome/firefox app!
+  To use getUserMedia() in an installable app (for example, a Firefox OS app), you need to specify one or both of the following fields inside your manifest file:
+    "permissions": {
+      "audio-capture": {
+        "description": "Required to capture audio using getUserMedia()"
+      },
+      "video-capture": {
+        "description": "Required to capture video using getUserMedia()"
+      }
+    }

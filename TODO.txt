@@ -1,0 +1,42 @@
+Push to github!
+
+Make first click start recording and change to awaitingOutpoint
+  just replace existing global "recording" in scriptNode.onaudioprocess
+  remove old global
+
+Refactor states from:
+    awaitingInPoint
+    awaitingOutPoint
+    recording:
+    saving:
+To:
+  buffering (awaitingInPoint)
+  recording (awaitingOutPoint)
+  prepping (preparing file for download)
+  savedialog
+  resetting
+
+Wire up button to show
+  Start for awaitingInPoint
+  Stop for awaitingOutPoint
+  grey for preppingFile
+  greyed for savedialog
+  greyed for resetting
+
+
+
+awaitingOutPoint draws from either
+
+    recording start point TO end point in green
+
+    or
+
+    recording start point TO mouseX in green
+    and
+    mouseX TO end point in white
+
+Next after that...
+
+Modify or fork that recorder module to extract the wav file encoding and downloading part
+
+Make second click stop recording
