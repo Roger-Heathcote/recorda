@@ -1,293 +1,261 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head>
-  	<meta charset="utf-8">
-  	<meta name="viewport" content="width=device-width, initial-scale=1">
-  	<title>recorda :: pre-buffering audio recorder</title>
-    <script>
-    </script>
-    <style>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>recorda :: pre-buffering audio recorder</title>
+        <script></script>
+        <style>
+            *,
+            html {
+                box-sizing: border-box;
+            }
+            *,
+            *:before,
+            *:after {
+                box-sizing: inherit;
+            }
+            body {
+                padding: 0px;
+                margin: 0px;
+                background: #333;
+                font-family: monospace;
+                overflow-y: scroll;
+            }
+            ul {
+                list-style-type: none;
+                margin: 0px;
+                padding: 0px;
+                width: 100%;
+            }
+            .recordingListItem {
+                height: 2em;
+                margin-left: auto;
+                margin-right: auto;
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .recordingListItemFlexbox {
+                display: flex;
+                max-width: 700px;
+                min-width: 0px;
+                flex-grow: 1;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .recording_humanTime {
+                padding-left: 0.5em;
+                min-width: 5em;
+                max-width: 5em;
+            }
+            .recording_Name {
+                min-width: 0px;
+                max-width: 215px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                padding-right: 1em;
+                flex-basis: 215px;
+            }
+            .buffer-parameters {
+                /* background: yellow; */
+                /* padding-top: 0.5em; */
+                /* padding-bottom: 0.5em; */
+            }
+            .vSAC {
+                flex-basis: 250px;
+                width: 100%;
+                min-width: 4em;
+                border-top: 2px solid rgba(0, 0, 0, 0); /* hack, unsure why reqd */
+            }
+            .vSAC_outer {
+                margin-left: 1em;
+                background: #aaa;
+                height: 1em;
+                margin-right: 1em;
+                border-radius: 0.5em;
+            }
+            .vSAC_timeline {
+                width: calc(100% - 1em);
+            }
+            .vSAC_cursor {
+                background: #555;
+                height: 1em;
+                width: 1em;
+                padding: 0px;
+                margin-left: 0%; /* modulate this */
+                border-radius: 50%;
+            }
+            .invisible {
+                display: none;
+            }
+            .playBtn {
+                float: left;
+            }
+            .svg-triangle {
+                width: 1em;
+                height: 1em;
+                fill: #555;
+            }
+            .svg-triangle:hover {
+                fill: #999;
+            }
 
-      /*-----------------------------------------------------*/
-      /*-----------------------------------------------------*/
-      /*----------------------- RESET -----------------------*/
-      /*-----------------------------------------------------*/
-      /*-----------------------------------------------------*/
+            .saveOverlayDiv {
+                display: table-cell;
+                text-align: center;
+                vertical-align: middle;
+                position: absolute;
+                color: #fff;
+                background: rgba(0, 0, 0, 0.5);
+                font-family: monospace;
+            }
+            button::-moz-focus-inner {
+                border: 0px;
+                padding: 0px;
+                margin-top: -3px;
+            }
+            .saveButton,
+            .deleteButton {
+                padding: 0px 6px 0px;
+                border-top: 1px solid #fff;
+                border-left: 1px solid #fff;
+                border-right: 1px solid #000;
+                border-bottom: 1px solid #000;
+            }
 
-      html, body, div, span, applet, object, iframe,
-      h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-      a, abbr, acronym, address, big, cite, code,
-      del, dfn, em, img, ins, kbd, q, s, samp,
-      small, strike, strong, sub, sup, tt, var,
-      b, u, i, center,
-      dl, dt, dd, ol, ul, li,
-      fieldset, form, label, legend,
-      table, caption, tbody, tfoot, thead, tr, th, td,
-      article, aside, canvas, details, embed,
-      figure, figcaption, footer, header, hgroup,
-      menu, nav, output, ruby, section, summary,
-      time, mark, audio, video {
-      	margin: 0;
-      	padding: 0;
-      	border: 0;
-      	font-size: 100%;
-      	font: inherit;
-      	vertical-align: baseline;
-      }
-      /* HTML5 display-role reset for older browsers */
-      article, aside, details, figcaption, figure,
-      footer, header, hgroup, menu, nav, section {
-      	display: block;
-      }
-      body {
-      	line-height: 1;
-      }
-      ol, ul {
-      	list-style: none;
-      }
-      blockquote, q {
-      	quotes: none;
-      }
-      blockquote:before, blockquote:after,
-      q:before, q:after {
-      	content: '';
-      	content: none;
-      }
-      table {
-      	border-collapse: collapse;
-      	border-spacing: 0;
-      }
+            #main {
+                border: 5px solid #fff;
+                background: #fff;
+                width: 96%;
+                margin-left: auto;
+                margin-right: auto;
+                margin-top: 2%;
+            }
 
-      /*--------------------------------------------------------------
-      --------------------------------------------------------------
-      --------------------------------------------------------------
-      --------------------------------------------------------------
-      --------------------------------------------------------------
-      */
-      *,
-      html {
-        box-sizing: border-box;
-      }
-      *, *:before, *:after {
-        box-sizing: inherit;
-      }
-      body{
-        padding: 0px;
-        margin: 0px;
-        background: #333;
-        font-family: monospace;
-        overflow-y: scroll;
-      }
-      ul {
-        list-style-type: none;
-        margin:0px;
-        padding:0px;
-        width: 100%;
-      }
-      .recordingListItem{
-        height: 2em;
-        margin-left: auto;
-        margin-right: auto;
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-      .recordingListItemFlexbox{
-        /*height: 1em;*/
-        display: flex;
-        max-width: 700px;
-        min-width: 0px;
-        flex-grow: 1;
-        justify-content: space-between;
-        align-items: center;
-      }
-      .recording_humanTime{
-        padding-left: 0.5em;
-        min-width: 5em;
-        max-width: 5em;
-      }
-      .recording_Name{
-        min-width: 0px;
-        max-width: 215;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        padding-right: 1em;
-        flex-basis: 215px;
-      }
-      .vSAC{
-        flex-basis: 250px;
-        width: 100%;
-        min-width: 4em;
-        border-top: 2px solid rgba(0, 0, 0, 0); /* hack, unsure why reqd */
-      }
-      .vSAC_outer{
-        margin-left: 1em;
-        background: #AAA;
-        height: 1em;
-        margin-right:1em;
-        border-radius: 0.5em;
-      }
-      .vSAC_timeline{
-        width: calc(100% - 1em);
-      }
-      .vSAC_cursor{
-        background: #555;
-        height: 1em;
-        width: 1em;
-        padding: 0px;
-        margin-left: 0%; /* modulate this */
-        border-radius: 50%;
-      }
-      .playBtn{
-        float: left;
-      }
-      .svg-triangle{
-        width: 1em;
-        height: 1em;
-        fill: #555;
-      }
-      .svg-triangle:hover{ fill: #999; }
+            #title {
+                width: 100%;
+                overflow: hidden;
+                min-width: 200px;
+                padding-bottom: 0.5em;
+            }
+            h1 {
+                margin: 0px;
+                padding: 0px;
+            }
+            #title span {
+                white-space: nowrap;
+            }
 
-      .saveOverlayDiv{
-        display: table-cell;
-        text-align:center;
-        vertical-align: middle;
-        position: absolute;
-        zIndex: 2;
-        color: #FFF;
-        background: rgba(0, 0, 0, 0.5);
-        font-family: monospace;
-      }
-      button::-moz-focus-inner{
-        border: 0px;
-      	padding: 0px;
-      	margin-top:-3px;
-      	/*margin-bottom: -0px;*/
-      }
-      .saveButton, .deleteButton{
-        padding: 0px 6px 0px;
-        border-top: 1px solid #FFF;
-        border-left: 1px solid #FFF;
-        border-right: 1px solid #000;
-        border-bottom: 1px solid #000;
-      }
+            .wrapper {
+                border: 1px solid green;
+            }
+            .waveform {
+                border: 1px solid red;
+            }
+            #timeline {
+                display: flex;
+                border-top: 1px black dotted;
+                /*background: #F00;*/
+                justify-content: space-between;
+            }
+            .headRowSelectorSpans select {
+                background: rgba(0, 0, 0, 0);
+                border: 1px dotted black;
+                font-size: 1em;
+            }
 
-      #main{
-        border: 5px solid #FFF;
-        background: #FFF;
-        width: 96%;
-        margin-left: auto;
-        margin-right: auto;
-        margin-top: 2%;
-      }
+            @media all and (max-width: 600px) {
+                #title {
+                    font-size: 4vw;
+                }
+            }
+            @media all and (max-width: 400px) {
+                .buff-text {
+                    display: none;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div id="main">
+            <header>
+                <div>
+                    <h1 id="title">recorda :: buffering audio recorder</h1>
 
-      #title {
-        width: 100%;
-        overflow: hidden;
-        min-width: 200px;
-        padding-bottom: 0.5em;
-      }
-      h1 {
-        margin: 0px;
-        padding: 0px;
-      }
-      #title span{
-        white-space: nowrap;
-      }
-      @media all and (min-width: 700px) {
-        #title span{ font-size: 1.3em; }
-      }
+                    <div class="buffer-parameters">
+                        <span class="buff-text">Buffer</span>
+                        <span class="headRowSelectorSpans">
+                            <select id="bufferLengthSelector">
+                                <option value="30">30 seconds</option>
+                                <option value="60">1 minute</option>
+                                <option value="120" selected>2 minutes</option>
+                                <option value="300">5 minutes</option>
+                                <option value="900">15 minutes</option>
+                                <option value="3600">1 hour</option>
+                                <option value="7200">2 hours</option>
+                                <option value="14400">4 hours</option>
+                            </select>
+                        </span>
+                        <span class="buff-text"> of </span>
+                        <span class="headRowSelectorSpans">
+                            <select id="audioQualitySelector">
+                                <option value="mono 8bit WAV">mono 8bit WAV</option>
+                                <option value="mono 16bit WAV" selected>mono 16bit WAV</option>
+                                <option value="stereo 16bit WAV">stereo 16bit WAV</option>
+                            </select>
+                        </span>
+                        <span class="buff-text"> audio</span>
+                    </div>
+                    <br />
+                    Click on the waveform to set your recording's start point, click again to set
+                    end.<br />
+                </div>
+            </header>
 
-      @media all and (max-width: 699px) and (min-width: 320px) {
-        #title span{ font-size: 4vw; }
-      }
+            <main>
+                <div id="wrapper">
+                    <canvas id="waveform"></canvas>
+                </div>
 
-      @media all and (max-width: 319px) {
-        #title span{ font-size: 0.7em; }
-      }
+                <div id="timeline">
+                    <div id="timelineMax"></div>
+                    <div>Now</div>
+                </div>
+                <br />
+                <div id="stuff">
+                    <div id="recordingsBlock">
+                        <ul id="recordingsList"></ul>
+                    </div>
+                    <br />
+                    <button id="settingsButton">Show Settings</button>
 
-      .wrapper{ border: 1px solid green; }
-      .waveform{ border: 1px solid red; }
-      #timeline{
-        display: flex;
-        border-top: 1px black dotted;
-        /*background: #F00;*/
-        justify-content: space-between;
-      }
-      .headRowSelectorSpans select{
-        background: rgba(0,0,0,0);
-        border: 1px dotted black;
-        font-size: 1em;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="main">
+                    <section id="settings" class="invisible">
+                        <div id="dataDisplayBlock"></div>
 
-      <header>
-        <div id="title">
-          <span>recorda :: buffering </span>
-          <span class="headRowSelectorSpans">
-            <select id="bufferLengthSelector" >
-              <option value="30">30 seconds</option>
-              <option value="60">1 minute</option>
-              <option value="120" selected>2 minutes</option>
-              <option value="300">5 minutes</option>
-              <option value="900">15 minutes</option>
-              <option value="3600">1 hour</option>
-              <option value="7200">2 hours</option>
-              <option value="14400">4 hours</option>
-            </select>
-          </span>
-          <span> of </span>
-          <span class="headRowSelectorSpans">
-            <select id="audioQualitySelector">
-                <option value="mono 8bit WAV">mono 8bit WAV</option>
-                <option value="mono 16bit WAV" selected>mono 16bit WAV</option>
-                <option value="stereo 16bit WAV">stereo 16bit WAV</option>
-            </select>
-          </span>
-          <span> audio</span>
+                        <div id="optionsBlock"></div>
+
+                        <button name="audioPassthrough">
+                            audio passthrough
+                        </button>
+
+                        Will cause feedback if your mic can hear your speakers!
+                    </section>
+                </div>
+            </main>
         </div>
-      </header>
-
-      <main>
-
-        <div id="wrapper">
-           <canvas id="waveform"></canvas>
-        </div>
-
-        <div id="timeline">
-          <div id="timelineMax"></div>
-          <div>Now</div>
-        </div>
-        <br />
-        <div id="stuff">
-
-          <div id="recordingsBlock">
-            <ul id="recordingsList">
-            </ul>
-          </div>
-
-          <div id="dataDisplayBlock">
-          </div>
-
-          <div id="optionsBlock">
-          </div>
-
-          <button name='options'>options</button>
-          <button name='audioPassthrough'>audio passthrough</button>
-
-        </div>
-
-      </main>
-
-      <footer>Yo Webpack, you packin?</footer>
-
-    </div>
-
-  </body>
-
+        <script>
+            const settingsButton = document.getElementById("settingsButton");
+            const settingsArea = document.getElementById("settings");
+            settingsButton.addEventListener("click", () => {
+                settingsButton.textContent =
+                    settingsButton.textContent === "Show Settings"
+                        ? "Hide Settings"
+                        : "Show Setttings";
+                settingsArea.classList.toggle("invisible");
+            });
+        </script>
+    </body>
 </html>
