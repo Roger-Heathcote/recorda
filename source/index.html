@@ -166,6 +166,23 @@
                 border: 1px dotted black;
                 font-size: 1em;
             }
+            #startPage {
+                position: absolute;
+                left: 0;
+                right: 0;
+                /* background: rgba(126, 104, 104, 0.5); */
+                background: yellow;
+                width: 100vw;
+                height: 100vh;
+            }
+            .startTextFrame {
+                position: relative;
+                background: white;
+                width: 50vw;
+                height: 50vh;
+                margin-left: auto;
+                margin-right: auto;
+            }
 
             @media all and (max-width: 600px) {
                 #title {
@@ -180,7 +197,7 @@
         </style>
     </head>
     <body>
-        <div id="main">
+        <div id="main" class="invisible">
             <header>
                 <div>
                     <h1 id="title">recorda :: buffering audio recorder</h1>
@@ -245,6 +262,12 @@
                     </section>
                 </div>
             </main>
+        </div>
+        <div id="startPage">
+            <div class="startTextFrame">
+                Press the button to start.
+                <button id="startButton">Go!</button>
+            </div>
         </div>
         <script>
             const settingsButton = document.getElementById("settingsButton");
