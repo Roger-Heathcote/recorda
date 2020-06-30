@@ -91,8 +91,6 @@ let AudioEngine = function AudioEngine(GLOBALS, aOpt, options) {
     if (aOpt.hasOwnProperty("raw")) {
         processor = bypass;
     }
-    console.log("PROCESSOR IS", processor);
-
     this.getPointsAt = function getPointsAt(bufferRatio) {
         let loResCode = false,
             fullResCode = false,

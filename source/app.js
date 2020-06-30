@@ -86,7 +86,7 @@ function main() {
     };
     function keyClickDelegator(event) {
         let key = event.keyCode;
-        console.log("KEYCODE:", key);
+        // console.log("KEYCODE:", key);
         if (keyHandlers.hasOwnProperty(key)) {
             keyHandlers[key]();
         }
@@ -263,17 +263,14 @@ function main() {
 const settingsButton = document.getElementById("settingsButton");
 const settingsArea = document.getElementById("settings");
 settingsButton.addEventListener("click", () => {
-    settingsButton.textContent =
-        settingsButton.textContent === "Show Settings" ? "Hide Settings" : "Show Setttings";
+    settingsButton.textContent === "Show Settings" ? "Hide Settings" : "Show Setttings";
     settingsArea.classList.toggle("invisible");
 });
 
 const mainPage = document.getElementById("main");
 const startPage = document.getElementById("startPage");
 const startButton = document.getElementById("startButton");
-console.log("stbtn", startButton);
 startButton.addEventListener("click", event => {
-    console.log("BUMFLAPS!");
     event.preventDefault();
     mainPage.classList.toggle("invisible");
     startPage.classList.toggle("invisible");
