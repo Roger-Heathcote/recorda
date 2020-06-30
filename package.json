@@ -23,7 +23,6 @@
     "devDependencies": {
         "blob": "0.0.4",
         "chai": "^3.5.0",
-        "devtool": "^2.3.0",
         "html-webpack-plugin": "^2.24.1",
         "mocha": "^3.2.0",
         "webpack": "^1.14.0",
