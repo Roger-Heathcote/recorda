@@ -194,8 +194,14 @@
                 margin-right: auto;
             }
 
+            #subFrame{
+                font-size: 1rem;
+            }
+            #subFrame h1{
+                font-size: 1.2rem;
+            }
             #subFrame p{
-                font-size: 1.4rem;
+                font-size: 1rem;
                 max-width: 30rem;
                 text-align: justify;
             }
@@ -203,6 +209,13 @@
             #subFrame button{
                 font-size: 1.2rem;
             }
+            #subFrame ul {
+                list-style-type: disc; 
+                padding-left: 1rem;
+                width: 100%;
+                text-align: left;
+            }
+
 
             @media all and (max-width: 600px) {
                 #title {
@@ -293,6 +306,18 @@
         <div id="startPage">
             <div class="startTextFrame">
                 <div id="subFrame">
+                    <h1>This app may not work with your browser 😢</h1>
+                    <p>
+                        Recent browsers have restricted access to the core API this app relies on.
+                        I intend to rewrite it at some point but I can't say when yet.
+                        It still runs okay locally, on Firefox at least, so if you want to use it...</p>
+
+                        <ul>
+                            <li>Clone the <a href="https://github.com/Roger-Heathcote/recorda">github repo</a></li>
+                            <li>run <strong>npm build</strong></li>
+                            <li><a href="https://medium.com/swlh/need-a-local-static-server-here-are-several-options-bbbe77e59a11">Serve the app</a> from your local build folder.</li>
+                        </ul>
+
                     <p>Welcome to recorda buffering audio recorder! Please click below to get started. If your browser asks for permission then please give it.</p></br>
                     <button id="startButton">START</button>
                 </div>
